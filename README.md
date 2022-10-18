@@ -12,9 +12,6 @@ Design your hardware using Project Lab's open-source design.
 
 Check out the [Meadow.ProjectLab.Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples) repo for a bunch of samples that you can run straight out of the box!
 
-
-
-
 ## About the Hardware
 
 The PROJ LAB board includes the following hardware:
