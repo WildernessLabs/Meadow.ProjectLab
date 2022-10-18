@@ -1,5 +1,18 @@
-# Project_Lab
-Project Lab Board
+# Project Lab
+
+Project Lab is the most functional IoT prototyping platform on the planet. No more breadboards, complicated wiring, or soldering. Project Lab was built from the ground up using the industry's most powerful, capable, and reliable sensors, components, and connectors.
+
+Learn at the speed of innovation.
+Rapidly prototype and build the best solutions.
+Explore thousands of sensors and components via plug-and-play.
+Reliably take it anywhere and everywhere you go.
+Design your hardware using Project Lab's open-source design.
+
+## [Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples)
+
+Check out the [Meadow.ProjectLab.Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples) repo for a bunch of samples that you can run straight out of the box!
+
+
 
 
 ## About the Hardware
