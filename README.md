@@ -38,3 +38,7 @@ Check the diagram below to see what pins on the Meadow are connected to every pe
 &nbsp;
 
 [](Docs/Images/Pinout.png)
+
+## [Hardware Design](Source/Hardware)
+
+You can find the schematics and other design files in the [Hardware folder](Source/Hardware).
