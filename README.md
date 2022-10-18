@@ -1,5 +1,7 @@
 # Project Lab
 
+[TODO: Image]
+
 Project Lab is the most functional IoT prototyping platform on the planet. No more breadboards, complicated wiring, or soldering. Project Lab was built from the ground up using the industry's most powerful, capable, and reliable sensors, components, and connectors.
 
 ## Purchasing or Building
@@ -36,6 +38,8 @@ As well as connectors to 5V, 3.3V, ground, one analog port and 2 GPIO ports.
 
 Check the diagram below to see what pins on the Meadow are connected to every peripheral on board:
 &nbsp;
+
+[TODO: why this no worky?]
 
 [](Docs/Images/Pinout.png)
 
