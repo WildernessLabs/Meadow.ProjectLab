@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: nelonoel/branch-name@v1
     - name: Checkout ProjectLab
       uses: actions/checkout@v3
       with:
@@ -46,7 +45,7 @@ jobs:
       with:
         repository: WildernessLabs/Meadow.Core
         path: Meadow.Core
-        ref: ${BRANCH_NAME} # match Core branch to this branch
+        ref: ${GITHUB_REF_NAME} # match Core branch to this branch
         token: ${{ secrets.CI_ACCESS_TOKEN }}         
     - name: Checkout Meadow.Foundation
       uses: actions/checkout@v3
