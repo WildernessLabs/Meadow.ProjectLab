@@ -1,0 +1,24 @@
+name: CI Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore ./Source/Meadow.ProjectLab.sln
+    - name: Build
+      run: dotnet build -c Release ./Source/Meadow.ProjectLab.sln --no-restore
