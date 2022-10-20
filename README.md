@@ -16,19 +16,24 @@ If you've just got a Project Lab, we recommend cloning the [Meadow.ProjectLab.Sa
 
 ## About the Hardware
 
-The PROJ LAB board includes the following hardware:
+<img src="Design/project-lab-specs.jpg" style="margin-bottom:10px" />
+
+### Onboard Peripherals
+
+Project Lab includes the following hardware:
 * **ST7789** - SPI 240x240 color display
 * **BMI270** - I2C motion and acceleration sensor
 * **BH1750** - I2C light sensor
-* **BME680** - I2C atmospheric sensor
+* **BME688** - I2C atmospheric sensor
 * **Push Button** - 4 momentary buttons
+* **Magnetic Audio Transducer** - High quality piezo speaker
 
-## Connectivity
+### Connectivity
 
 The PROJ LAB board includes the following expansion connection options:
-* **MikroBUS** - 2 sets of MikroBUS pin headers
+* **MikroBUS** - Two sets of MikroBUS pin headers
 * **Qwiic** - Stemma QT I2C connector
-* **Grove** - analog header
+* **Grove** - Analog header
 * **Grove** - GPIO/serial header
 * **RS-485** - serial 
 
