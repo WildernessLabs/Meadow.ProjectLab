@@ -46,9 +46,7 @@ As well as connectors to 5V, 3.3V, ground, one analog port and 2 GPIO ports.
 Check the diagram below to see what pins on the Meadow are connected to every peripheral on board:
 &nbsp;
 
-[TODO: why this no worky?]
-
-[](Docs/Images/Pinout.png)
+<img src="Design/Pinout.png" />
 
 ## [Hardware Design](Source/Hardware)
 
