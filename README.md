@@ -14,9 +14,11 @@ It's also designed so that it can be assembled at home for the adventurous. All 
 
 If you've just got a Project Lab, we recommend cloning the [Meadow.ProjectLab.Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples) repo. There you'll find a bunch of awesome samples that you can run right out-of-the box!
 
+<img src="Design/project-lab-samples.png" />
+
 ## About the Hardware
 
-<img src="Design/project-lab-specs.jpg" style="margin-bottom:10px" />
+<img src="Design/project-lab-specs.jpg" />
 
 ### Onboard Peripherals
 
