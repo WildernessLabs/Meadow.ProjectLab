@@ -1,12 +1,12 @@
-# Project Lab
+<img src="Design/banner.jpg" style="margin-bottom:10px" />
 
-[TODO: Image]
+# Meadow.ProjectLab
 
 Project Lab is the most functional IoT prototyping platform on the planet. No more breadboards, complicated wiring, or soldering. Project Lab was built from the ground up using the industry's most powerful, capable, and reliable sensors, components, and connectors.
 
 ## Purchasing or Building
 
-You can purchase a Project Lab from the [Wilderness Labs store](https://store.wildernesslabs.co/collections/frontpage/products/project-lab-board).
+You can get a Project Lab from the [Wilderness Labs store](https://store.wildernesslabs.co/collections/frontpage/products/project-lab-board).
 
 It's also designed so that it can be assembled at home for the adventurous. All design files can be found in the [Hardware Design folder](Source/Hardware).
 
