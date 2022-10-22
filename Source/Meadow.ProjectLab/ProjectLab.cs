@@ -19,31 +19,29 @@ namespace Meadow.Devices
         public ISpiBus SpiBus { get; }
         public II2cBus I2CBus { get; }
 
-        private readonly Lazy<RgbPwmLed> _led;
-        private readonly Lazy<St7789?> _display;
-        private readonly Lazy<Bh1750?> _lightSensor;
-        private readonly Lazy<PushButton> _upButton;
-        private readonly Lazy<PushButton> _downButton;
-        private readonly Lazy<PushButton> _leftButton;
-        private readonly Lazy<PushButton> _rightButton;
-        private readonly Lazy<Bme680?> _bme680;
-        private readonly Lazy<PiezoSpeaker> _speaker;
-        private readonly Lazy<Bmi270?> _imu;
+        private readonly Lazy<RgbPwmLed> led;
+        private readonly Lazy<St7789?> display;
+        private readonly Lazy<Bh1750?> lightSensor;
+        private readonly Lazy<PushButton> upButton;
+        private readonly Lazy<PushButton> downButton;
+        private readonly Lazy<PushButton> leftButton;
+        private readonly Lazy<PushButton> rightButton;
+        private readonly Lazy<Bme688?> environmentalSensor;
+        private readonly Lazy<PiezoSpeaker> speaker;
+        private readonly Lazy<Bmi270?> motionSensor;
 
-        public RgbPwmLed Led => _led.Value;
-        public St7789? Display => _display.Value;
-        public Bh1750? LightSensor => _lightSensor.Value;
-        public PushButton UpButton => _upButton.Value;
-        public PushButton DownButton => _downButton.Value;
-        public PushButton LeftButton => _leftButton.Value;
-        public PushButton RightButton => _rightButton.Value;
-        public Bme680? EnvironmentalSensor => _bme680.Value;
-        public PiezoSpeaker Speaker => _speaker.Value;
-        public Bmi270? IMU => _imu.Value;
+        public RgbPwmLed Led => led.Value;
+        public St7789? Display => display.Value;
+        public Bh1750? LightSensor => lightSensor.Value;
+        public PushButton UpButton => upButton.Value;
+        public PushButton DownButton => downButton.Value;
+        public PushButton LeftButton => leftButton.Value;
+        public PushButton RightButton => rightButton.Value;
+        public Bme688? EnvironmentalSensor => environmentalSensor.Value;
+        public PiezoSpeaker Speaker => speaker.Value;
+        public Bmi270? MotionSensor => motionSensor.Value;
 
         internal IProjectLabHardware Hardware { get; }
-
-        private string? _rev;
 
         public Mcp23008? Mcp_1 { get; }
         public Mcp23008? Mcp_2 { get; }
@@ -129,14 +127,14 @@ namespace Meadow.Devices
             // lazy load all components
             try
             {
-                _led = new Lazy<RgbPwmLed>(() =>
+                led = new Lazy<RgbPwmLed>(() =>
                     new RgbPwmLed(
                     device: device,
                     redPwmPin: device.Pins.OnboardLedRed,
                     greenPwmPin: device.Pins.OnboardLedGreen,
                     bluePwmPin: device.Pins.OnboardLedBlue));
 
-                _display = new Lazy<St7789?>(() =>
+                display = new Lazy<St7789?>(() =>
                 {
                     try
                     {
@@ -150,7 +148,7 @@ namespace Meadow.Devices
                 });
 
 
-                _lightSensor = new Lazy<Bh1750?>(() =>
+                lightSensor = new Lazy<Bh1750?>(() =>
                 {
                     try
                     {
@@ -168,20 +166,20 @@ namespace Meadow.Devices
                 });
 
 
-                _rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
+                rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
 
                 if (!this.IsV1Hardware())
                 {
-                    _upButton = new Lazy<PushButton>(Hardware.GetUpButton());
-                    _leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
-                    _downButton = new Lazy<PushButton>(Hardware.GetDownButton());
+                    upButton = new Lazy<PushButton>(Hardware.GetUpButton());
+                    leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
+                    downButton = new Lazy<PushButton>(Hardware.GetDownButton());
                 }
 
-                _bme680 = new Lazy<Bme680?>(() =>
+                environmentalSensor = new Lazy<Bme688?>(() =>
                 {
                     try
                     {
-                        return new Bme680(I2CBus, (byte)Bme680.Addresses.Address_0x76);
+                        return new Bme688(I2CBus, (byte)Bme688.Addresses.Address_0x76);
                     }
                     catch (Exception ex)
                     {
@@ -190,9 +188,9 @@ namespace Meadow.Devices
                     }
                 });
 
-                _speaker = new Lazy<PiezoSpeaker>(new PiezoSpeaker(device, device.Pins.D11));
+                speaker = new Lazy<PiezoSpeaker>(new PiezoSpeaker(device, device.Pins.D11));
 
-                _imu = new Lazy<Bmi270?>(() =>
+                motionSensor = new Lazy<Bmi270?>(() =>
                 {
                     try
                     {
@@ -268,4 +266,3 @@ namespace Meadow.Devices
             );
     }
 }
-

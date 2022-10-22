@@ -8,38 +8,38 @@ namespace Meadow.Devices
 {
     internal class ProjectLabHardwareV1 : IProjectLabHardware
     {
-        private IF7FeatherMeadowDevice _device;
-        private ISpiBus _spiBus;
-        private St7789? _display;
-        private PushButton? _right;
-        private string _revision = "v1.x";
+        private IF7FeatherMeadowDevice device;
+        private ISpiBus spiBus;
+        private St7789? display;
+        private PushButton? rightButton;
+        private string revision = "v1.x";
 
         public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus)
         {
-            _device = device;
-            _spiBus = spiBus;
+            this.device = device;
+            this.spiBus = spiBus;
         }
 
         public string GetRevisionString()
         {
-            return _revision;
+            return revision;
         }
 
         public St7789 GetDisplay()
         {
-            if (_display == null)
+            if (display == null)
             {
-                _display = new St7789(
-                    device: _device,
-                    spiBus: _spiBus,
-                    chipSelectPin: _device.Pins.A03,
-                    dcPin: _device.Pins.A04,
-                    resetPin: _device.Pins.A05,
+                display = new St7789(
+                    device: device,
+                    spiBus: spiBus,
+                    chipSelectPin: device.Pins.A03,
+                    dcPin: device.Pins.A04,
+                    resetPin: device.Pins.A05,
                     width: 240, height: 240,
                     colorMode: ColorType.Format16bppRgb565);
             }
 
-            return _display;
+            return display;
         }
 
         public PushButton GetLeftButton()
@@ -53,15 +53,15 @@ namespace Meadow.Devices
 
         public PushButton GetRightButton()
         {
-            if (_right == null)
+            if (rightButton == null)
             {
-                _right = new PushButton(
+                rightButton = new PushButton(
                     Resolver.Device.CreateDigitalInputPort(
-                        _device.Pins.D05,
+                        device.Pins.D05,
                         InterruptMode.EdgeBoth,
                         ResistorMode.InternalPullDown));
             }
-            return _right;
+            return rightButton;
         }
 
         public PushButton GetUpButton()
@@ -84,4 +84,3 @@ namespace Meadow.Devices
         }
     }
 }
-

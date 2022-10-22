@@ -13,4 +13,3 @@ namespace Meadow.Devices
         public string GetRevisionString();
     }
 }
-
