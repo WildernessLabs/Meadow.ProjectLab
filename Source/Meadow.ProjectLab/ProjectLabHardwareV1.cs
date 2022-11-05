@@ -2,6 +2,7 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
+using Meadow.Modbus;
 using System;
 
 namespace Meadow.Devices
@@ -81,6 +82,19 @@ namespace Meadow.Devices
                 // D02 no interrupts
             }
             throw new PlatformNotSupportedException("A hardware bug prevents usage of the Down button on ProjectLab v1 hardware.");
+        }
+
+        public ModbusRtuClient GetModbusRtuClient()
+        {
+            if (Resolver.Device is F7FeatherV1 device)
+            {
+                var port = device.CreateSerialPort(device.SerialPortNames.Com4, 19200, 8, Meadow.Hardware.Parity.None, Meadow.Hardware.StopBits.One);
+                var serialEnable = device.CreateDigitalOutputPort(device.Pins.D09, false);
+                return new ModbusRtuClient(port, serialEnable);
+            }
+
+            // this is v1 instance hardware, so we should never get here
+            throw new NotSupportedException();
         }
     }
 }

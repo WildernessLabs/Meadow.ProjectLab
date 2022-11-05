@@ -8,6 +8,7 @@ using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
+using Meadow.Modbus;
 using Meadow.Units;
 using System;
 
@@ -29,6 +30,7 @@ namespace Meadow.Devices
         private readonly Lazy<Bme688?> environmentalSensor;
         private readonly Lazy<PiezoSpeaker> speaker;
         private readonly Lazy<Bmi270?> motionSensor;
+        private readonly Lazy<ModbusRtuClient> modbusClient;
 
         public RgbPwmLed Led => led.Value;
         public St7789? Display => display.Value;
@@ -40,6 +42,7 @@ namespace Meadow.Devices
         public Bme688? EnvironmentalSensor => environmentalSensor.Value;
         public PiezoSpeaker Speaker => speaker.Value;
         public Bmi270? MotionSensor => motionSensor.Value;
+        public ModbusRtuClient ModbusRtuClient => modbusClient.Value;
 
         internal IProjectLabHardware Hardware { get; }
 
@@ -121,7 +124,7 @@ namespace Meadow.Devices
             }
             else
             {
-                Hardware = new ProjectLabHardwareV2(Mcp_1, Mcp_Version, device, SpiBus);
+                Hardware = new ProjectLabHardwareV2(Mcp_1, Mcp_2, Mcp_Version, device, SpiBus);
             }
 
             // lazy load all components
@@ -202,6 +205,8 @@ namespace Meadow.Devices
                         return default;
                     }
                 });
+
+                modbusClient = new Lazy<ModbusRtuClient>(Hardware.GetModbusRtuClient());
             }
 
             catch (Exception ex)

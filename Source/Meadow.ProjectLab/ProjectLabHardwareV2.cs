@@ -3,6 +3,8 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
+using Meadow.Modbus;
+using System;
 using System.Threading;
 
 namespace Meadow.Devices
@@ -12,6 +14,7 @@ namespace Meadow.Devices
         private IF7FeatherMeadowDevice device;
         private ISpiBus spiBus;
         private Mcp23008 mcp1;
+        private Mcp23008 mcp2;
         private Mcp23008? mcpVersion;
 
         private St7789? display;
@@ -21,11 +24,12 @@ namespace Meadow.Devices
         private PushButton? downButton;
         private string? revision;
 
-        public ProjectLabHardwareV2(Mcp23008 mcp1, Mcp23008? mcpVersion, IF7FeatherMeadowDevice device, ISpiBus spiBus)
+        public ProjectLabHardwareV2(Mcp23008 mcp1, Mcp23008 mcp2, Mcp23008? mcpVersion, IF7FeatherMeadowDevice device, ISpiBus spiBus)
         {
             this.device = device;
             this.spiBus = spiBus;
             this.mcp1 = mcp1;
+            this.mcp2 = mcp2;
             this.mcpVersion = mcpVersion;
         }
 
@@ -107,6 +111,19 @@ namespace Meadow.Devices
                 downButton = new PushButton(downPort);
             }
             return downButton;
+        }
+
+        public ModbusRtuClient GetModbusRtuClient()
+        {
+            if (Resolver.Device is F7FeatherV2 device)
+            {
+                var port = device.CreateSerialPort(device.SerialPortNames.Com4, 19200, 8, Meadow.Hardware.Parity.None, Meadow.Hardware.StopBits.One);
+                var serialEnable = mcp2.CreateDigitalOutputPort(mcp2.Pins.GP0, false);
+                return new ModbusRtuClient(port, serialEnable);
+            }
+
+            // this is v2 instance hardware, so we should never get here
+            throw new NotSupportedException();
         }
     }
 }
