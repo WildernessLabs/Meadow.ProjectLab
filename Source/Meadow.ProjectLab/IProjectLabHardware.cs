@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Displays;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Modbus;
 
 namespace Meadow.Devices
 {
@@ -11,5 +12,6 @@ namespace Meadow.Devices
         public PushButton GetUpButton();
         public PushButton GetDownButton();
         public string GetRevisionString();
+        public ModbusRtuClient GetModbusRtuClient();
     }
 }
