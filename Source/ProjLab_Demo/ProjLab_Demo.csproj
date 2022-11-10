@@ -1,0 +1,51 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <OutputType>Library</OutputType>
+    <AssemblyName>App</AssemblyName>
+    <Configurations>Debug_v1_ProjLab;Release_v1_ProjLab;Debug_v2_ProjLab;Release_v2_ProjLab</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_v1_ProjLab|AnyCPU' ">
+    <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUG;V1_PROJLAB;DEBUG_V1_PROJLAB;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_v1_ProjLab|AnyCPU' ">
+    <IntermediateOutputPath>obj\Release\netstandard2.1\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;RELEASE;V1_PROJLAB;RELEASE_V1_PROJLAB;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_v2_ProjLab|AnyCPU' ">
+    <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUG;V2_PROJLAB;DEBUG_V2_PROJLAB;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_v2_ProjLab|AnyCPU' ">
+    <IntermediateOutputPath>obj\Release\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;RELEASE;V2_PROJLAB;RELEASE_V2_PROJLAB;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.F7" Version="0.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="app.config.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="meadow.config.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

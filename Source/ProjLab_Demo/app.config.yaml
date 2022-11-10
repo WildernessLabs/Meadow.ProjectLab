@@ -1,0 +1,7 @@
+﻿Logging:
+  LogLevel:
+    Default: Trace
+Lifecycle:
+  RestartOnAppFailure: false
+Update:
+  Enabled: false
