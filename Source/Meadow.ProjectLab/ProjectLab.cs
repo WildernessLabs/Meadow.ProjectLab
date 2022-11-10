@@ -30,7 +30,6 @@ namespace Meadow.Devices
         private readonly Lazy<Bme688?> environmentalSensor;
         private readonly Lazy<PiezoSpeaker> speaker;
         private readonly Lazy<Bmi270?> motionSensor;
-        private readonly Lazy<ModbusRtuClient> modbusClient;
 
         public RgbPwmLed Led => led.Value;
         public St7789? Display => display.Value;
@@ -42,7 +41,6 @@ namespace Meadow.Devices
         public Bme688? EnvironmentalSensor => environmentalSensor.Value;
         public PiezoSpeaker Speaker => speaker.Value;
         public Bmi270? MotionSensor => motionSensor.Value;
-        public ModbusRtuClient ModbusRtuClient => modbusClient.Value;
 
         internal IProjectLabHardware Hardware { get; }
 
@@ -150,7 +148,6 @@ namespace Meadow.Devices
                     }
                 });
 
-
                 lightSensor = new Lazy<Bh1750?>(() =>
                 {
                     try
@@ -167,7 +164,6 @@ namespace Meadow.Devices
                         return default;
                     }
                 });
-
 
                 rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
 
@@ -205,14 +201,17 @@ namespace Meadow.Devices
                         return default;
                     }
                 });
-
-                modbusClient = new Lazy<ModbusRtuClient>(Hardware.GetModbusRtuClient());
             }
 
             catch (Exception ex)
             {
                 Logger?.Error($"Error initializing ProjectLab: {ex.Message}");
             }
+        }
+
+        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
+        {
+            return Hardware.GetModbusRtuClient(baudRate, dataBits, parity, stopBits);
         }
 
         public string HardwareRevision

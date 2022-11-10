@@ -113,12 +113,14 @@ namespace Meadow.Devices
             return downButton;
         }
 
-        public ModbusRtuClient GetModbusRtuClient()
+        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             if (Resolver.Device is F7FeatherV2 device)
             {
-                var port = device.CreateSerialPort(device.SerialPortNames.Com4, 19200, 8, Meadow.Hardware.Parity.None, Meadow.Hardware.StopBits.One);
+                var port = device.CreateSerialPort(device.SerialPortNames.Com4, baudRate, dataBits, parity, stopBits);
+                port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
                 var serialEnable = mcp2.CreateDigitalOutputPort(mcp2.Pins.GP0, false);
+
                 return new ModbusRtuClient(port, serialEnable);
             }
 
