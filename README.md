@@ -14,9 +14,9 @@ It's also designed so that it can be assembled at home for the adventurous. All 
 
 1. **[Setup your Meadow Build Environment](http://developer.wildernesslabs.co/Meadow/Getting_Started/Deploying_Meadow/)** - If you haven't deployed a Meadow app before, you'll need to setup your IDE extension(s), deploy Meadow.OS, etc.
 2. **[Run the Demo App](Source/ProjectLab_Demo)** - Deploy the Project Lab demonstration app to see the built in peripherals at work.
-3. **[Check out the Project Lab Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples)** - We recommend cloning the [Meadow.ProjectLab.Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples) repo. There you'll find a bunch of awesome samples that you can run right out-of-the box!
+3. **[Check out the Project Lab Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples)** - We recommend cloning the [Meadow.ProjectLab.Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples) repo. There you'll find a bunch of awesome samples that you can run right out-of-the box!  
     <img src="Design/project-lab-samples.png" />
-4. **Add the Project Lab Nuget Package to your own app** - We've created a [Nuget package](https://www.nuget.org/packages/Meadow.ProjectLab) that simplifies using the Project Lab hardware by automatically instiantes the hardware classes for you and makes them available for use in your app:
+4. **Add the Project Lab Nuget Package to your own app** - We've created a [Nuget package](https://www.nuget.org/packages/Meadow.ProjectLab) that simplifies using the Project Lab hardware by automatically instiantes the hardware classes for you and makes them available for use in your app:  
     `dotnet add package Meadow.ProjectLab`
 
 ## About the Hardware
