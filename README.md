@@ -76,10 +76,16 @@ To make using the hardware even simpler, we've created a Nuget package that inst
 
 ## Pinout Diagram
 
-Check the diagram below to see what pins on the Meadow are connected to every peripheral on board:
+Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board:
 &nbsp;
 
+### v1
+
 <img src="Design/Pinout.png" />
+
+### v2
+
+Coming soon!
 
 ## [Hardware Design](Source/Hardware)
 
