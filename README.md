@@ -60,15 +60,14 @@ To make using the hardware even simpler, we've created a Nuget package that inst
         {
             projLab = new ProjectLab();
             ...
-        }
     ```
 3. Access the `ProjectLab` peripherals:
    ```csharp
-    if (projLab.EnvironmentalSensor is { } bme688)
-    {
-        bme688.Updated += Bme688Updated;
-        bme688.StartUpdating(TimeSpan.FromSeconds(5));
-    }
+            if (projLab.EnvironmentalSensor is { } bme688)
+            {
+                bme688.Updated += Bme688Updated;
+                bme688.StartUpdating(TimeSpan.FromSeconds(5));
+            }
     ```
 
  * [Explore in Fuget.org](https://www.fuget.org/packages/Meadow.ProjectLab/0.1.0/lib/netstandard2.1/ProjectLab.dll/Meadow.Devices/ProjectLab)
