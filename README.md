@@ -23,6 +23,27 @@ It's also designed so that it can be assembled at home for the adventurous. All 
 
 <img src="Design/project-lab-specs.jpg" />
 
+### Onboard Peripherals
+
+Project Lab includes the following hardware:
+* **ST7789** - SPI 240x240 color display
+* **BMI270** - I2C motion and acceleration sensor
+* **BH1750** - I2C light sensor
+* **BME688** - I2C atmospheric sensor
+* **Push Button** - 4 momentary buttons
+* **Magnetic Audio Transducer** - High quality piezo speaker
+
+### Connectivity
+
+The PROJ LAB board includes the following expansion connection options:
+* **MikroBUS** - Two sets of MikroBUS pin headers
+* **Qwiic** - Stemma QT I2C connector
+* **Grove** - Analog header
+* **Grove** - GPIO/serial header
+* **RS-485** - serial 
+
+As well as connectors to 5V, 3.3V, ground, one analog port and 2 GPIO ports.
+
 ## Project Lab Nuget
 
 To make using the hardware even simpler, we've created a Nuget package that instantiates and encapsulates the onboard hardware into a `ProjectLab` class. To use:
@@ -50,31 +71,11 @@ To make using the hardware even simpler, we've created a Nuget package that inst
         bme688.StartUpdating(TimeSpan.FromSeconds(5));
     }
     ```
-    
+
  * [Explore in Fuget.org](https://www.fuget.org/packages/Meadow.ProjectLab/0.1.0/lib/netstandard2.1/ProjectLab.dll/Meadow.Devices/ProjectLab)
  * [Nuget Source](Source/Meadow.ProjectLab)
 
 
-### Onboard Peripherals
-
-Project Lab includes the following hardware:
-* **ST7789** - SPI 240x240 color display
-* **BMI270** - I2C motion and acceleration sensor
-* **BH1750** - I2C light sensor
-* **BME688** - I2C atmospheric sensor
-* **Push Button** - 4 momentary buttons
-* **Magnetic Audio Transducer** - High quality piezo speaker
-
-### Connectivity
-
-The PROJ LAB board includes the following expansion connection options:
-* **MikroBUS** - Two sets of MikroBUS pin headers
-* **Qwiic** - Stemma QT I2C connector
-* **Grove** - Analog header
-* **Grove** - GPIO/serial header
-* **RS-485** - serial 
-
-As well as connectors to 5V, 3.3V, ground, one analog port and 2 GPIO ports.
 
 ## Pinout Diagram
 
