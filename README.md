@@ -61,7 +61,6 @@ To make using the hardware even simpler, we've created a Nuget package that inst
             projLab = new ProjectLab();
             ...
         }
-    ...
     ```
 3. Access the `ProjectLab` peripherals:
    ```csharp
