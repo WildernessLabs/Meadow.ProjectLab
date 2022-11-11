@@ -171,19 +171,9 @@ namespace ProjLab_Demo
                 }
             }
 
-            if (isV1)
-            {
-                DrawStatus("Left:", $"disabled", WildernessLabsColors.ChileanFire, 200);
-                DrawStatus("Down:", $"disabled", WildernessLabsColors.ChileanFire, 180);
-                DrawStatus("Up:", $"disabled", WildernessLabsColors.ChileanFire, 160);
-            }
-            else
-            {
-                DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
-                DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
-                DrawStatus("Up:", $"{(UpButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 160);
-            }
-
+            DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
+            DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
+            DrawStatus("Up:", $"{(UpButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 160);
             DrawStatus("Right:", $"{(RightButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 220);
         }
     }

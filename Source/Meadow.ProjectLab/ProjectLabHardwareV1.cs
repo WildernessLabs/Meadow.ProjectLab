@@ -46,14 +46,17 @@ namespace Meadow.Devices
             return display;
         }
 
-        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin)
+        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin, InterruptMode? interruptMode = null)
         {
-            var interrupt = pin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
+            if (interruptMode == null)
+            {
+                interruptMode = pin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
+            }
 
             return new PushButton(
                 Resolver.Device.CreateDigitalInputPort(
                     pin,
-                    interrupt,
+                    interruptMode.Value,
                     ResistorMode.InternalPullDown));
         }
 
@@ -88,7 +91,15 @@ namespace Meadow.Devices
         {
             if (downButton == null)
             {
-                downButton = GetPushButton(device, device.Pins.D02);
+                if (device is F7FeatherV1)
+                {
+                    // timer conflict with piezo?
+                    downButton = GetPushButton(device, device.Pins.D02, InterruptMode.None);
+                }
+                else
+                {
+                    downButton = GetPushButton(device, device.Pins.D02);
+                }
             }
             return downButton;
         }

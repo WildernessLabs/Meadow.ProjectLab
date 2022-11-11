@@ -31,25 +31,60 @@ namespace Meadow.Devices
         private readonly Lazy<PiezoSpeaker> speaker;
         private readonly Lazy<Bmi270?> motionSensor;
 
+        /// <summary>
+        /// Gets the RGB LED on the Meadow Feather itself.
+        /// </summary>
         public RgbPwmLed Led => led.Value;
+        /// <summary>
+        /// Gets the ST7789 Display on the Project Lab board
+        /// </summary>
         public St7789? Display => display.Value;
+        /// <summary>
+        /// Gets the BH1750 Light Sensor on the Project Lab board
+        /// </summary>
         public Bh1750? LightSensor => lightSensor.Value;
+        /// <summary>
+        /// Gets the Up PushButton on the Project Lab board
+        /// </summary>
         public PushButton UpButton => upButton.Value;
+        /// <summary>
+        /// Gets the Down PushButton on the Project Lab board
+        /// </summary>
         public PushButton DownButton => downButton.Value;
+        /// <summary>
+        /// Gets the Left PushButton on the Project Lab board
+        /// </summary>
         public PushButton LeftButton => leftButton.Value;
+        /// <summary>
+        /// Gets the Right PushButton on the Project Lab board
+        /// </summary>
         public PushButton RightButton => rightButton.Value;
+        /// <summary>
+        /// Gets the BME688 environmental sensor  on the Project Lab board
+        /// </summary>
         public Bme688? EnvironmentalSensor => environmentalSensor.Value;
+        /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
         public PiezoSpeaker Speaker => speaker.Value;
+        /// <summary>
+        /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
+        /// </summary>
         public Bmi270? MotionSensor => motionSensor.Value;
 
         internal IProjectLabHardware Hardware { get; }
+        internal Mcp23008? Mcp_1 { get; }
+        internal Mcp23008? Mcp_2 { get; }
+        internal Mcp23008? Mcp_Version { get; }
 
-        public Mcp23008? Mcp_1 { get; }
-        public Mcp23008? Mcp_2 { get; }
-        public Mcp23008? Mcp_Version { get; }
-
+        /// <summary>
+        /// Create an instance of the ProjectLab class
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         public ProjectLab()
         {
+            Logger?.Debug("Initializing Project Lab...");
+
             // check to see if we have an MCP23008 - it was introduced in v2 hardware
             if (Resolver.Device == null)
             {
@@ -68,7 +103,7 @@ namespace Meadow.Devices
             }
 
             // create our busses
-            Logger?.Info("Creating comms busses...");
+            Logger?.Debug("Creating comms busses...");
             var config = new SpiClockConfiguration(
                            new Frequency(48000, Frequency.UnitType.Kilohertz),
                            SpiClockConfiguration.Mode.Mode3);
@@ -135,6 +170,8 @@ namespace Meadow.Devices
                     greenPwmPin: device.Pins.OnboardLedGreen,
                     bluePwmPin: device.Pins.OnboardLedBlue));
 
+                Logger?.Debug("Creating Display...");
+
                 display = new Lazy<St7789?>(() =>
                 {
                     try
@@ -147,6 +184,8 @@ namespace Meadow.Devices
                         return default;
                     }
                 });
+
+                Logger?.Debug("Creating BH1750...");
 
                 lightSensor = new Lazy<Bh1750?>(() =>
                 {
@@ -165,14 +204,14 @@ namespace Meadow.Devices
                     }
                 });
 
-                rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
+                Logger?.Debug("Creating Buttons...");
 
-                if (!this.IsV1Hardware())
-                {
-                    upButton = new Lazy<PushButton>(Hardware.GetUpButton());
-                    leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
-                    downButton = new Lazy<PushButton>(Hardware.GetDownButton());
-                }
+                rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
+                upButton = new Lazy<PushButton>(Hardware.GetUpButton());
+                leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
+                downButton = new Lazy<PushButton>(Hardware.GetDownButton());
+
+                Logger?.Debug("Creating BME688...");
 
                 environmentalSensor = new Lazy<Bme688?>(() =>
                 {
@@ -187,7 +226,11 @@ namespace Meadow.Devices
                     }
                 });
 
+                Logger?.Debug("Creating Piezo...");
+
                 speaker = new Lazy<PiezoSpeaker>(new PiezoSpeaker(device, device.Pins.D11));
+
+                Logger?.Debug("Creating BMI270...");
 
                 motionSensor = new Lazy<Bmi270?>(() =>
                 {
@@ -209,16 +252,30 @@ namespace Meadow.Devices
             }
         }
 
+        /// <summary>
+        /// Gets a ModbusRtuClient for the on-baord RS485 connector
+        /// </summary>
+        /// <param name="baudRate"></param>
+        /// <param name="dataBits"></param>
+        /// <param name="parity"></param>
+        /// <param name="stopBits"></param>
+        /// <returns></returns>
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             return Hardware.GetModbusRtuClient(baudRate, dataBits, parity, stopBits);
         }
 
+        /// <summary>
+        /// Gets the ProjectLab board hardware revision
+        /// </summary>
         public string HardwareRevision
         {
             get => Hardware.GetRevisionString();
         }
 
+        /// <summary>
+        /// Gets the pin definitions for the Project Lab board
+        /// </summary>
         public static (
             IPin MB1_CS,
             IPin MB1_INT,
