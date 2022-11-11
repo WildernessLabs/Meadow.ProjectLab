@@ -23,6 +23,38 @@ It's also designed so that it can be assembled at home for the adventurous. All 
 
 <img src="Design/project-lab-specs.jpg" />
 
+## Project Lab Nuget
+
+To make using the hardware even simpler, we've created a Nuget package that instantiates and encapsulates the onboard hardware into a `ProjectLab` class. To use:
+
+1. Add a reference to the nuget package: 
+    `dotnet add package Meadow.ProjectLab`
+2. Instantiate the `ProjectLab` class:  
+    ```csharp
+    public class MeadowApp : App<F7FeatherV2>
+    {
+        ProjectLab projLab;
+
+        public override Task Initialize()
+        {
+            projLab = new ProjectLab();
+            ...
+        }
+    ...
+    ```
+3. Access the `ProjectLab` peripherals:
+   ```csharp
+    if (projLab.EnvironmentalSensor is { } bme688)
+    {
+        bme688.Updated += Bme688Updated;
+        bme688.StartUpdating(TimeSpan.FromSeconds(5));
+    }
+    ```
+    
+ * [Explore in Fuget.org](https://www.fuget.org/packages/Meadow.ProjectLab/0.1.0/lib/netstandard2.1/ProjectLab.dll/Meadow.Devices/ProjectLab)
+ * [Nuget Source](Source/Meadow.ProjectLab)
+
+
 ### Onboard Peripherals
 
 Project Lab includes the following hardware:
