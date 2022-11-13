@@ -175,13 +175,9 @@ namespace Meadow.Devices
                 });
 
                 rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
-
-                if (!this.IsV1Hardware())
-                {
-                    upButton = new Lazy<PushButton>(Hardware.GetUpButton());
-                    leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
-                    downButton = new Lazy<PushButton>(Hardware.GetDownButton());
-                }
+                upButton = new Lazy<PushButton>(Hardware.GetUpButton());
+                leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
+                downButton = new Lazy<PushButton>(Hardware.GetDownButton());
 
                 environmentalSensor = new Lazy<Bme688?>(() =>
                 {

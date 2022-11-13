@@ -12,7 +12,7 @@ namespace Meadow.Devices
         private IF7FeatherMeadowDevice device;
         private ISpiBus spiBus;
         private St7789? display;
-        private PushButton? rightButton;
+        private PushButton? upButton, downButton, leftButton, rightButton;
         private string revision = "v1.x";
 
         public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus)
@@ -45,11 +45,15 @@ namespace Meadow.Devices
 
         public PushButton GetLeftButton()
         {
-            if (Resolver.Device is F7FeatherV2)
+            if (leftButton == null)
             {
-                // D10 no interrupts
+                leftButton = new PushButton(
+                    Resolver.Device.CreateDigitalInputPort(
+                        device.Pins.D10,
+                        InterruptMode.None,
+                        ResistorMode.InternalPullDown));
             }
-            throw new PlatformNotSupportedException("A hardware bug prevents usage of the Left button on ProjectLab v1 hardware.");
+            return leftButton;
         }
 
         public PushButton GetRightButton()
@@ -67,21 +71,28 @@ namespace Meadow.Devices
 
         public PushButton GetUpButton()
         {
-            // D15
-            if (Resolver.Device is F7FeatherV2)
+            if (upButton == null)
             {
-                // D15 no interrupts
+                upButton = new PushButton(
+                    Resolver.Device.CreateDigitalInputPort(
+                        device.Pins.D15,
+                        InterruptMode.None,
+                        ResistorMode.InternalPullDown));
             }
-            throw new PlatformNotSupportedException("A hardware bug prevents usage of the Up button on ProjectLab v1 hardware.");
+            return upButton;
         }
 
         public PushButton GetDownButton()
         {
-            if (Resolver.Device is F7FeatherV2)
+            if (downButton == null)
             {
-                // D02 no interrupts
+                downButton = new PushButton(
+                    Resolver.Device.CreateDigitalInputPort(
+                        device.Pins.D02,
+                        InterruptMode.None,
+                        ResistorMode.InternalPullDown));
             }
-            throw new PlatformNotSupportedException("A hardware bug prevents usage of the Down button on ProjectLab v1 hardware.");
+            return downButton;
         }
 
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProjLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         DisplayController displayController;
         ProjectLab projLab;
@@ -58,32 +58,25 @@ namespace ProjLab_Demo
                 rightButton.PressEnded += (s, e) => displayController.RightButtonState = false;
             }
 
-            if (projLab.IsV2Hardware())
+            if (projLab.DownButton is { } downButton)
             {
-                if (projLab.DownButton is { } downButton)
-                {
-                    Resolver.Log.Info($"Down button created");
-                    downButton.PressStarted += (s, e) => displayController.DownButtonState = true;
-                    downButton.PressEnded += (s, e) => displayController.DownButtonState = false;
-                }
-                if (projLab.LeftButton is { } leftButton)
-                {
-                    Resolver.Log.Info($"Left button created");
-                    leftButton.PressStarted += (s, e) => displayController.LeftButtonState = true;
-                    leftButton.PressEnded += (s, e) => displayController.LeftButtonState = false;
-                }
-                if (projLab.UpButton is { } upButton)
-                {
-                    Resolver.Log.Info($"Up button created");
-                    upButton.PressStarted += (s, e) => displayController.UpButtonState = true;
-                    upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
-                }
+                Resolver.Log.Info($"Down button created");
+                downButton.PressStarted += (s, e) => displayController.DownButtonState = true;
+                downButton.PressEnded += (s, e) => displayController.DownButtonState = false;
             }
-            else
+
+            if (projLab.LeftButton is { } leftButton)
             {
-                Resolver.Log.Info($"Project Lab V1 hardware does not support the Up button");
-                Resolver.Log.Info($"Project Lab V1 hardware does not support the Down button");
-                Resolver.Log.Info($"Project Lab V1 hardware does not support the Left button");
+                Resolver.Log.Info($"Left button created");
+                leftButton.PressStarted += (s, e) => displayController.LeftButtonState = true;
+                leftButton.PressEnded += (s, e) => displayController.LeftButtonState = false;
+            }
+
+            if (projLab.UpButton is { } upButton)
+            {
+                Resolver.Log.Info($"Up button created");
+                upButton.PressStarted += (s, e) => displayController.UpButtonState = true;
+                upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
             //---- heartbeat
