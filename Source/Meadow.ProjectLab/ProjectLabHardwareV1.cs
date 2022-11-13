@@ -48,10 +48,9 @@ namespace Meadow.Devices
             if (leftButton == null)
             {
                 leftButton = new PushButton(
-                    Resolver.Device.CreateDigitalInputPort(
-                        device.Pins.D10,
-                        InterruptMode.None,
-                        ResistorMode.InternalPullDown));
+                    device,
+                    device.Pins.D10,
+                    ResistorMode.InternalPullDown);
             }
             return leftButton;
         }
@@ -61,10 +60,9 @@ namespace Meadow.Devices
             if (rightButton == null)
             {
                 rightButton = new PushButton(
-                    Resolver.Device.CreateDigitalInputPort(
-                        device.Pins.D05,
-                        InterruptMode.EdgeBoth,
-                        ResistorMode.InternalPullDown));
+                    device,
+                    device.Pins.D05,
+                    ResistorMode.InternalPullDown);
             }
             return rightButton;
         }
@@ -74,10 +72,9 @@ namespace Meadow.Devices
             if (upButton == null)
             {
                 upButton = new PushButton(
-                    Resolver.Device.CreateDigitalInputPort(
-                        device.Pins.D15,
-                        InterruptMode.None,
-                        ResistorMode.InternalPullDown));
+                    device,
+                    device.Pins.D15,
+                    ResistorMode.InternalPullDown);
             }
             return upButton;
         }
@@ -87,10 +84,9 @@ namespace Meadow.Devices
             if (downButton == null)
             {
                 downButton = new PushButton(
-                    Resolver.Device.CreateDigitalInputPort(
-                        device.Pins.D02,
-                        InterruptMode.None,
-                        ResistorMode.InternalPullDown));
+                    device,
+                    device.Pins.D02,
+                    ResistorMode.InternalPullDown);
             }
             return downButton;
         }

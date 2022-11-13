@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectLab_Demo", "ProjectL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_External", "_External", "{580CAC8F-38C5-4DEA-AAEA-415F5D08982B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Mcp23xxx", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj", "{824A3FDF-2C92-4C5E-9040-EB4221E75B75}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Foundation.Core", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj", "{37AAB07A-1F40-4660-97A5-D24890ED7F27}"
 EndProject
 Global
@@ -59,24 +57,6 @@ Global
 		{C9A1FF4C-7210-4EA6-874E-44BE198B2790}.Release|Any CPU.ActiveCfg = Release_v1_ProjLab|Any CPU
 		{C9A1FF4C-7210-4EA6-874E-44BE198B2790}.Release|Any CPU.Build.0 = Release_v1_ProjLab|Any CPU
 		{C9A1FF4C-7210-4EA6-874E-44BE198B2790}.Release|Any CPU.Deploy.0 = Release_v1_ProjLab|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug_v1_ProjLab|Any CPU.ActiveCfg = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug_v1_ProjLab|Any CPU.Build.0 = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug_v1_ProjLab|Any CPU.Deploy.0 = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug_v2_ProjLab|Any CPU.ActiveCfg = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug_v2_ProjLab|Any CPU.Build.0 = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug_v2_ProjLab|Any CPU.Deploy.0 = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release_v1_ProjLab|Any CPU.ActiveCfg = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release_v1_ProjLab|Any CPU.Build.0 = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release_v1_ProjLab|Any CPU.Deploy.0 = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release_v2_ProjLab|Any CPU.ActiveCfg = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release_v2_ProjLab|Any CPU.Build.0 = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release_v2_ProjLab|Any CPU.Deploy.0 = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{37AAB07A-1F40-4660-97A5-D24890ED7F27}.Debug_v1_ProjLab|Any CPU.ActiveCfg = Debug|Any CPU
 		{37AAB07A-1F40-4660-97A5-D24890ED7F27}.Debug_v1_ProjLab|Any CPU.Build.0 = Debug|Any CPU
 		{37AAB07A-1F40-4660-97A5-D24890ED7F27}.Debug_v1_ProjLab|Any CPU.Deploy.0 = Debug|Any CPU
@@ -100,7 +80,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{824A3FDF-2C92-4C5E-9040-EB4221E75B75} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{37AAB07A-1F40-4660-97A5-D24890ED7F27} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -100,8 +100,9 @@ namespace Meadow.Devices
             }
             catch (Exception e)
             {
-                Logger?.Trace($"Failed to create MCP1: {e.Message}");
+                Logger?.Trace($"Failed to create MCP1: {e.Message}. Is this a Project Lab v1?");
             }
+
             try
             {
                 // MCP the Second
@@ -113,8 +114,9 @@ namespace Meadow.Devices
             }
             catch (Exception e)
             {
-                Logger?.Trace($"Failed to create MCP2: {e.Message}");
+                Logger?.Trace($"Failed to create MCP2: {e.Message}. Is this a Project Lab v1?");
             }
+
             try
             {
                 Mcp_Version = new Mcp23008(I2CBus, address: 0x27);
