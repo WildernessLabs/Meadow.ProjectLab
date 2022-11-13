@@ -79,7 +79,11 @@ namespace Meadow.Devices
                 device.Pins.CIPO,
                 config);
 
+            Logger?.Info("SPI Bus instantiated.");
+
             I2CBus = device.CreateI2cBus();
+
+            Logger?.Info("I2C Bus instantiated.");
 
             // determine hardware
 
@@ -91,6 +95,8 @@ namespace Meadow.Devices
                 IDigitalOutputPort mcp_Reset = device.CreateDigitalOutputPort(device.Pins.D14);
 
                 Mcp_1 = new Mcp23008(I2CBus, address: 0x20, mcp1_int, mcp_Reset);
+
+                Logger?.Info("Mcp_1 up.");
             }
             catch (Exception e)
             {
@@ -102,6 +108,8 @@ namespace Meadow.Devices
                 IDigitalInputPort mcp2_int = device.CreateDigitalInputPort(
                     device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 Mcp_2 = new Mcp23008(I2CBus, address: 0x21, mcp2_int);
+
+                Logger?.Info("Mcp_2 up.");
             }
             catch (Exception e)
             {
@@ -110,6 +118,7 @@ namespace Meadow.Devices
             try
             {
                 Mcp_Version = new Mcp23008(I2CBus, address: 0x27);
+                Logger?.Info("Mcp_Version up.");
             }
             catch (Exception e)
             {
