@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProjLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         DisplayController displayController;
         ProjectLab projLab;
