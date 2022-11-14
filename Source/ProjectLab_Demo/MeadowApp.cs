@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProjLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         DisplayController displayController;
         ProjectLab projLab;
@@ -64,14 +64,12 @@ namespace ProjLab_Demo
                 downButton.PressStarted += (s, e) => displayController.DownButtonState = true;
                 downButton.PressEnded += (s, e) => displayController.DownButtonState = false;
             }
-
             if (projLab.LeftButton is { } leftButton)
             {
                 Resolver.Log.Info($"Left button created");
                 leftButton.PressStarted += (s, e) => displayController.LeftButtonState = true;
                 leftButton.PressEnded += (s, e) => displayController.LeftButtonState = false;
             }
-
             if (projLab.UpButton is { } upButton)
             {
                 Resolver.Log.Info($"Up button created");

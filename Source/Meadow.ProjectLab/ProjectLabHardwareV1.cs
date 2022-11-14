@@ -12,7 +12,10 @@ namespace Meadow.Devices
         private IF7FeatherMeadowDevice device;
         private ISpiBus spiBus;
         private St7789? display;
-        private PushButton? upButton, downButton, leftButton, rightButton;
+        private PushButton? rightButton;
+        private PushButton? leftButton;
+        private PushButton? upButton;
+        private PushButton? downButton;
         private string revision = "v1.x";
 
         public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus)
@@ -43,14 +46,25 @@ namespace Meadow.Devices
             return display;
         }
 
+        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin, InterruptMode? interruptMode = null)
+        {
+            if (interruptMode == null)
+            {
+                interruptMode = pin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
+            }
+
+            return new PushButton(
+                Resolver.Device.CreateDigitalInputPort(
+                    pin,
+                    interruptMode.Value,
+                    ResistorMode.InternalPullDown));
+        }
+
         public PushButton GetLeftButton()
         {
             if (leftButton == null)
             {
-                leftButton = new PushButton(
-                    device,
-                    device.Pins.D10,
-                    ResistorMode.InternalPullDown);
+                leftButton = GetPushButton(device, device.Pins.D10);
             }
             return leftButton;
         }
@@ -59,10 +73,7 @@ namespace Meadow.Devices
         {
             if (rightButton == null)
             {
-                rightButton = new PushButton(
-                    device,
-                    device.Pins.D05,
-                    ResistorMode.InternalPullDown);
+                rightButton = GetPushButton(device, device.Pins.D05);
             }
             return rightButton;
         }
@@ -71,10 +82,7 @@ namespace Meadow.Devices
         {
             if (upButton == null)
             {
-                upButton = new PushButton(
-                    device,
-                    device.Pins.D15,
-                    ResistorMode.InternalPullDown);
+                upButton = GetPushButton(device, device.Pins.D15);
             }
             return upButton;
         }
@@ -83,10 +91,15 @@ namespace Meadow.Devices
         {
             if (downButton == null)
             {
-                downButton = new PushButton(
-                    device,
-                    device.Pins.D02,
-                    ResistorMode.InternalPullDown);
+                if (device is F7FeatherV1)
+                {
+                    // timer conflict with piezo?
+                    downButton = GetPushButton(device, device.Pins.D02, InterruptMode.None);
+                }
+                else
+                {
+                    downButton = GetPushButton(device, device.Pins.D02);
+                }
             }
             return downButton;
         }
