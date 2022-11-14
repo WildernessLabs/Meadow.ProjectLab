@@ -46,19 +46,19 @@ jobs:
         repository: WildernessLabs/Meadow.Core
         path: Meadow.Core
         ref: ${{ env.GITHUB_REF_NAME }} # match Core branch to this branch
-        token: ${{ secrets.CI_ACCESS_TOKEN }}         
+        token: ${{ secrets.CI_ACCESS_TOKEN }}
     - name: Checkout Meadow.Foundation
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Foundation
         path: Meadow.Foundation
         ref: ${{ env.GITHUB_REF_NAME }}
-        
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ./Meadow.ProjLab/Source/Meadow.ProjectLab/Meadow.ProjectLab.sln
+      run: dotnet restore Meadow.ProjLab/Source/Meadow.ProjectLab.sln
     - name: Build
-      run: dotnet build -c Release ./Meadow.ProjLab/Source/Meadow.ProjectLab/Meadow.ProjectLab.sln --no-restore
+      run: dotnet build -c Release Meadow.ProjLab/Source/Meadow.ProjectLab.sln --no-restore
