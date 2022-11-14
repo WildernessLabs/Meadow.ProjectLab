@@ -1,13 +1,6 @@
-﻿using Meadow;
-using Meadow.Devices;
-using Meadow.Foundation.Audio;
-using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Sensors.Accelerometers;
-using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Foundation.Sensors.Light;
-using Meadow.Gateways.Bluetooth;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using System;
@@ -57,7 +50,7 @@ namespace Meadow.Devices
                     ResistorMode.InternalPullDown));
         }
 
-        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
+        public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             if (Resolver.Device is F7FeatherV1 device)
             {

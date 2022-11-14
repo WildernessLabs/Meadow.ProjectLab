@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading;
-using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using System;
+using System.Threading;
 
 namespace Meadow.Devices
 {
@@ -20,7 +20,7 @@ namespace Meadow.Devices
             ISpiBus spiBus,
             II2cBus i2cBus,
             Mcp23008 mcp1, Mcp23008 mcp2, Mcp23008? mcpVersion
-            ) : base (device, spiBus, i2cBus )
+            ) : base(device, spiBus, i2cBus)
         {
             this.mcp1 = mcp1;
             this.mcp2 = mcp2;
@@ -78,7 +78,7 @@ namespace Meadow.Devices
         }
         protected string? revision;
 
-        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
+        public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             if (Resolver.Device is F7FeatherV2 device)
             {
