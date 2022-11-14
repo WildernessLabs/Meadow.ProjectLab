@@ -71,7 +71,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the ProjectLab board hardware revision
         /// </summary>
-        public virtual string RevisionString { get; set; }
+        public virtual string RevisionString { get; set; } = "unknown";
 
         public ProjectLabHardwareBase(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
         {

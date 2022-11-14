@@ -9,6 +9,7 @@ using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
+using Meadow.Peripherals.Displays;
 using System;
 using System.Threading;
 
@@ -30,6 +31,34 @@ namespace Meadow.Devices
             this.mcp1 = mcp1;
             this.mcp2 = mcp2;
             this.mcpVersion = mcpVersion;
+
+            //---- instantiate display
+            Logger?.Info("Instantiating display.");
+            var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
+            var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
+            var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
+            Thread.Sleep(50);
+
+            base.Display = new St7789(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 240,
+                colorMode: ColorType.Format16bppRgb565);
+            Logger?.Info("Display up.");
+
+            //---- buttons
+            Logger?.Info("Instantiating buttons.");
+            var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            LeftButton = new PushButton(leftPort);
+            var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            RightButton = new PushButton(rightPort);
+            var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            UpButton = new PushButton(upPort);
+            var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            DownButton = new PushButton(downPort);
+            Logger?.Info("Buttons up.");
         }
 
         public override string RevisionString
@@ -54,94 +83,6 @@ namespace Meadow.Devices
             }
         }
         protected string? revision;
-
-        public St7789 Display
-        {
-            get
-            {
-                if (display == null)
-                {
-                    Logger?.Info("Instantiating display.");
-                    var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
-                    var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
-                    var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
-
-                    Thread.Sleep(50);
-
-                    display = new St7789(
-                        spiBus: SpiBus,
-                        chipSelectPort: chipSelectPort,
-                        dataCommandPort: dcPort,
-                        resetPort: resetPort,
-                        width: 240, height: 240,
-                        colorMode: ColorType.Format16bppRgb565);
-                    Logger?.Info("Display up.");
-                }
-                return display;
-            }
-            set { display = value; }
-        }
-        protected St7789? display;
-
-        public PushButton LeftButton
-        {
-            get
-            {
-                if (leftButton == null)
-                {
-                    var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                    leftButton = new PushButton(leftPort);
-                }
-                return leftButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton? leftButton;
-
-        public PushButton RightButton
-        {
-            get
-            {
-                if (rightButton == null)
-                {
-                    var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                    rightButton = new PushButton(rightPort);
-                }
-                return rightButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton? rightButton;
-
-        public PushButton UpButton
-        {
-            get
-            {
-                if (upButton == null)
-                {
-                    var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                    upButton = new PushButton(upPort);
-                }
-                return upButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton? upButton;
-
-        public PushButton DownButton
-        {
-            get
-            {
-                if (downButton == null)
-                {
-                    var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                    downButton = new PushButton(downPort);
-                }
-                return downButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton? downButton;
 
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {

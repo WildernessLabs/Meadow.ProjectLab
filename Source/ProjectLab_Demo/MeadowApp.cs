@@ -29,59 +29,56 @@ namespace ProjLab_Demo
                 CommonType.CommonAnode);
             Resolver.Log.Info("RGB LED up.");
 
+            //==== instantiate the project lab hardware
             projLab = new ProjectLab();
 
             Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.Hardware.RevisionString}");
 
+            //---- display controller (handles display updates)
             if (projLab.Hardware.Display is { } display)
             {
+                Resolver.Log.Info("Creating DisplayController.");
                 displayController = new DisplayController(display, projLab.IsV1Hardware());
+                Resolver.Log.Info("DisplayController up.");
             }
 
             //---- BH1750 Light Sensor
             if (projLab.Hardware.LightSensor is { } bh1750)
             {
-                Resolver.Log.Info($"Light sensor created");
                 bh1750.Updated += Bh1750Updated;
             }
 
             //---- BME688 Atmospheric sensor
             if (projLab.Hardware.EnvironmentalSensor is { } bme688)
             {
-                Resolver.Log.Info($"Environmental sensor created");
                 bme688.Updated += Bme688Updated;
             }
 
             //---- BMI270 Accel/IMU
             if (projLab.Hardware.MotionSensor is { } bmi270)
             {
-                Resolver.Log.Info($"IMU created");
                 bmi270.Updated += Bmi270Updated;
             }
 
             //---- buttons
             if (projLab.Hardware.RightButton is { } rightButton)
             {
-                Resolver.Log.Info($"Right button created");
                 rightButton.PressStarted += (s, e) => displayController.RightButtonState = true;
                 rightButton.PressEnded += (s, e) => displayController.RightButtonState = false;
             }
 
             if (projLab.Hardware.DownButton is { } downButton)
             {
-                Resolver.Log.Info($"Down button created");
                 downButton.PressStarted += (s, e) => displayController.DownButtonState = true;
                 downButton.PressEnded += (s, e) => displayController.DownButtonState = false;
             }
             if (projLab.Hardware.LeftButton is { } leftButton)
             {
-                Resolver.Log.Info($"Left button created");
                 leftButton.PressStarted += (s, e) => displayController.LeftButtonState = true;
                 leftButton.PressEnded += (s, e) => displayController.LeftButtonState = false;
             }
             if (projLab.Hardware.UpButton is { } upButton)
             {
-                Resolver.Log.Info($"Up button created");
                 upButton.PressStarted += (s, e) => displayController.UpButtonState = true;
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
@@ -130,7 +127,7 @@ namespace ProjLab_Demo
 
         private void Bmi270Updated(object sender, IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Temperature? Temperature)> e)
         {
-            Console.WriteLine($"BMI270: {e.New.Acceleration3D.Value.X.Gravity:0.0},{e.New.Acceleration3D.Value.Y.Gravity:0.0},{e.New.Acceleration3D.Value.Z.Gravity:0.0}g");
+            Resolver.Log.Info($"BMI270: {e.New.Acceleration3D.Value.X.Gravity:0.0},{e.New.Acceleration3D.Value.Y.Gravity:0.0},{e.New.Acceleration3D.Value.Z.Gravity:0.0}g");
             if (displayController != null)
             {
                 displayController.AccelerationConditions = e.New;
@@ -139,7 +136,7 @@ namespace ProjLab_Demo
 
         private void Bme688Updated(object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> e)
         {
-            Console.WriteLine($"BME688: {(int)e.New.Temperature?.Celsius}°C - {(int)e.New.Humidity?.Percent}% - {(int)e.New.Pressure?.Millibar}mbar");
+            Resolver.Log.Info($"BME688: {(int)e.New.Temperature?.Celsius}°C - {(int)e.New.Humidity?.Percent}% - {(int)e.New.Pressure?.Millibar}mbar");
             if (displayController != null)
             {
                 displayController.AtmosphericConditions = e.New;
@@ -148,7 +145,7 @@ namespace ProjLab_Demo
 
         private void Bh1750Updated(object sender, IChangeResult<Illuminance> e)
         {
-            Console.WriteLine($"BH1750: {e.New.Lux}");
+            Resolver.Log.Info($"BH1750: {e.New.Lux}");
             if (displayController != null)
             {
                 displayController.LightConditions = e.New;

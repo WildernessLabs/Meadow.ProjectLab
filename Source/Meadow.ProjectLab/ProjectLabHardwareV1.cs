@@ -21,18 +21,9 @@ namespace Meadow.Devices
         public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
             : base(device, spiBus, i2cBus)
         {
-            
-        }
-
-        public override string RevisionString => revision;
-
-        public St7789 Display
-        {
-            get
-            {
-                if (display == null)
-                {
-                    display = new St7789(
+            //---- create our display
+            Logger?.Info("Instantiating display.");
+            base.Display = new St7789(
                         device: device,
                         spiBus: SpiBus,
                         chipSelectPin: device.Pins.A03,
@@ -40,13 +31,17 @@ namespace Meadow.Devices
                         resetPin: device.Pins.A05,
                         width: 240, height: 240,
                         colorMode: ColorType.Format16bppRgb565);
-                }
 
-                return display;
-            }
-            set { throw new Exception("Don't set this."); }
+            //---- buttons
+            Logger?.Info("Instantiating buttons.");
+            LeftButton = GetPushButton(device, device.Pins.D10);
+            RightButton = GetPushButton(device, device.Pins.D05);
+            UpButton = GetPushButton(device, device.Pins.D15);
+            DownButton = GetPushButton(device, device.Pins.D02);
+            Logger?.Info("Buttons up.");
         }
-        protected St7789 display;
+
+        public override string RevisionString => revision;
 
         private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin, InterruptMode? interruptMode = null)
         {
@@ -61,62 +56,6 @@ namespace Meadow.Devices
                     interruptMode.Value,
                     ResistorMode.InternalPullDown));
         }
-
-        public PushButton LeftButton
-        {
-            get
-            {
-                if (leftButton == null)
-                {
-                    leftButton = GetPushButton(device, device.Pins.D10);
-                }
-                return leftButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton leftButton;
-
-        public PushButton RightButton
-        {
-            get
-            {
-                if (rightButton == null)
-                {
-                    rightButton = GetPushButton(device, device.Pins.D05);
-                }
-                return rightButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton rightButton;
-
-        public PushButton UpButton
-        {
-            get
-            {
-                if (upButton == null)
-                {
-                    upButton = GetPushButton(device, device.Pins.D15);
-                }
-                return upButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton upButton;
-
-        public PushButton DownButton
-        {
-            get
-            {
-                if (downButton == null)
-                {
-                    downButton = GetPushButton(device, device.Pins.D02);
-                }
-                return downButton;
-            }
-            set { throw new Exception("Don't set this."); }
-        }
-        protected PushButton downButton;
 
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
