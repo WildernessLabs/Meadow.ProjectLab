@@ -1,17 +1,11 @@
-﻿using Meadow.Foundation.Audio;
+﻿using System;
+using System.Threading;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Foundation.Sensors.Accelerometers;
-using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
-using Meadow.Logging;
 using Meadow.Modbus;
-using Meadow.Peripherals.Displays;
-using System;
-using System.Threading;
 
 namespace Meadow.Devices
 {
