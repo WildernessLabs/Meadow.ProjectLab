@@ -1,7 +1,9 @@
+using System;
+using Meadow;
+using Meadow.Devices;
 using Meadow.Foundation.Audio;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
@@ -9,47 +11,38 @@ using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Units;
-using System;
 
 namespace Meadow.Devices
 {
-    public class ProjectLab
+    public class ProjectLab : IProjectLabHardware
     {
         protected Logger? Logger { get; } = Resolver.Log;
-        public ISpiBus SpiBus { get; }
-        public II2cBus I2CBus { get; }
-
-        private readonly Lazy<RgbPwmLed> led;
-        private readonly Lazy<St7789?> display;
-        private readonly Lazy<Bh1750?> lightSensor;
-        private readonly Lazy<PushButton> upButton;
-        private readonly Lazy<PushButton> downButton;
-        private readonly Lazy<PushButton> leftButton;
-        private readonly Lazy<PushButton> rightButton;
-        private readonly Lazy<Bme688?> environmentalSensor;
-        private readonly Lazy<PiezoSpeaker> speaker;
-        private readonly Lazy<Bmi270?> motionSensor;
-
-        public RgbPwmLed Led => led.Value;
-        public St7789? Display => display.Value;
-        public Bh1750? LightSensor => lightSensor.Value;
-        public PushButton UpButton => upButton.Value;
-        public PushButton DownButton => downButton.Value;
-        public PushButton LeftButton => leftButton.Value;
-        public PushButton RightButton => rightButton.Value;
-        public Bme688? EnvironmentalSensor => environmentalSensor.Value;
-        public PiezoSpeaker Speaker => speaker.Value;
-        public Bmi270? MotionSensor => motionSensor.Value;
-
         internal IProjectLabHardware Hardware { get; }
 
+        //==== convenience rollup properties
+        // common ones
+        public ISpiBus SpiBus { get; set; }
+        public II2cBus I2CBus { get; set; }
+        public Bh1750? LightSensor { get; set; }
+        public Bme688? EnvironmentalSensor { get; set; }
+        public PiezoSpeaker Speaker { get; set; }
+        public Bmi270? MotionSensor { get; set; }
+        // version specific
+        public St7789? Display { get => Hardware.Display; set => Hardware.Display = value; }
+        public PushButton UpButton { get => Hardware.UpButton; set => Hardware.UpButton = value; }
+        public PushButton DownButton { get => Hardware.DownButton; set => Hardware.DownButton = value; }
+        public PushButton LeftButton { get => Hardware.LeftButton; set => Hardware.LeftButton = value; }
+        public PushButton RightButton { get => Hardware.RightButton; set => Hardware.RightButton = value; }
+        public string RevisionString => Hardware.RevisionString;
+
+        // v2+ stuff
         public Mcp23008? Mcp_1 { get; }
         public Mcp23008? Mcp_2 { get; }
         public Mcp23008? Mcp_Version { get; }
 
         public ProjectLab()
         {
-            // check to see if we have an MCP23008 - it was introduced in v2 hardware
+            // make sure not getting instantiated before the App Initialize method
             if (Resolver.Device == null)
             {
                 var msg = "ProjLab instance must be created no earlier than App.Initialize()";
@@ -126,102 +119,73 @@ namespace Meadow.Devices
 
             if (Mcp_1 == null)
             {
+                Logger?.Info("Instantiating Project Lab v1 specific hardware.");
                 Hardware = new ProjectLabHardwareV1(device, SpiBus);
             }
             else
             {
+                Logger?.Info("Instantiating Project Lab v2 specific hardware.");
                 Hardware = new ProjectLabHardwareV2(Mcp_1, Mcp_Version, device, SpiBus);
             }
 
-            // lazy load all components
+            //==== Initialize the shared/common stuff
             try
             {
-                led = new Lazy<RgbPwmLed>(() =>
-                    new RgbPwmLed(
-                    device: device,
-                    redPwmPin: device.Pins.OnboardLedRed,
-                    greenPwmPin: device.Pins.OnboardLedGreen,
-                    bluePwmPin: device.Pins.OnboardLedBlue));
-
-                display = new Lazy<St7789?>(() =>
-                {
-                    try
-                    {
-                        return Hardware.GetDisplay();
-                    }
-                    catch (Exception ex)
-                    {
-                        Resolver.Log.Error($"Unable to create the ST7789 Display Light Sensor: {ex.Message}");
-                        return default;
-                    }
-                });
-
-
-                lightSensor = new Lazy<Bh1750?>(() =>
-                {
-                    try
-                    {
-                        return new Bh1750(
-                            i2cBus: I2CBus,
-                            measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
-                            lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
-                            address: (byte)Bh1750.Addresses.Address_0x23);
-                    }
-                    catch (Exception ex)
-                    {
-                        Resolver.Log.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
-                        return default;
-                    }
-                });
-
-
-                rightButton = new Lazy<PushButton>(Hardware.GetRightButton());
-
-                if (!this.IsV1Hardware())
-                {
-                    upButton = new Lazy<PushButton>(Hardware.GetUpButton());
-                    leftButton = new Lazy<PushButton>(Hardware.GetLeftButton());
-                    downButton = new Lazy<PushButton>(Hardware.GetDownButton());
-                }
-
-                environmentalSensor = new Lazy<Bme688?>(() =>
-                {
-                    try
-                    {
-                        return new Bme688(I2CBus, (byte)Bme688.Addresses.Address_0x76);
-                    }
-                    catch (Exception ex)
-                    {
-                        Resolver.Log.Error($"Unable to create the BME680 Environmental Sensor: {ex.Message}");
-                        return default;
-                    }
-                });
-
-                speaker = new Lazy<PiezoSpeaker>(new PiezoSpeaker(device, device.Pins.D11));
-
-                motionSensor = new Lazy<Bmi270?>(() =>
-                {
-                    try
-                    {
-                        return new Bmi270(I2CBus);
-                    }
-                    catch (Exception ex)
-                    {
-                        Resolver.Log.Error($"Unable to create the BMI270 IMU: {ex.Message}");
-                        return default;
-                    }
-                });
+                Logger?.Info("Instantiating light sensor.");
+                Hardware.LightSensor = new Bh1750(
+                    i2cBus: I2CBus,
+                    measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
+                    lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
+                    address: (byte)Bh1750.Addresses.Address_0x23);
+                Logger?.Info("Light sensor up.");
             }
-
             catch (Exception ex)
             {
-                Logger?.Error($"Error initializing ProjectLab: {ex.Message}");
+                Resolver.Log.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
             }
-        }
 
-        public string HardwareRevision
-        {
-            get => Hardware.GetRevisionString();
+            //rightButton = new Lazy<PushButton>(Hardware.RightButton());
+
+            //if (!this.IsV1Hardware())
+            //{
+            //    upButton = new Lazy<PushButton>(Hardware.UpButton());
+            //    leftButton = new Lazy<PushButton>(Hardware.LeftButton());
+            //    downButton = new Lazy<PushButton>(Hardware.DownButton());
+            //}
+
+            try
+            {
+                Logger?.Info("Instantiating environmental sensor.");
+                Hardware.EnvironmentalSensor = new Bme688(I2CBus, (byte)Bme688.Addresses.Address_0x76);
+                Logger?.Info("Environmental sensor up.");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
+            }
+
+            try
+            {
+                Logger?.Info("Instantiating speaker.");
+                Hardware.Speaker = new PiezoSpeaker(device, device.Pins.D11);
+                Logger?.Info("Speaker up.");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
+
+
+            try
+            {
+                Logger?.Info("Instantiating motion sensor.");
+                Hardware.MotionSensor = new Bmi270(I2CBus);
+                Logger?.Info("Motion sensor up.");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the BMI270 IMU: {ex.Message}");
+            }
         }
 
         public static (
