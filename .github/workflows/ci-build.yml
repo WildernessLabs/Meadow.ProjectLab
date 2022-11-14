@@ -59,6 +59,6 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ./Meadow.ProjectLab/Source/Meadow.ProjectLab.sln
+      run: dotnet restore Meadow.ProjLab/Source/Meadow.ProjectLab.sln
     - name: Build
-      run: dotnet build -c Release ./Meadow.ProjectLab/Source/Meadow.ProjectLab.sln --no-restore
+      run: dotnet build -c Release Meadow.ProjLab/Source/Meadow.ProjectLab.sln --no-restore
