@@ -17,7 +17,6 @@ namespace Meadow.Devices
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
         protected Logger? Logger { get; } = Resolver.Log;
-        protected IF7FeatherMeadowDevice device;
 
         //==== properties
 
@@ -48,23 +47,23 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
-        public St7789? Display { get; protected set; }
+        public abstract St7789? Display { get; }
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
-        public PushButton? UpButton { get; protected set; }
+        public abstract PushButton? UpButton { get; }
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
-        public PushButton? DownButton { get; protected set; }
+        public abstract PushButton? DownButton { get; }
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
-        public PushButton? LeftButton { get; protected set; }
+        public abstract PushButton? LeftButton { get; }
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
-        public PushButton? RightButton { get; protected set; }
+        public abstract PushButton? RightButton { get; }
         /// <summary>
         /// Gets the ProjectLab board hardware revision
         /// </summary>
@@ -72,7 +71,6 @@ namespace Meadow.Devices
 
         public ProjectLabHardwareBase(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
         {
-            this.device = device;
             this.SpiBus = spiBus;
             this.I2cBus = i2cBus;
 

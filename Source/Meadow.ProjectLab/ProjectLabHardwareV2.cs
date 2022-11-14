@@ -11,9 +11,30 @@ namespace Meadow.Devices
 {
     internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
-        protected Mcp23008 mcp1;
-        protected Mcp23008 mcp2;
-        protected Mcp23008? mcpVersion;
+        private Mcp23008 mcp1;
+        private Mcp23008 mcp2;
+        private Mcp23008? mcpVersion;
+
+        /// <summary>
+        /// Gets the ST7789 Display on the Project Lab board
+        /// </summary>
+        public override St7789? Display { get; }
+        /// <summary>
+        /// Gets the Up PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? UpButton { get; }
+        /// <summary>
+        /// Gets the Down PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? DownButton { get; }
+        /// <summary>
+        /// Gets the Left PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? LeftButton { get; }
+        /// <summary>
+        /// Gets the Right PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? RightButton { get; }
 
         public ProjectLabHardwareV2(
             IF7FeatherMeadowDevice device,
@@ -33,7 +54,7 @@ namespace Meadow.Devices
             var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
             Thread.Sleep(50);
 
-            base.Display = new St7789(
+            Display = new St7789(
                 spiBus: SpiBus,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,

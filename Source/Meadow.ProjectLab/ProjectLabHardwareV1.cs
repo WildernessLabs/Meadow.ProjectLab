@@ -11,12 +11,33 @@ namespace Meadow.Devices
     {
         private string revision = "v1.x";
 
+        /// <summary>
+        /// Gets the ST7789 Display on the Project Lab board
+        /// </summary>
+        public override St7789? Display { get; }
+        /// <summary>
+        /// Gets the Up PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? UpButton { get; }
+        /// <summary>
+        /// Gets the Down PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? DownButton { get; }
+        /// <summary>
+        /// Gets the Left PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? LeftButton { get; }
+        /// <summary>
+        /// Gets the Right PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? RightButton { get; }
+
         public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
             : base(device, spiBus, i2cBus)
         {
             //---- create our display
             Logger?.Info("Instantiating display.");
-            base.Display = new St7789(
+            Display = new St7789(
                         device: device,
                         spiBus: SpiBus,
                         chipSelectPin: device.Pins.A03,
