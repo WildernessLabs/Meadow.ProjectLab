@@ -7,44 +7,55 @@ using System;
 
 namespace Meadow.Devices
 {
-    internal class ProjectLabHardwareV1 : IProjectLabHardware
+    internal class ProjectLabHardwareV1 : ProjectLabHardwareBase
     {
-        private IF7FeatherMeadowDevice device;
-        private ISpiBus spiBus;
-        private St7789? display;
-        private PushButton? rightButton;
-        private PushButton? leftButton;
-        private PushButton? upButton;
-        private PushButton? downButton;
         private string revision = "v1.x";
 
-        public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus)
+        /// <summary>
+        /// Gets the ST7789 Display on the Project Lab board
+        /// </summary>
+        public override St7789? Display { get; }
+        /// <summary>
+        /// Gets the Up PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? UpButton { get; }
+        /// <summary>
+        /// Gets the Down PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? DownButton { get; }
+        /// <summary>
+        /// Gets the Left PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? LeftButton { get; }
+        /// <summary>
+        /// Gets the Right PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? RightButton { get; }
+
+        public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
+            : base(device, spiBus, i2cBus)
         {
-            this.device = device;
-            this.spiBus = spiBus;
+            //---- create our display
+            Logger?.Info("Instantiating display.");
+            Display = new St7789(
+                        device: device,
+                        spiBus: SpiBus,
+                        chipSelectPin: device.Pins.A03,
+                        dcPin: device.Pins.A04,
+                        resetPin: device.Pins.A05,
+                        width: 240, height: 240,
+                        colorMode: ColorType.Format16bppRgb565);
+
+            //---- buttons
+            Logger?.Info("Instantiating buttons.");
+            LeftButton = GetPushButton(device, device.Pins.D10);
+            RightButton = GetPushButton(device, device.Pins.D05);
+            UpButton = GetPushButton(device, device.Pins.D15);
+            DownButton = GetPushButton(device, device.Pins.D02);
+            Logger?.Info("Buttons up.");
         }
 
-        public string GetRevisionString()
-        {
-            return revision;
-        }
-
-        public St7789 GetDisplay()
-        {
-            if (display == null)
-            {
-                display = new St7789(
-                    device: device,
-                    spiBus: spiBus,
-                    chipSelectPin: device.Pins.A03,
-                    dcPin: device.Pins.A04,
-                    resetPin: device.Pins.A05,
-                    width: 240, height: 240,
-                    colorMode: ColorType.Format16bppRgb565);
-            }
-
-            return display;
-        }
+        public override string RevisionString => revision;
 
         private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin, InterruptMode? interruptMode = null)
         {
@@ -60,51 +71,7 @@ namespace Meadow.Devices
                     ResistorMode.InternalPullDown));
         }
 
-        public PushButton GetLeftButton()
-        {
-            if (leftButton == null)
-            {
-                leftButton = GetPushButton(device, device.Pins.D10);
-            }
-            return leftButton;
-        }
-
-        public PushButton GetRightButton()
-        {
-            if (rightButton == null)
-            {
-                rightButton = GetPushButton(device, device.Pins.D05);
-            }
-            return rightButton;
-        }
-
-        public PushButton GetUpButton()
-        {
-            if (upButton == null)
-            {
-                upButton = GetPushButton(device, device.Pins.D15);
-            }
-            return upButton;
-        }
-
-        public PushButton GetDownButton()
-        {
-            if (downButton == null)
-            {
-                if (device is F7FeatherV1)
-                {
-                    // timer conflict with piezo?
-                    downButton = GetPushButton(device, device.Pins.D02, InterruptMode.None);
-                }
-                else
-                {
-                    downButton = GetPushButton(device, device.Pins.D02);
-                }
-            }
-            return downButton;
-        }
-
-        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
+        public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             if (Resolver.Device is F7FeatherV1 device)
             {
