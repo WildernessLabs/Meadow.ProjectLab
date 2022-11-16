@@ -84,8 +84,14 @@ namespace Meadow.Devices
             try
             {
                 // MCP the Second
-                IDigitalInputPort mcp2_int = device.CreateDigitalInputPort(
-                    device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                IDigitalInputPort? mcp2_int = null;
+
+                if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
+                {   //Only create the interrupt port if the pin supports interrupts
+                    device.CreateDigitalInputPort(
+                        device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                }
+                
                 mcp_2 = new Mcp23008(i2cBus, address: 0x21, mcp2_int);
 
                 Logger?.Info("Mcp_2 up.");
@@ -115,7 +121,6 @@ namespace Meadow.Devices
                 Logger?.Info("Instantiating Project Lab v2 specific hardware.");
                 Hardware = new ProjectLabHardwareV2(device, spiBus, i2cBus, mcp_1, mcp_2, mcp_Version);
             }
-
         }
 
         /// <summary>
