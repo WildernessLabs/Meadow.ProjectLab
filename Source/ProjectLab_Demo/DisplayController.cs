@@ -88,11 +88,9 @@ namespace ProjLab_Demo
 
         bool isUpdating = false;
         bool needsUpdate = false;
-        bool isV1 = false;
 
-        public DisplayController(IGraphicsDisplay display, bool isV1)
+        public DisplayController(IGraphicsDisplay display)
         {
-            this.isV1 = isV1;
             graphics = new MicroGraphics(display)
             {
                 Rotation = RotationType._90Degrees,

@@ -32,52 +32,52 @@ namespace ProjLab_Demo
             //==== instantiate the project lab hardware
             projLab = new ProjectLab();
 
-            Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.Hardware.RevisionString}");
+            Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.RevisionString}");
 
             //---- display controller (handles display updates)
-            if (projLab.Hardware.Display is { } display)
+            if (projLab.Display is { } display)
             {
                 Resolver.Log.Info("Creating DisplayController.");
-                displayController = new DisplayController(display, projLab.IsV1Hardware());
+                displayController = new DisplayController(display);
                 Resolver.Log.Info("DisplayController up.");
             }
 
             //---- BH1750 Light Sensor
-            if (projLab.Hardware.LightSensor is { } bh1750)
+            if (projLab.LightSensor is { } bh1750)
             {
                 bh1750.Updated += Bh1750Updated;
             }
 
             //---- BME688 Atmospheric sensor
-            if (projLab.Hardware.EnvironmentalSensor is { } bme688)
+            if (projLab.EnvironmentalSensor is { } bme688)
             {
                 bme688.Updated += Bme688Updated;
             }
 
             //---- BMI270 Accel/IMU
-            if (projLab.Hardware.MotionSensor is { } bmi270)
+            if (projLab.MotionSensor is { } bmi270)
             {
                 bmi270.Updated += Bmi270Updated;
             }
 
             //---- buttons
-            if (projLab.Hardware.RightButton is { } rightButton)
+            if (projLab.RightButton is { } rightButton)
             {
                 rightButton.PressStarted += (s, e) => displayController.RightButtonState = true;
                 rightButton.PressEnded += (s, e) => displayController.RightButtonState = false;
             }
 
-            if (projLab.Hardware.DownButton is { } downButton)
+            if (projLab.DownButton is { } downButton)
             {
                 downButton.PressStarted += (s, e) => displayController.DownButtonState = true;
                 downButton.PressEnded += (s, e) => displayController.DownButtonState = false;
             }
-            if (projLab.Hardware.LeftButton is { } leftButton)
+            if (projLab.LeftButton is { } leftButton)
             {
                 leftButton.PressStarted += (s, e) => displayController.LeftButtonState = true;
                 leftButton.PressEnded += (s, e) => displayController.LeftButtonState = false;
             }
-            if (projLab.Hardware.UpButton is { } upButton)
+            if (projLab.UpButton is { } upButton)
             {
                 upButton.PressStarted += (s, e) => displayController.UpButtonState = true;
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
@@ -96,19 +96,19 @@ namespace ProjLab_Demo
             Console.WriteLine("Run...");
 
             //---- BH1750 Light Sensor
-            if (projLab.Hardware.LightSensor is { } bh1750)
+            if (projLab.LightSensor is { } bh1750)
             {
                 bh1750.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
             //---- BME688 Atmospheric sensor
-            if (projLab.Hardware.EnvironmentalSensor is { } bme688)
+            if (projLab.EnvironmentalSensor is { } bme688)
             {
                 bme688.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
             //---- BMI270 Accel/IMU
-            if (projLab.Hardware.MotionSensor is { } bmi270)
+            if (projLab.MotionSensor is { } bmi270)
             {
                 bmi270.StartUpdating(TimeSpan.FromSeconds(5));
             }
