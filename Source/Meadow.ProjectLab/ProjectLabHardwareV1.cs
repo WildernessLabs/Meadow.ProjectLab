@@ -57,19 +57,8 @@ namespace Meadow.Devices
 
         public override string RevisionString => revision;
 
-        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin, InterruptMode? interruptMode = null)
-        {
-            if (interruptMode == null)
-            {
-                interruptMode = pin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
-            }
-
-            return new PushButton(
-                Resolver.Device.CreateDigitalInputPort(
-                    pin,
-                    interruptMode.Value,
-                    ResistorMode.InternalPullDown));
-        }
+        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin)
+             => new PushButton(Resolver.Device, pin, ResistorMode.InternalPullDown);
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
