@@ -44,7 +44,6 @@ namespace Meadow.Devices
 
             Logger?.Debug("Initializing Project Lab...");
 
-            //==== hardware and lifecycle checks
             // make sure not getting instantiated before the App Initialize method
             if (Resolver.Device == null)
             {
@@ -62,7 +61,6 @@ namespace Meadow.Devices
                 throw new Exception(msg);
             }
 
-            //==== create our busses
             Logger?.Info("Creating comms busses...");
             var config = new SpiClockConfiguration(
                            new Frequency(48000, Frequency.UnitType.Kilohertz),
@@ -74,13 +72,12 @@ namespace Meadow.Devices
                 device.Pins.CIPO,
                 config);
 
-            Logger?.Info("SPI Bus instantiated.");
+            Logger?.Info("SPI Bus instantiated");
 
             I2cBus = device.CreateI2cBus();
 
-            Logger?.Info("I2C Bus instantiated.");
+            Logger?.Info("I2C Bus instantiated");
 
-            //==== determine hardware
             try
             {
                 // MCP the First
@@ -90,50 +87,57 @@ namespace Meadow.Devices
 
                 mcp_1 = new Mcp23008(I2cBus, address: 0x20, mcp1_int, mcp_Reset);
 
-                Logger?.Info("Mcp_1 up.");
+                Logger?.Info("Mcp_1 up");
             }
             catch (Exception e)
             {
-                Logger?.Trace($"Failed to create MCP1: {e.Message}, could be a v1 board.");
+                Logger?.Trace($"Failed to create MCP1: {e.Message}, could be a v1 board");
             }
+
+            IDigitalInputPort? mcp2_int = null;
             try
             {
-                // MCP the Second
-                IDigitalInputPort? mcp2_int = null;
+                if(mcp_1 != null)
+                {
+                    // MCP the Second
+                    if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
+                    {
+                        mcp2_int = device.CreateDigitalInputPort(
+                            device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                    }
 
-                if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
-                {   //Only create the interrupt port if the pin supports interrupts
-                    device.CreateDigitalInputPort(
-                        device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                    mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
+
+                    Logger?.Info("Mcp_2 up");
                 }
-                
-                mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
-
-                Logger?.Info("Mcp_2 up.");
             }
             catch (Exception e)
             {
                 Logger?.Trace($"Failed to create MCP2: {e.Message}");
+                mcp2_int?.Dispose();
             }
+            
             try
             {
-                mcp_Version = new Mcp23008(I2cBus, address: 0x27);
-                Logger?.Info("Mcp_Version up.");
+                if (mcp_1 != null)
+                {
+                    mcp_Version = new Mcp23008(I2cBus, address: 0x27);
+                    Logger?.Info("Mcp_Version up");
+                }
             }
             catch (Exception e)
             {
                 Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
             }
 
-            //==== instantiate the appropriate hardware per the version
             if (mcp_1 == null)
             {
-                Logger?.Info("Instantiating Project Lab v1 specific hardware.");
+                Logger?.Info("Instantiating Project Lab v1 specific hardware");
                 Hardware = new ProjectLabHardwareV1(device, SpiBus, I2cBus);
             }
             else
             {
-                Logger?.Info("Instantiating Project Lab v2 specific hardware.");
+                Logger?.Info("Instantiating Project Lab v2 specific hardware");
                 Hardware = new ProjectLabHardwareV2(device, SpiBus, I2cBus, mcp_1, mcp_2, mcp_Version);
             }
         }
@@ -150,6 +154,5 @@ namespace Meadow.Devices
         {
             return Hardware.GetModbusRtuClient(baudRate, dataBits, parity, stopBits);
         }
-
     }
 }
