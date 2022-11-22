@@ -88,11 +88,9 @@ namespace ProjLab_Demo
 
         bool isUpdating = false;
         bool needsUpdate = false;
-        bool isV1 = false;
 
-        public DisplayController(IGraphicsDisplay display, bool isV1)
+        public DisplayController(IGraphicsDisplay display)
         {
-            this.isV1 = isV1;
             graphics = new MicroGraphics(display)
             {
                 Rotation = RotationType._90Degrees,
@@ -128,7 +126,7 @@ namespace ProjLab_Demo
         void DrawStatus(string label, string value, Color color, int yPosition)
         {
             graphics.DrawText(x: 2, y: yPosition, label, color: color);
-            graphics.DrawText(x: 238, y: yPosition, value, alignment: TextAlignment.Right, color: color);
+            graphics.DrawText(x: 238, y: yPosition, value, alignmentH: HorizontalAlignment.Right, color: color);
         }
 
         void Draw()
@@ -171,19 +169,9 @@ namespace ProjLab_Demo
                 }
             }
 
-            if (isV1)
-            {
-                DrawStatus("Left:", $"disabled", WildernessLabsColors.ChileanFire, 200);
-                DrawStatus("Down:", $"disabled", WildernessLabsColors.ChileanFire, 180);
-                DrawStatus("Up:", $"disabled", WildernessLabsColors.ChileanFire, 160);
-            }
-            else
-            {
-                DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
-                DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
-                DrawStatus("Up:", $"{(UpButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 160);
-            }
-
+            DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
+            DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
+            DrawStatus("Up:", $"{(UpButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 160);
             DrawStatus("Right:", $"{(RightButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 220);
         }
     }

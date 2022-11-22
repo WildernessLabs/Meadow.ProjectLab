@@ -1,6 +1,6 @@
 ﻿Logging:
   LogLevel:
-    Default: Trace
+    Default: Information
 Lifecycle:
   RestartOnAppFailure: false
 Update:

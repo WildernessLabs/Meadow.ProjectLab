@@ -3,110 +3,115 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
+using Meadow.Modbus;
+using System;
 using System.Threading;
 
 namespace Meadow.Devices
 {
-    internal class ProjectLabHardwareV2 : IProjectLabHardware
+    internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
-        private IF7FeatherMeadowDevice device;
-        private ISpiBus spiBus;
         private Mcp23008 mcp1;
+        private Mcp23008 mcp2;
         private Mcp23008? mcpVersion;
 
-        private St7789? display;
-        private PushButton? leftButton;
-        private PushButton? rightButton;
-        private PushButton? upButton;
-        private PushButton? downButton;
-        private string? revision;
+        /// <summary>
+        /// Gets the ST7789 Display on the Project Lab board
+        /// </summary>
+        public override St7789? Display { get; }
+        /// <summary>
+        /// Gets the Up PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? UpButton { get; }
+        /// <summary>
+        /// Gets the Down PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? DownButton { get; }
+        /// <summary>
+        /// Gets the Left PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? LeftButton { get; }
+        /// <summary>
+        /// Gets the Right PushButton on the Project Lab board
+        /// </summary>
+        public override PushButton? RightButton { get; }
 
-        public ProjectLabHardwareV2(Mcp23008 mcp1, Mcp23008? mcpVersion, IF7FeatherMeadowDevice device, ISpiBus spiBus)
+        public ProjectLabHardwareV2(
+            IF7FeatherMeadowDevice device,
+            ISpiBus spiBus,
+            II2cBus i2cBus,
+            Mcp23008 mcp1, Mcp23008 mcp2, Mcp23008? mcpVersion
+            ) : base(device, spiBus, i2cBus)
         {
-            this.device = device;
-            this.spiBus = spiBus;
             this.mcp1 = mcp1;
+            this.mcp2 = mcp2;
             this.mcpVersion = mcpVersion;
+
+            //---- instantiate display
+            Logger?.Info("Instantiating display.");
+            var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
+            var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
+            var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
+            Thread.Sleep(50);
+
+            Display = new St7789(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 240,
+                colorMode: ColorType.Format16bppRgb565);
+            Logger?.Info("Display up.");
+
+            //---- buttons
+            Logger?.Info("Instantiating buttons.");
+            var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            LeftButton = new PushButton(leftPort);
+            var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            RightButton = new PushButton(rightPort);
+            var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            UpButton = new PushButton(upPort);
+            var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            DownButton = new PushButton(downPort);
+            Logger?.Info("Buttons up.");
         }
 
-        public string GetRevisionString()
+        public override string RevisionString
         {
-            // TODO: figure this out from MCP3?
-            if (revision == null)
+            get
             {
-                if (mcpVersion == null)
+                // TODO: figure this out from MCP3?
+                if (revision == null)
                 {
-                    revision = $"v2.x";
+                    if (mcpVersion == null)
+                    {
+                        revision = $"v2.x";
+                    }
+                    else
+                    {
+                        byte rev = mcpVersion.ReadFromPorts(Mcp23xxx.PortBank.A);
+                        //mapping? 0 == d2.d?
+                        revision = $"v2.{rev}";
+                    }
                 }
-                else
-                {
-                    byte rev = mcpVersion.ReadFromPorts(Mcp23xxx.PortBank.A);
-                    //mapping? 0 == d2.d?
-                    revision = $"v2.{rev}";
-                }
+                return revision;
             }
-            return revision;
         }
+        protected string? revision;
 
-        public St7789 GetDisplay()
+        public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
-            if (display == null)
+            if (Resolver.Device is F7FeatherV2 device)
             {
-                var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
-                var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
-                var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
+                var port = device.CreateSerialPort(device.SerialPortNames.Com4, baudRate, dataBits, parity, stopBits);
+                port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
+                var serialEnable = mcp2.CreateDigitalOutputPort(mcp2.Pins.GP0, false);
 
-                Thread.Sleep(50);
-
-                display = new St7789(
-                    spiBus: spiBus,
-                    chipSelectPort: chipSelectPort,
-                    dataCommandPort: dcPort,
-                    resetPort: resetPort,
-                    width: 240, height: 240,
-                    colorMode: ColorType.Format16bppRgb565);
+                return new ModbusRtuClient(port, serialEnable);
             }
-            return display;
-        }
 
-        public PushButton GetLeftButton()
-        {
-            if (leftButton == null)
-            {
-                var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                leftButton = new PushButton(leftPort);
-            }
-            return leftButton;
-        }
-
-        public PushButton GetRightButton()
-        {
-            if (rightButton == null)
-            {
-                var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                rightButton = new PushButton(rightPort);
-            }
-            return rightButton;
-        }
-
-        public PushButton GetUpButton()
-        {
-            if (upButton == null)
-            {
-                var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                upButton = new PushButton(upPort);
-            }
-            return upButton;
-        }
-
-        public PushButton GetDownButton()
-        {
-            if (downButton == null)
-            {
-                var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-                downButton = new PushButton(downPort);
-            }
-            return downButton;
+            // this is v2 instance hardware, so we should never get here
+            throw new NotSupportedException();
         }
     }
 }
