@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -11,7 +11,7 @@
     <PackageId>Meadow.ProjectLab</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.ProjectLab</RepositoryUrl>
     <PackageTags>Meadow.ProjectLab, Meadow, ProjectLab</PackageTags>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Base convenience library for the Meadow ProjLab board</Description>
     <Nullable>enable</Nullable>
