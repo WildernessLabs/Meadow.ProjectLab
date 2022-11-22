@@ -17,7 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
   </ItemGroup>
 </Project>
