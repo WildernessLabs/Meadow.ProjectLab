@@ -21,6 +21,7 @@
 
   </ItemGroup>
   <ItemGroup>
+	<!--
     <PackageReference Include="Meadow.Contracts" Version="0.*" />
     <PackageReference Include="Meadow" Version="0.*" />
     <PackageReference Include="Meadow.F7" Version="0.*" />
@@ -32,5 +33,14 @@
     <PackageReference Include="Meadow.Foundation.Sensors.Light.Bh1750" Version="0.*" />
     <PackageReference Include="Meadow.Foundation.Sensors.Motion.Bmi270" Version="0.*" />
     <PackageReference Include="Meadow.Modbus" Version="0.*" />
+	-->
+	<ProjectReference Include="..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme68x\Driver\Sensors.Atmospheric.Bme68x.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Bh1750\Driver\Sensors.Light.Bh1750.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Bmi270\Driver\Sensors.Motion.Bmi270.csproj" />
+	<ProjectReference Include="..\..\..\Meadow.Modbus\src\Meadow.Modbus\Meadow.Modbus.csproj" />
   </ItemGroup>
 </Project>
