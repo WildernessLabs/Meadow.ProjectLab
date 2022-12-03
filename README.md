@@ -12,8 +12,8 @@ Project Lab is the most functional IoT prototyping platform on the planet. No mo
   * [Connectivity](#conectivity)
 * [Project Lab NuGet](#project-lab-nuget)
 * [Pinout Diagram](#pinout-diagram)
-  * [v1](#v1)
-  * [v2](#v2)
+  * [Project Lab v1.e](#project-lab-v1e)
+  * [Project Lab v2.e](#project-lab-v2e)
 * [Hardware Design](#hardware-design)
 
 ## Purchasing or Building
@@ -89,13 +89,13 @@ To make using the hardware even simpler, we've created a Nuget package that inst
 Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board:
 &nbsp;
 
-### v1
+### Project Lab v1.e
 
-<img src="Design/PinoutV1.png" />
+<img src="Design/PinoutV1.jpg" />
 
-### v2
+### Project Lab v2.e
 
-Coming soon!
+<img src="Design/PinoutV2.jpg" />
 
 ## Hardware Design
 
