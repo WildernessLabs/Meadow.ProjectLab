@@ -4,6 +4,18 @@
 
 Project Lab is the most functional IoT prototyping platform on the planet. No more breadboards, complicated wiring, or soldering. Project Lab was built from the ground up using the industry's most powerful, capable, and reliable sensors, components, and connectors.
 
+## Contents
+* [Purchasing or Building](#purchasing-or-building)
+* [Getting Started](#getting-started)
+* [About the Hardware](#about-the-hardware)
+  * [Onboard Peripherals](#onboard-peripherals)
+  * [Connectivity](#conectivity)
+* [Project Lab NuGet](#project-lab-nuget)
+* [Pinout Diagram](#pinout-diagram)
+  * [Project Lab v1.e](#project-lab-v1e)
+  * [Project Lab v2.e](#project-lab-v2e)
+* [Hardware Design](#hardware-design)
+
 ## Purchasing or Building
 
 You can get a Project Lab from the [Wilderness Labs store](https://store.wildernesslabs.co/collections/frontpage/products/project-lab-board).
@@ -43,7 +55,7 @@ The PROJ LAB board includes the following expansion connection options:
 
 As well as connectors to 5V, 3.3V, ground, one analog port and 2 GPIO ports.
 
-## Project Lab Nuget
+## Project Lab NuGet
 
 To make using the hardware even simpler, we've created a Nuget package that instantiates and encapsulates the onboard hardware into a `ProjectLab` class. To use:
 
@@ -72,21 +84,19 @@ To make using the hardware even simpler, we've created a Nuget package that inst
  * [Explore in Fuget.org](https://www.fuget.org/packages/Meadow.ProjectLab/0.1.0/lib/netstandard2.1/ProjectLab.dll/Meadow.Devices/ProjectLab)
  * [Nuget Source](Source/Meadow.ProjectLab)
 
-
-
 ## Pinout Diagram
 
 Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board:
 &nbsp;
 
-### v1
+### Project Lab v1.e
 
-<img src="Design/PinoutV1.png" />
+<img src="Design/PinoutV1.jpg" />
 
-### v2
+### Project Lab v2.e
 
-Coming soon!
+<img src="Design/PinoutV2.jpg" />
 
-## [Hardware Design](Source/Hardware)
+## Hardware Design
 
 You can find the schematics and other design files in the [Hardware folder](Source/Hardware).
