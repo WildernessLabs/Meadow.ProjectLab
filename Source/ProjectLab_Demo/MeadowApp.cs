@@ -18,7 +18,9 @@ namespace ProjLab_Demo
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
+
+            Resolver.Log.Info("Initialize hardware...");
 
             //==== RGB LED
             Resolver.Log.Info("Initializing onboard RGB LED");
@@ -86,14 +88,14 @@ namespace ProjLab_Demo
             //---- heartbeat
             onboardLed.StartPulse(WildernessLabsColors.PearGreen);
 
-            Console.WriteLine("Initialization complete");
+            Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
         }
 
         public override Task Run()
         {
-            Console.WriteLine("Run...");
+            Resolver.Log.Info("Run...");
 
             //---- BH1750 Light Sensor
             if (projLab.LightSensor is { } bh1750)
@@ -118,7 +120,7 @@ namespace ProjLab_Demo
                 displayController.Update();
             }
 
-            Console.WriteLine("starting blink");
+            Resolver.Log.Info("starting blink");
             onboardLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
 
             return base.Run();
