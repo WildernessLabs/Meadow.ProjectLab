@@ -132,12 +132,12 @@ namespace Meadow.Devices
 
             if (mcp_1 == null)
             {
-                Logger?.Info("Instantiating Project Lab v1 specific hardware");
+                Logger?.Debug("Instantiating Project Lab v1 specific hardware");
                 Hardware = new ProjectLabHardwareV1(device, SpiBus, I2cBus);
             }
             else
             {
-                Logger?.Info("Instantiating Project Lab v2 specific hardware");
+                Logger?.Debug("Instantiating Project Lab v2 specific hardware");
                 Hardware = new ProjectLabHardwareV2(device, SpiBus, I2cBus, mcp_1, mcp_2, mcp_Version);
             }
         }
