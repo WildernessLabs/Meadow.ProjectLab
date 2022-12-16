@@ -77,13 +77,13 @@ namespace Meadow.Devices
             //==== Initialize the shared/common stuff
             try
             {
-                Logger?.Info("Instantiating light sensor.");
+                Logger?.Trace("Instantiating light sensor");
                 LightSensor = new Bh1750(
                     i2cBus: I2cBus,
                     measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
                     lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
                     address: (byte)Bh1750.Addresses.Address_0x23);
-                Logger?.Info("Light sensor up.");
+                Logger?.Trace("Light sensor up");
             }
             catch (Exception ex)
             {
@@ -92,9 +92,9 @@ namespace Meadow.Devices
 
             try
             {
-                Logger?.Info("Instantiating environmental sensor.");
+                Logger?.Trace("Instantiating environmental sensor");
                 EnvironmentalSensor = new Bme688(I2cBus, (byte)Bme688.Addresses.Address_0x76);
-                Logger?.Info("Environmental sensor up.");
+                Logger?.Trace("Environmental sensor up");
             }
             catch (Exception ex)
             {
@@ -103,9 +103,9 @@ namespace Meadow.Devices
 
             try
             {
-                Logger?.Info("Instantiating speaker.");
+                Logger?.Trace("Instantiating speaker");
                 Speaker = new PiezoSpeaker(device, device.Pins.D11);
-                Logger?.Info("Speaker up.");
+                Logger?.Trace("Speaker up");
             }
             catch (Exception ex)
             {
@@ -114,9 +114,9 @@ namespace Meadow.Devices
 
             try
             {
-                Logger?.Info("Instantiating motion sensor.");
+                Logger?.Trace("Instantiating motion sensor");
                 MotionSensor = new Bmi270(I2cBus);
-                Logger?.Info("Motion sensor up.");
+                Logger?.Trace("Motion sensor up");
             }
             catch (Exception ex)
             {

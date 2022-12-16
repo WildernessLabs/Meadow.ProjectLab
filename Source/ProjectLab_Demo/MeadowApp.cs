@@ -21,13 +21,13 @@ namespace ProjLab_Demo
             Console.WriteLine("Initialize hardware...");
 
             //==== RGB LED
-            Resolver.Log.Info("Initializing onboard RGB LED.");
+            Resolver.Log.Info("Initializing onboard RGB LED");
             onboardLed = new RgbPwmLed(device: Device,
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
                 CommonType.CommonAnode);
-            Resolver.Log.Info("RGB LED up.");
+            Resolver.Log.Info("RGB LED up");
 
             //==== instantiate the project lab hardware
             projLab = new ProjectLab();
@@ -37,9 +37,9 @@ namespace ProjLab_Demo
             //---- display controller (handles display updates)
             if (projLab.Display is { } display)
             {
-                Resolver.Log.Info("Creating DisplayController.");
+                Resolver.Log.Trace("Creating DisplayController");
                 displayController = new DisplayController(display);
-                Resolver.Log.Info("DisplayController up.");
+                Resolver.Log.Trace("DisplayController up");
             }
 
             //---- BH1750 Light Sensor

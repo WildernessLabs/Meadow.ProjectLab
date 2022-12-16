@@ -61,7 +61,7 @@ namespace Meadow.Devices
                 throw new Exception(msg);
             }
 
-            Logger?.Info("Creating comms busses...");
+            Logger?.Debug("Creating comms busses...");
             var config = new SpiClockConfiguration(
                            new Frequency(48000, Frequency.UnitType.Kilohertz),
                            SpiClockConfiguration.Mode.Mode3);
@@ -72,11 +72,11 @@ namespace Meadow.Devices
                 device.Pins.CIPO,
                 config);
 
-            Logger?.Info("SPI Bus instantiated");
+            Logger?.Debug("SPI Bus instantiated");
 
             I2cBus = device.CreateI2cBus();
 
-            Logger?.Info("I2C Bus instantiated");
+            Logger?.Debug("I2C Bus instantiated");
 
             try
             {
@@ -87,11 +87,11 @@ namespace Meadow.Devices
 
                 mcp_1 = new Mcp23008(I2cBus, address: 0x20, mcp1_int, mcp_Reset);
 
-                Logger?.Info("Mcp_1 up");
+                Logger?.Trace("Mcp_1 up");
             }
             catch (Exception e)
             {
-                Logger?.Trace($"Failed to create MCP1: {e.Message}, could be a v1 board");
+                Logger?.Debug($"Failed to create MCP1: {e.Message}, could be a v1 board");
             }
 
             IDigitalInputPort? mcp2_int = null;
@@ -108,12 +108,12 @@ namespace Meadow.Devices
 
                     mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
 
-                    Logger?.Info("Mcp_2 up");
+                    Logger?.Trace("Mcp_2 up");
                 }
             }
             catch (Exception e)
             {
-                Logger?.Trace($"Failed to create MCP2: {e.Message}");
+                Logger?.Debug($"Failed to create MCP2: {e.Message}");
                 mcp2_int?.Dispose();
             }
             
@@ -122,12 +122,12 @@ namespace Meadow.Devices
                 if (mcp_1 != null)
                 {
                     mcp_Version = new Mcp23008(I2cBus, address: 0x27);
-                    Logger?.Info("Mcp_Version up");
+                    Logger?.Trace("Mcp_Version up");
                 }
             }
             catch (Exception e)
             {
-                Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
+                Logger?.Debug($"ERR creating the MCP that has version information: {e.Message}");
             }
 
             if (mcp_1 == null)
