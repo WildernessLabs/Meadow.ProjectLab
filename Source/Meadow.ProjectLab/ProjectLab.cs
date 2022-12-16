@@ -52,9 +52,7 @@ namespace Meadow.Devices
                 throw new Exception(msg);
             }
 
-            var device = Resolver.Device as IF7FeatherMeadowDevice;
-
-            if (device == null)
+            if (!(Resolver.Device is IF7FeatherMeadowDevice device))
             {
                 var msg = "ProjLab Device must be an F7Feather";
                 Logger?.Error(msg);

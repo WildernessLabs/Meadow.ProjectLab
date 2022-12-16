@@ -71,8 +71,8 @@ namespace Meadow.Devices
 
         public ProjectLabHardwareBase(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
         {
-            this.SpiBus = spiBus;
-            this.I2cBus = i2cBus;
+            SpiBus = spiBus;
+            I2cBus = i2cBus;
 
             //==== Initialize the shared/common stuff
             try
