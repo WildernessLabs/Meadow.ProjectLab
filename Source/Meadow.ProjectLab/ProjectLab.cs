@@ -50,16 +50,14 @@ namespace Meadow.Devices
                 throw new Exception(msg);
             }
 
-            var device = Resolver.Device as IF7FeatherMeadowDevice;
-
-            if (device == null)
+            if (!(Resolver.Device is IF7FeatherMeadowDevice device))
             {
                 var msg = "ProjLab Device must be an F7Feather";
                 Logger?.Error(msg);
                 throw new Exception(msg);
             }
 
-            Logger?.Info("Creating comms busses...");
+            Logger?.Debug("Creating comms busses...");
             var config = new SpiClockConfiguration(
                            new Frequency(48000, Frequency.UnitType.Kilohertz),
                            SpiClockConfiguration.Mode.Mode3);
@@ -70,11 +68,11 @@ namespace Meadow.Devices
                 device.Pins.CIPO,
                 config);
 
-            Logger?.Info("SPI Bus instantiated");
+            Logger?.Debug("SPI Bus instantiated");
 
             I2cBus = device.CreateI2cBus();
 
-            Logger?.Info("I2C Bus instantiated");
+            Logger?.Debug("I2C Bus instantiated");
 
             try
             {
@@ -85,16 +83,16 @@ namespace Meadow.Devices
 
                 mcp_1 = new Mcp23008(I2cBus, address: 0x20, mcp1_int, mcp_Reset);
 
-                Logger?.Info("Mcp_1 up");
+                Logger?.Trace("Mcp_1 up");
             }
             catch (Exception e)
             {
-                Logger?.Trace($"Failed to create MCP1: {e.Message}, could be a v1 board");
+                Logger?.Debug($"Failed to create MCP1: {e.Message}, could be a v1 board");
             }
 
             if (mcp_1 == null)
             {
-                Logger?.Info("Instantiating Project Lab v1 specific hardware");
+                Logger?.Debug("Instantiating Project Lab v1 specific hardware");
                 Hardware = new ProjectLabHardwareV1(device, SpiBus, I2cBus);
             }
             else
