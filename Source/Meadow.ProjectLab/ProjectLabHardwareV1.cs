@@ -36,7 +36,7 @@ namespace Meadow.Devices
             : base(device, spiBus, i2cBus)
         {
             //---- create our display
-            Logger?.Info("Instantiating display.");
+            Logger?.Trace("Instantiating display");
             Display = new St7789(
                         device: device,
                         spiBus: SpiBus,
@@ -47,12 +47,12 @@ namespace Meadow.Devices
                         colorMode: ColorType.Format16bppRgb565);
 
             //---- buttons
-            Logger?.Info("Instantiating buttons.");
+            Logger?.Trace("Instantiating buttons");
             LeftButton = GetPushButton(device, device.Pins.D10);
             RightButton = GetPushButton(device, device.Pins.D05);
             UpButton = GetPushButton(device, device.Pins.D15);
             DownButton = GetPushButton(device, device.Pins.D02);
-            Logger?.Info("Buttons up.");
+            Logger?.Trace("Buttons up");
         }
 
         public override string RevisionString => revision;
