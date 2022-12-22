@@ -27,11 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Bmi270", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.MicroGraphics", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj", "{DB4C8FC0-18A8-4735-933B-D1FCE59FC1E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj", "{A01BAE24-E0E4-458D-A5BA-9C10C4224354}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Modbus", "..\..\Meadow.Modbus\src\Meadow.Modbus\Meadow.Modbus.csproj", "{2D1FC26C-C80D-42E8-92BD-25BE517AC663}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{18EE7297-3E8D-4B94-B6E3-319991927D58}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj", "{E56BD47C-4997-4831-833C-EA35C83F89B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,10 +105,6 @@ Global
 		{DB4C8FC0-18A8-4735-933B-D1FCE59FC1E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB4C8FC0-18A8-4735-933B-D1FCE59FC1E3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB4C8FC0-18A8-4735-933B-D1FCE59FC1E3}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{A01BAE24-E0E4-458D-A5BA-9C10C4224354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A01BAE24-E0E4-458D-A5BA-9C10C4224354}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A01BAE24-E0E4-458D-A5BA-9C10C4224354}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A01BAE24-E0E4-458D-A5BA-9C10C4224354}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D1FC26C-C80D-42E8-92BD-25BE517AC663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D1FC26C-C80D-42E8-92BD-25BE517AC663}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D1FC26C-C80D-42E8-92BD-25BE517AC663}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -119,6 +115,10 @@ Global
 		{18EE7297-3E8D-4B94-B6E3-319991927D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18EE7297-3E8D-4B94-B6E3-319991927D58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{18EE7297-3E8D-4B94-B6E3-319991927D58}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -133,9 +133,9 @@ Global
 		{CD675B1D-BC88-4DB5-AF45-8079435F52CA} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{95770BEF-6864-493C-A8DA-660D3AC582A0} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{DB4C8FC0-18A8-4735-933B-D1FCE59FC1E3} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
-		{A01BAE24-E0E4-458D-A5BA-9C10C4224354} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{2D1FC26C-C80D-42E8-92BD-25BE517AC663} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{18EE7297-3E8D-4B94-B6E3-319991927D58} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
+		{E56BD47C-4997-4831-833C-EA35C83F89B7} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A24E3C-F7F9-4EB3-8A7F-5C6AB7C2A43D}
