@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Bmi270", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.MicroGraphics", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj", "{DB4C8FC0-18A8-4735-933B-D1FCE59FC1E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\lib\Meadow.Logging.csproj", "{A01BAE24-E0E4-458D-A5BA-9C10C4224354}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj", "{A01BAE24-E0E4-458D-A5BA-9C10C4224354}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Modbus", "..\..\Meadow.Modbus\src\Meadow.Modbus\Meadow.Modbus.csproj", "{2D1FC26C-C80D-42E8-92BD-25BE517AC663}"
 EndProject
