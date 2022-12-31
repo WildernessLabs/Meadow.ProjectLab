@@ -1,4 +1,3 @@
-using System;
 using Meadow.Foundation.Audio;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
@@ -10,6 +9,7 @@ using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Devices
 {
@@ -39,8 +39,6 @@ namespace Meadow.Devices
         {
             // v2+ stuff
             Mcp23008? mcp_1 = null;
-            Mcp23008? mcp_2 = null;
-            Mcp23008? mcp_Version = null;
 
             Logger?.Debug("Initializing Project Lab...");
 
@@ -92,42 +90,6 @@ namespace Meadow.Devices
                 Logger?.Debug($"Failed to create MCP1: {e.Message}, could be a v1 board");
             }
 
-            IDigitalInputPort? mcp2_int = null;
-            try
-            {
-                if(mcp_1 != null)
-                {
-                    // MCP the Second
-                    if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
-                    {
-                        mcp2_int = device.CreateDigitalInputPort(
-                            device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
-                    }
-
-                    mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
-
-                    Logger?.Trace("Mcp_2 up");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger?.Debug($"Failed to create MCP2: {e.Message}");
-                mcp2_int?.Dispose();
-            }
-            
-            try
-            {
-                if (mcp_1 != null)
-                {
-                    mcp_Version = new Mcp23008(I2cBus, address: 0x27);
-                    Logger?.Trace("Mcp_Version up");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger?.Debug($"ERR creating the MCP that has version information: {e.Message}");
-            }
-
             if (mcp_1 == null)
             {
                 Logger?.Debug("Instantiating Project Lab v1 specific hardware");
@@ -135,8 +97,8 @@ namespace Meadow.Devices
             }
             else
             {
-                Logger?.Debug("Instantiating Project Lab v2 specific hardware");
-                Hardware = new ProjectLabHardwareV2(device, SpiBus, I2cBus, mcp_1, mcp_2, mcp_Version);
+                Logger?.Info("Instantiating Project Lab v2 specific hardware");
+                Hardware = new ProjectLabHardwareV2(device, SpiBus, I2cBus, mcp_1);
             }
         }
 
