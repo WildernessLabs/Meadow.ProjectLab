@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj", "{E56BD47C-4997-4831-833C-EA35C83F89B7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj", "{35B3DDB4-71EF-4A68-B242-982C71126F3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +121,12 @@ Global
 		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E56BD47C-4997-4831-833C-EA35C83F89B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,6 +144,7 @@ Global
 		{2D1FC26C-C80D-42E8-92BD-25BE517AC663} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{18EE7297-3E8D-4B94-B6E3-319991927D58} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{E56BD47C-4997-4831-833C-EA35C83F89B7} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
+		{35B3DDB4-71EF-4A68-B242-982C71126F3E} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A24E3C-F7F9-4EB3-8A7F-5C6AB7C2A43D}
