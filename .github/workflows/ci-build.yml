@@ -22,13 +22,13 @@ jobs:
       with:
         repository: WildernessLabs/Meadow.Contracts
         path: Meadow.Contracts
-        ref: ${{ env.GITHUB_REF_NAME }}
+        ref: develop
     - name: Checkout Meadow.Units
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Units
         path: Meadow.Units
-        ref: ${{ env.GITHUB_REF_NAME }}
+        ref: develop
     - name: Checkout Meadow.Logging
       uses: actions/checkout@v3
       with:

@@ -11,9 +11,9 @@ namespace Meadow.Devices
 {
     internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
-        private Mcp23008 mcp1;
-        private Mcp23008 mcp2;
-        private Mcp23008? mcpVersion;
+        private Mcp23008 mcp_1;
+        private Mcp23008 mcp_2;
+        private Mcp23008? mcp_Version;
 
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
@@ -40,15 +40,43 @@ namespace Meadow.Devices
             IF7FeatherMeadowDevice device,
             ISpiBus spiBus,
             II2cBus i2cBus,
-            Mcp23008 mcp1, Mcp23008 mcp2, Mcp23008? mcpVersion
+            Mcp23008 mcp1
             ) : base(device, spiBus, i2cBus)
         {
-            this.mcp1 = mcp1;
-            this.mcp2 = mcp2;
-            this.mcpVersion = mcpVersion;
+            this.mcp_1 = mcp1;
+            IDigitalInputPort? mcp2_int = null;
+
+            try
+            {
+                // MCP the Second
+                if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
+                {
+                    mcp2_int = device.CreateDigitalInputPort(
+                        device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                }
+
+                mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
+
+                Logger?.Info("Mcp_2 up");
+            }
+            catch (Exception e)
+            {
+                Logger?.Trace($"Failed to create MCP2: {e.Message}");
+                mcp2_int?.Dispose();
+            }
+
+            try
+            {
+                mcp_Version = new Mcp23008(I2cBus, address: 0x27);
+                Logger?.Info("Mcp_Version up");
+            }
+            catch (Exception e)
+            {
+                Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
+            }
 
             //---- instantiate display
-            Logger?.Info("Instantiating display.");
+            Logger?.Trace("Instantiating display");
             var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
             var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
             var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
@@ -61,10 +89,10 @@ namespace Meadow.Devices
                 resetPort: resetPort,
                 width: 240, height: 240,
                 colorMode: ColorType.Format16bppRgb565);
-            Logger?.Info("Display up.");
+            Logger?.Trace("Display up");
 
             //---- buttons
-            Logger?.Info("Instantiating buttons.");
+            Logger?.Trace("Instantiating buttons");
             var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             LeftButton = new PushButton(leftPort);
             var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
@@ -73,7 +101,7 @@ namespace Meadow.Devices
             UpButton = new PushButton(upPort);
             var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             DownButton = new PushButton(downPort);
-            Logger?.Info("Buttons up.");
+            Logger?.Trace("Buttons up");
         }
 
         public override string RevisionString
@@ -83,13 +111,13 @@ namespace Meadow.Devices
                 // TODO: figure this out from MCP3?
                 if (revision == null)
                 {
-                    if (mcpVersion == null)
+                    if (mcp_Version == null)
                     {
                         revision = $"v2.x";
                     }
                     else
                     {
-                        byte rev = mcpVersion.ReadFromPorts(Mcp23xxx.PortBank.A);
+                        byte rev = mcp_Version.ReadFromPorts(Mcp23xxx.PortBank.A);
                         //mapping? 0 == d2.d?
                         revision = $"v2.{rev}";
                     }
@@ -105,7 +133,7 @@ namespace Meadow.Devices
             {
                 var port = device.CreateSerialPort(device.SerialPortNames.Com4, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
-                var serialEnable = mcp2.CreateDigitalOutputPort(mcp2.Pins.GP0, false);
+                var serialEnable = mcp_2.CreateDigitalOutputPort(mcp_2.Pins.GP0, false);
 
                 return new ModbusRtuClient(port, serialEnable);
             }
