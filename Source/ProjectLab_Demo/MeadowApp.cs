@@ -14,7 +14,7 @@ namespace ProjLab_Demo
     {
         DisplayController displayController;
         RgbPwmLed onboardLed;
-        ProjectLab projLab;
+        IProjectLabHardware projLab;
 
         public override Task Initialize()
         {
@@ -32,7 +32,7 @@ namespace ProjLab_Demo
             Resolver.Log.Info("RGB LED up");
 
             //==== instantiate the project lab hardware
-            projLab = new ProjectLab();
+            projLab = ProjectLab.CreateProjectLab();
 
             Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.RevisionString}");
 
