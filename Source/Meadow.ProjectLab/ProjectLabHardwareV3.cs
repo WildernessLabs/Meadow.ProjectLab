@@ -10,9 +10,9 @@ using System.Threading;
 
 namespace Meadow.Devices
 {
-    internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
-    { 
-        public Mcp23008 Mcp_1 {get;protected set;}
+    internal class ProjectLabHardwareV3 : ProjectLabHardwareBase
+    {
+        public Mcp23008 Mcp_1 { get; protected set; }
         public Mcp23008 Mcp_2 { get; protected set; }
         public Mcp23008? Mcp_Version { get; protected set; }
 
@@ -37,8 +37,8 @@ namespace Meadow.Devices
         /// </summary>
         public override PushButton? RightButton { get; }
 
-        public ProjectLabHardwareV2(
-            IF7FeatherMeadowDevice device,
+        public ProjectLabHardwareV3(
+            IF7CoreComputeMeadowDevice device,
             ISpiBus spiBus,
             II2cBus i2cBus,
             Mcp23008 mcp1
@@ -83,13 +83,12 @@ namespace Meadow.Devices
             var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
             Thread.Sleep(50);
 
-            Display = new St7789(
+            Display = new Ili9341(
                 spiBus: SpiBus,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
-                width: 240, height: 240,
-                colorMode: ColorType.Format16bppRgb565);
+                width: 240, height: 320);
             Logger?.Trace("Display up");
 
             //---- buttons
@@ -108,7 +107,7 @@ namespace Meadow.Devices
             try
             {
                 Logger?.Trace("Instantiating speaker");
-                Speaker = new PiezoSpeaker(device, device.Pins.D11);
+                Speaker = new PiezoSpeaker(device, device.Pins.D20);
                 Logger?.Trace("Speaker up");
             }
             catch (Exception ex)
@@ -126,13 +125,13 @@ namespace Meadow.Devices
                 {
                     if (Mcp_Version == null)
                     {
-                        revision = $"v2.x";
+                        revision = $"v3.x";
                     }
                     else
                     {
                         byte rev = Mcp_Version.ReadFromPorts(Mcp23xxx.PortBank.A);
                         //mapping? 0 == d2.d?
-                        revision = $"v2.{rev}";
+                        revision = $"v3.{rev}";
                     }
                 }
                 return revision;

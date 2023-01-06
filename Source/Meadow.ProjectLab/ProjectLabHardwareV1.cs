@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
@@ -14,7 +15,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
-        public override St7789? Display { get; }
+        public override IGraphicsDisplay? Display { get; }
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
@@ -53,6 +54,19 @@ namespace Meadow.Devices
             UpButton = GetPushButton(device, device.Pins.D15);
             DownButton = GetPushButton(device, device.Pins.D02);
             Logger?.Trace("Buttons up");
+
+            //---- speaker
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                Speaker = new PiezoSpeaker(device, device.Pins.D11);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
+
         }
 
         public override string RevisionString => revision;

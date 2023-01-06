@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
@@ -39,15 +40,15 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the Piezo noise maker on the Project Lab board
         /// </summary>
-        public PiezoSpeaker? Speaker { get; }
+        public PiezoSpeaker? Speaker { get; protected set; }
         /// <summary>
         /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
         /// </summary>
         public Bmi270? MotionSensor { get; }
         /// <summary>
-        /// Gets the ST7789 Display on the Project Lab board
+        /// Gets the Display on the Project Lab board
         /// </summary>
-        public abstract St7789? Display { get; }
+        public abstract IGraphicsDisplay? Display { get; }
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
@@ -69,7 +70,7 @@ namespace Meadow.Devices
         /// </summary>
         public virtual string RevisionString { get; set; } = "unknown";
 
-        public ProjectLabHardwareBase(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
+        public ProjectLabHardwareBase(IMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
         {
             SpiBus = spiBus;
             I2cBus = i2cBus;
@@ -99,17 +100,6 @@ namespace Meadow.Devices
             catch (Exception ex)
             {
                 Resolver.Log.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
-            }
-
-            try
-            {
-                Logger?.Trace("Instantiating speaker");
-                Speaker = new PiezoSpeaker(device, device.Pins.D11);
-                Logger?.Trace("Speaker up");
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
             }
 
             try
