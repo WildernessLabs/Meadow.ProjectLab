@@ -43,7 +43,7 @@ namespace Meadow.Devices
             Mcp23008 mcp1
             ) : base(device, spiBus, i2cBus)
         {
-            this.Mcp_1 = mcp1;
+            Mcp_1 = mcp1;
             IDigitalInputPort? mcp2_int = null;
 
             try
@@ -89,6 +89,9 @@ namespace Meadow.Devices
                 resetPort: resetPort,
                 width: 240, height: 240,
                 colorMode: ColorType.Format16bppRgb565);
+
+            Display.SetRotation(TftSpiBase.Rotation.Rotate_270);
+
             Logger?.Trace("Display up");
 
             //---- buttons
