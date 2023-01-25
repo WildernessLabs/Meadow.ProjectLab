@@ -46,7 +46,7 @@ namespace Meadow.Devices
                         width: 240, height: 240,
                         colorMode: ColorType.Format16bppRgb565);
 
-            Display.SetRotation(TftSpiBase.Rotation.Rotate_270);
+            Display.SetRotation(RotationType._270Degrees);
 
             Logger?.Trace("Display up");
 
