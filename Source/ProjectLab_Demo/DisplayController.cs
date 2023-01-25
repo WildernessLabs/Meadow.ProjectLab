@@ -93,7 +93,6 @@ namespace ProjLab_Demo
         {
             graphics = new MicroGraphics(display)
             {
-                Rotation = RotationType._90Degrees,
                 CurrentFont = new Font12x16()
             };
 
