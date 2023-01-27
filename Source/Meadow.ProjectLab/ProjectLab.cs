@@ -15,7 +15,7 @@ namespace Meadow.Devices
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static IProjectLabHardware CreateProjectLab()
+        public static IProjectLabHardware Create()
         {
             IProjectLabHardware hardware;
             Logger? logger = Resolver.Log;
