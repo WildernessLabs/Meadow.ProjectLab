@@ -44,7 +44,7 @@ namespace Meadow.Devices
                         dcPin: device.Pins.A04,
                         resetPin: device.Pins.A05,
                         width: 240, height: 240,
-                        colorMode: ColorType.Format16bppRgb565);
+                        colorMode: ColorMode.Format16bppRgb565);
 
             Display.SetRotation(RotationType._270Degrees);
 
@@ -68,7 +68,8 @@ namespace Meadow.Devices
         {
             if (Resolver.Device is F7FeatherV1 device)
             {
-                var port = device.CreateSerialPort(device.SerialPortNames.Com4, baudRate, dataBits, parity, stopBits);
+                var portName = device.PlatformOS.GetSerialPortName("com4");
+                var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
                 var serialEnable = device.CreateDigitalOutputPort(device.Pins.D09, false);
                 return new ModbusRtuClient(port, serialEnable);

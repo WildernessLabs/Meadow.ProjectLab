@@ -10,8 +10,8 @@ using System.Threading;
 namespace Meadow.Devices
 {
     internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
-    { 
-        public Mcp23008 Mcp_1 {get;protected set;}
+    {
+        public Mcp23008 Mcp_1 { get; protected set; }
         public Mcp23008 Mcp_2 { get; protected set; }
         public Mcp23008? Mcp_Version { get; protected set; }
 
@@ -88,7 +88,7 @@ namespace Meadow.Devices
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
                 width: 240, height: 240,
-                colorMode: ColorType.Format16bppRgb565);
+                colorMode: ColorMode.Format16bppRgb565);
 
             Display.SetRotation(RotationType._270Degrees);
 
@@ -134,7 +134,8 @@ namespace Meadow.Devices
         {
             if (Resolver.Device is F7FeatherV2 device)
             {
-                var port = device.CreateSerialPort(device.SerialPortNames.Com4, baudRate, dataBits, parity, stopBits);
+                var portName = device.PlatformOS.GetSerialPortName("com4");
+                var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
                 var serialEnable = Mcp_2.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
 
