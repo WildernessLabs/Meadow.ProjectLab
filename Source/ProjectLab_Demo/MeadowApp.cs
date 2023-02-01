@@ -32,7 +32,7 @@ namespace ProjLab_Demo
             Resolver.Log.Info("RGB LED up");
 
             //==== instantiate the project lab hardware
-            projLab = ProjectLab.CreateProjectLab();
+            projLab = ProjectLab.Create();
 
             Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.RevisionString}");
 
