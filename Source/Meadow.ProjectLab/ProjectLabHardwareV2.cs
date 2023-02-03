@@ -11,9 +11,9 @@ namespace Meadow.Devices
 {
     internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
-        private Mcp23008 mcp_1;
-        private Mcp23008 mcp_2;
-        private Mcp23008? mcp_Version;
+        public Mcp23008 Mcp_1 { get; protected set; }
+        public Mcp23008 Mcp_2 { get; protected set; }
+        public Mcp23008? Mcp_Version { get; protected set; }
 
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
@@ -43,7 +43,7 @@ namespace Meadow.Devices
             Mcp23008 mcp1
             ) : base(device, spiBus, i2cBus)
         {
-            this.mcp_1 = mcp1;
+            Mcp_1 = mcp1;
             IDigitalInputPort? mcp2_int = null;
 
             try
@@ -55,7 +55,7 @@ namespace Meadow.Devices
                         device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 }
 
-                mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
+                Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
 
                 Logger?.Info("Mcp_2 up");
             }
@@ -67,7 +67,7 @@ namespace Meadow.Devices
 
             try
             {
-                mcp_Version = new Mcp23008(I2cBus, address: 0x27);
+                Mcp_Version = new Mcp23008(I2cBus, address: 0x27);
                 Logger?.Info("Mcp_Version up");
             }
             catch (Exception e)
@@ -88,7 +88,10 @@ namespace Meadow.Devices
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
                 width: 240, height: 240,
-                colorMode: ColorType.Format16bppRgb565);
+                colorMode: ColorMode.Format16bppRgb565);
+
+            Display.SetRotation(RotationType._270Degrees);
+
             Logger?.Trace("Display up");
 
             //---- buttons
@@ -111,13 +114,13 @@ namespace Meadow.Devices
                 // TODO: figure this out from MCP3?
                 if (revision == null)
                 {
-                    if (mcp_Version == null)
+                    if (Mcp_Version == null)
                     {
                         revision = $"v2.x";
                     }
                     else
                     {
-                        byte rev = mcp_Version.ReadFromPorts(Mcp23xxx.PortBank.A);
+                        byte rev = Mcp_Version.ReadFromPorts(Mcp23xxx.PortBank.A);
                         //mapping? 0 == d2.d?
                         revision = $"v2.{rev}";
                     }
@@ -131,9 +134,10 @@ namespace Meadow.Devices
         {
             if (Resolver.Device is F7FeatherV2 device)
             {
-                var port = device.CreateSerialPort(device.SerialPortNames.Com4, baudRate, dataBits, parity, stopBits);
+                var portName = device.PlatformOS.GetSerialPortName("com4");
+                var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
-                var serialEnable = mcp_2.CreateDigitalOutputPort(mcp_2.Pins.GP0, false);
+                var serialEnable = Mcp_2.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
 
                 return new ModbusRtuClient(port, serialEnable);
             }

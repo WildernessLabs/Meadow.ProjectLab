@@ -14,7 +14,7 @@ namespace ProjLab_Demo
     {
         DisplayController displayController;
         RgbPwmLed onboardLed;
-        ProjectLab projLab;
+        IProjectLabHardware projLab;
 
         public override Task Initialize()
         {
@@ -32,7 +32,7 @@ namespace ProjLab_Demo
             Resolver.Log.Info("RGB LED up");
 
             //==== instantiate the project lab hardware
-            projLab = new ProjectLab();
+            projLab = ProjectLab.Create();
 
             Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.RevisionString}");
 
@@ -138,7 +138,7 @@ namespace ProjLab_Demo
 
         private void Bme688Updated(object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> e)
         {
-            Resolver.Log.Info($"BME688: {(int)e.New.Temperature?.Celsius}°C - {(int)e.New.Humidity?.Percent}% - {(int)e.New.Pressure?.Millibar}mbar");
+            Resolver.Log.Info($"BME688: {(int)e.New.Temperature?.Celsius}C - {(int)e.New.Humidity?.Percent}% - {(int)e.New.Pressure?.Millibar}mbar");
             if (displayController != null)
             {
                 displayController.AtmosphericConditions = e.New;
