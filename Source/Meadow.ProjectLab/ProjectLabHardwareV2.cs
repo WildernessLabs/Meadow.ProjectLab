@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Meadow.Devices
 {
-    internal class ProjectLabHardwareV2 : ProjectLabHardwareBase
+    public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
         public Mcp23008 Mcp_1 { get; protected set; }
         public Mcp23008 Mcp_2 { get; protected set; }
@@ -36,7 +36,7 @@ namespace Meadow.Devices
         /// </summary>
         public override PushButton? RightButton { get; }
 
-        public ProjectLabHardwareV2(
+        internal ProjectLabHardwareV2(
             IF7FeatherMeadowDevice device,
             ISpiBus spiBus,
             II2cBus i2cBus,

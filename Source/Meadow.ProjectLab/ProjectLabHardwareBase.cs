@@ -122,7 +122,6 @@ namespace Meadow.Devices
             {
                 Resolver.Log.Error($"Unable to create the BMI270 IMU: {ex.Message}");
             }
-
         }
 
         /// <summary>

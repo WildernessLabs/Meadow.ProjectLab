@@ -7,7 +7,7 @@ using System;
 
 namespace Meadow.Devices
 {
-    internal class ProjectLabHardwareV1 : ProjectLabHardwareBase
+    public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     {
         private string revision = "v1.x";
 
@@ -32,7 +32,7 @@ namespace Meadow.Devices
         /// </summary>
         public override PushButton? RightButton { get; }
 
-        public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
+        internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
             : base(device, spiBus, i2cBus)
         {
             //---- create our display
