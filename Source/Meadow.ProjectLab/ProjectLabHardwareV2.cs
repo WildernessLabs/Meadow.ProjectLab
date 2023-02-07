@@ -11,30 +11,56 @@ namespace Meadow.Devices
 {
     public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
+        /// <summary>
+        /// The MCP23008 IO expander connected to internal peripherals
+        /// </summary>
         public Mcp23008 Mcp_1 { get; protected set; }
-        public Mcp23008 Mcp_2 { get; protected set; }
-        public Mcp23008? Mcp_Version { get; protected set; }
+
+        /// <summary>
+        /// The MCP23008 IO expander connected to IO headers and terminals on Project Lab
+        /// </summary>
+        public Mcp23008? Mcp_2 { get; protected set; }
+
+        /// <summary>
+        /// The MCP23008 IO expander that contains the ProjectLab hardware version 
+        /// </summary>
+        Mcp23008? Mcp_Version { get; set; }
 
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
         public override St7789? Display { get; }
+
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
         public override PushButton? UpButton { get; }
+
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
         public override PushButton? DownButton { get; }
+
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
         public override PushButton? LeftButton { get; }
+
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
         public override PushButton? RightButton { get; }
+
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 1
+        /// </summary>
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; }
+
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 2
+        /// </summary>
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; }
+
 
         internal ProjectLabHardwareV2(
             IF7FeatherMeadowDevice device,
@@ -105,13 +131,67 @@ namespace Meadow.Devices
             var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             DownButton = new PushButton(downPort);
             Logger?.Trace("Buttons up");
+
+            SetMikroBusPins();
+        }
+
+        void SetMikroBusPins()
+        {
+            (IPin AN,
+            IPin RST,
+            IPin CS,
+            IPin SCK,
+            IPin CIPO,
+            IPin COPI,
+            IPin PWM,
+            IPin INT,
+            IPin RX,
+            IPin TX,
+            IPin SCL,
+            IPin SCA) MikroBus1Pins =
+                (Resolver.Device.GetPin("A02"),
+                 Mcp_2.Pins.GP4,
+                 Mcp_2.Pins.GP5,
+                 Resolver.Device.GetPin("SCK"),
+                 Resolver.Device.GetPin("CIPO"),
+                 Resolver.Device.GetPin("COPI"),
+                 Resolver.Device.GetPin("D03"),
+                 Mcp_2.Pins.GP6,
+                 Resolver.Device.GetPin("D13"),
+                 Resolver.Device.GetPin("D12"),
+                 Resolver.Device.GetPin("D07"),
+                 Resolver.Device.GetPin("D08"));
+
+            (IPin AN,
+            IPin RST,
+            IPin CS,
+            IPin SCK,
+            IPin CIPO,
+            IPin COPI,
+            IPin PWM,
+            IPin INT,
+            IPin RX,
+            IPin TX,
+            IPin SCL,
+            IPin SCA) MikroBus2Pins =
+                (Resolver.Device.GetPin("A03"),
+                 Mcp_2.Pins.GP1,
+                 Mcp_2.Pins.GP2,
+                 Resolver.Device.GetPin("SCK"),
+                 Resolver.Device.GetPin("CIPO"),
+                 Resolver.Device.GetPin("COPI"),
+                 Resolver.Device.GetPin("D04"),
+                 Mcp_2.Pins.GP3,
+                 Resolver.Device.GetPin("D13"),
+                 Resolver.Device.GetPin("D12"),
+                 Resolver.Device.GetPin("D07"),
+                 Resolver.Device.GetPin("D08"));
         }
 
         public override string RevisionString
         {
             get
             {
-                // TODO: figure this out from MCP3?
                 if (revision == null)
                 {
                     if (Mcp_Version == null)
@@ -121,14 +201,13 @@ namespace Meadow.Devices
                     else
                     {
                         byte rev = Mcp_Version.ReadFromPorts(Mcp23xxx.PortBank.A);
-                        //mapping? 0 == d2.d?
                         revision = $"v2.{rev}";
                     }
                 }
                 return revision;
             }
         }
-        protected string? revision;
+        string? revision;
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {

@@ -15,22 +15,36 @@ namespace Meadow.Devices
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
         public override St7789? Display { get; }
+
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
         public override PushButton? UpButton { get; }
+
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
         public override PushButton? DownButton { get; }
+
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
         public override PushButton? LeftButton { get; }
+
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
         public override PushButton? RightButton { get; }
+
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 1
+        /// </summary>
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; }
+
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 2
+        /// </summary>
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; }
 
         internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
             : base(device, spiBus, i2cBus)
@@ -57,6 +71,62 @@ namespace Meadow.Devices
             UpButton = GetPushButton(device, device.Pins.D15);
             DownButton = GetPushButton(device, device.Pins.D02);
             Logger?.Trace("Buttons up");
+
+            SetMikroBusPins();
+        }
+
+        void SetMikroBusPins()
+        {
+            (IPin AN,
+            IPin RST,
+            IPin CS,
+            IPin SCK,
+            IPin CIPO,
+            IPin COPI,
+            IPin PWM,
+            IPin INT,
+            IPin RX,
+            IPin TX,
+            IPin SCL,
+            IPin SCA) MikroBus1Pins =
+                (Resolver.Device.GetPin("A00"),
+                 null,
+                 Resolver.Device.GetPin("D14"),
+                 Resolver.Device.GetPin("SCK"),
+                 Resolver.Device.GetPin("CIPO"),
+                 Resolver.Device.GetPin("COPI"),
+                 Resolver.Device.GetPin("D04"),
+                 Resolver.Device.GetPin("D03"),
+                 Resolver.Device.GetPin("D12"),
+                 Resolver.Device.GetPin("D13"),
+                 Resolver.Device.GetPin("D07"),
+                 Resolver.Device.GetPin("D08"));
+
+
+            (IPin AN,
+            IPin RST,
+            IPin CS,
+            IPin SCK,
+            IPin CIPO,
+            IPin COPI,
+            IPin PWM,
+            IPin INT,
+            IPin RX,
+            IPin TX,
+            IPin SCL,
+            IPin SCA) MikroBus2Pins =
+                (Resolver.Device.GetPin("A01"),
+                 null,
+                 Resolver.Device.GetPin("A02"),
+                 Resolver.Device.GetPin("SCK"),
+                 Resolver.Device.GetPin("CIPO"),
+                 Resolver.Device.GetPin("COPI"),
+                 Resolver.Device.GetPin("D03"),
+                 Resolver.Device.GetPin("D04"),
+                 Resolver.Device.GetPin("D12"),
+                 Resolver.Device.GetPin("D13"),
+                 Resolver.Device.GetPin("D07"),
+                 Resolver.Device.GetPin("D08"));
         }
 
         public override string RevisionString => revision;
