@@ -24,7 +24,7 @@ namespace ProjLab_Demo
 
             //==== RGB LED
             Resolver.Log.Info("Initializing onboard RGB LED");
-            onboardLed = new RgbPwmLed(device: Device,
+            onboardLed = new RgbPwmLed(
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
