@@ -45,7 +45,7 @@ jobs:
       with:
         repository: WildernessLabs/Meadow.Core
         path: Meadow.Core
-        ref: ${{ env.GITHUB_REF_NAME }} # match Core branch to this branch
+        ref: develop
         token: ${{ secrets.CI_ACCESS_TOKEN }}
     - name: Checkout Meadow.Foundation
       uses: actions/checkout@v3
