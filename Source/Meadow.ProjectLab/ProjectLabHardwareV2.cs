@@ -139,7 +139,7 @@ namespace Meadow.Devices
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
                 var serialEnable = Mcp_2.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
 
-                return new ModbusRtuClient(port, serialEnable);
+                return new ProjectLabModbusRtuClient(port, serialEnable);
             }
 
             // this is v2 instance hardware, so we should never get here

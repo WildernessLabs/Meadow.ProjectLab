@@ -38,7 +38,6 @@ namespace Meadow.Devices
             //---- create our display
             Logger?.Trace("Instantiating display");
             Display = new St7789(
-                        device: device,
                         spiBus: SpiBus,
                         chipSelectPin: device.Pins.A03,
                         dcPin: device.Pins.A04,
@@ -62,7 +61,7 @@ namespace Meadow.Devices
         public override string RevisionString => revision;
 
         private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin)
-             => new PushButton(Resolver.Device, pin, ResistorMode.InternalPullDown);
+             => new PushButton(pin, ResistorMode.InternalPullDown);
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {

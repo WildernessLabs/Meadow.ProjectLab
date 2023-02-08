@@ -104,7 +104,7 @@ namespace Meadow.Devices
             try
             {
                 Logger?.Trace("Instantiating speaker");
-                Speaker = new PiezoSpeaker(device, device.Pins.D11);
+                Speaker = new PiezoSpeaker(device.Pins.D11);
                 Logger?.Trace("Speaker up");
             }
             catch (Exception ex)
