@@ -27,5 +27,31 @@ namespace Meadow.Devices
         public PushButton? DownButton { get; }
 
         public string RevisionString { get; }
+
+        public (IPin AN,
+                IPin RST,
+                IPin CS,
+                IPin SCK,
+                IPin CIPO,
+                IPin COPI,
+                IPin PWM,
+                IPin INT,
+                IPin RX,
+                IPin TX,
+                IPin SCL,
+                IPin SCA) MikroBus1Pins { get; }
+
+        public (IPin AN,
+                IPin RST,
+                IPin CS,
+                IPin SCK,
+                IPin CIPO,
+                IPin COPI,
+                IPin PWM,
+                IPin INT,
+                IPin RX,
+                IPin TX,
+                IPin SCL,
+                IPin SCA) MikroBus2Pins { get; }
     }
 }
