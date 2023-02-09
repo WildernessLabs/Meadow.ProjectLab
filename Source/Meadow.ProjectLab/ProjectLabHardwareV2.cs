@@ -54,13 +54,12 @@ namespace Meadow.Devices
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
-        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; }
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
 
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 2
         /// </summary>
-        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; }
-
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
         internal ProjectLabHardwareV2(
             IF7FeatherMeadowDevice device,
@@ -137,18 +136,7 @@ namespace Meadow.Devices
 
         void SetMikroBusPins()
         {
-            (IPin AN,
-            IPin RST,
-            IPin CS,
-            IPin SCK,
-            IPin CIPO,
-            IPin COPI,
-            IPin PWM,
-            IPin INT,
-            IPin RX,
-            IPin TX,
-            IPin SCL,
-            IPin SCA) MikroBus1Pins =
+            MikroBus1Pins =
                 (Resolver.Device.GetPin("A02"),
                  Mcp_2.Pins.GP4,
                  Mcp_2.Pins.GP5,
@@ -162,18 +150,7 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D07"),
                  Resolver.Device.GetPin("D08"));
 
-            (IPin AN,
-            IPin RST,
-            IPin CS,
-            IPin SCK,
-            IPin CIPO,
-            IPin COPI,
-            IPin PWM,
-            IPin INT,
-            IPin RX,
-            IPin TX,
-            IPin SCL,
-            IPin SCA) MikroBus2Pins =
+            MikroBus2Pins =
                 (Resolver.Device.GetPin("A03"),
                  Mcp_2.Pins.GP1,
                  Mcp_2.Pins.GP2,
