@@ -121,7 +121,6 @@ namespace Meadow.Devices
                 return new ModbusRtuClient(port, serialEnable);
             }
 
-            // this is v1 instance hardware, so we should never get here
             throw new NotSupportedException();
         }
     }

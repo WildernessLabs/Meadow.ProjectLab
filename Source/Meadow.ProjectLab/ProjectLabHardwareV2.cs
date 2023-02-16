@@ -198,7 +198,6 @@ namespace Meadow.Devices
                 return new ProjectLabModbusRtuClient(port, serialEnable);
             }
 
-            // this is v2 instance hardware, so we should never get here
             throw new NotSupportedException();
         }
     }
