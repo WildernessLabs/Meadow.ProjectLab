@@ -188,7 +188,7 @@ namespace Meadow.Devices
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
-            if (Resolver.Device is F7FeatherV2 device)
+            if (Resolver.Device is F7FeatherBase device)
             {
                 var portName = device.PlatformOS.GetSerialPortName("com4");
                 var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
@@ -198,7 +198,6 @@ namespace Meadow.Devices
                 return new ProjectLabModbusRtuClient(port, serialEnable);
             }
 
-            // this is v2 instance hardware, so we should never get here
             throw new NotSupportedException();
         }
     }
