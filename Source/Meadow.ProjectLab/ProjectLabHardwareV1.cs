@@ -118,7 +118,7 @@ namespace Meadow.Devices
                 var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
                 var serialEnable = device.CreateDigitalOutputPort(device.Pins.D09, false);
-                return new ModbusRtuClient(port, serialEnable);
+                return new ProjectLabModbusRtuClient(port, serialEnable);
             }
 
             throw new NotSupportedException();
