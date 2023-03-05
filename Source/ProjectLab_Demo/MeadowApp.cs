@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Peripherals.Leds;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace ProjLab_Demo
 {
@@ -24,7 +24,7 @@ namespace ProjLab_Demo
 
             //==== RGB LED
             Resolver.Log.Info("Initializing onboard RGB LED");
-            onboardLed = new RgbPwmLed(device: Device,
+            onboardLed = new RgbPwmLed(
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,

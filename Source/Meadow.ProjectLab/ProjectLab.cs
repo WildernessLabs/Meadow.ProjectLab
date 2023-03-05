@@ -23,7 +23,7 @@ namespace Meadow.Devices
             ISpiBus spiBus;
 
             // v2+ stuff
-            Mcp23008? mcp_1 = null;
+            Mcp23008? mcp1 = null;
 
             logger?.Debug("Initializing Project Lab...");
 
@@ -59,23 +59,27 @@ namespace Meadow.Devices
 
             logger?.Debug("I2C Bus instantiated");
 
+            IDigitalInputPort? mcp1Interrupt = null;
+            IDigitalOutputPort? mcp1Reset = null;
+
             try
             {
                 // MCP the First
-                IDigitalInputPort mcp1_int = device.CreateDigitalInputPort(
-                    device.Pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
-                IDigitalOutputPort mcp_Reset = device.CreateDigitalOutputPort(device.Pins.D14);
+                mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D14);
 
-                mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1_int, mcp_Reset);
+                mcp1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
                 logger?.Trace("Mcp_1 up");
             }
             catch (Exception e)
             {
                 logger?.Debug($"Failed to create MCP1: {e.Message}, could be a v1 board");
+                mcp1Interrupt?.Dispose();
+                mcp1Reset?.Dispose();
             }
 
-            if (mcp_1 == null)
+            if (mcp1 == null)
             {
                 logger?.Debug("Instantiating Project Lab v1 specific hardware");
                 hardware = new ProjectLabHardwareV1(device, spiBus, i2cBus);
@@ -83,7 +87,7 @@ namespace Meadow.Devices
             else
             {
                 logger?.Info("Instantiating Project Lab v2 specific hardware");
-                hardware = new ProjectLabHardwareV2(device, spiBus, i2cBus, mcp_1);
+                hardware = new ProjectLabHardwareV2(device, spiBus, i2cBus, mcp1);
             }
 
             return hardware;

@@ -7,7 +7,7 @@ using System;
 
 namespace Meadow.Devices
 {
-    internal class ProjectLabHardwareV1 : ProjectLabHardwareBase
+    public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     {
         private string revision = "v1.x";
 
@@ -15,30 +15,43 @@ namespace Meadow.Devices
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
         public override St7789? Display { get; }
+
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
         public override PushButton? UpButton { get; }
+
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
         public override PushButton? DownButton { get; }
+
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
         public override PushButton? LeftButton { get; }
+
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
         public override PushButton? RightButton { get; }
 
-        public ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 1
+        /// </summary>
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
+
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 2
+        /// </summary>
+        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+
+        internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
             : base(device, spiBus, i2cBus)
         {
             //---- create our display
             Logger?.Trace("Instantiating display");
             Display = new St7789(
-                        device: device,
                         spiBus: SpiBus,
                         chipSelectPin: device.Pins.A03,
                         dcPin: device.Pins.A04,
@@ -57,25 +70,57 @@ namespace Meadow.Devices
             UpButton = GetPushButton(device, device.Pins.D15);
             DownButton = GetPushButton(device, device.Pins.D02);
             Logger?.Trace("Buttons up");
+
+            SetMikroBusPins();
+        }
+
+        void SetMikroBusPins()
+        {
+            MikroBus1Pins =
+                (Resolver.Device.GetPin("A00"),
+                 null,
+                 Resolver.Device.GetPin("D14"),
+                 Resolver.Device.GetPin("SCK"),
+                 Resolver.Device.GetPin("CIPO"),
+                 Resolver.Device.GetPin("COPI"),
+                 Resolver.Device.GetPin("D04"),
+                 Resolver.Device.GetPin("D03"),
+                 Resolver.Device.GetPin("D12"),
+                 Resolver.Device.GetPin("D13"),
+                 Resolver.Device.GetPin("D07"),
+                 Resolver.Device.GetPin("D08"));
+
+            MikroBus2Pins =
+                (Resolver.Device.GetPin("A01"),
+                 null,
+                 Resolver.Device.GetPin("A02"),
+                 Resolver.Device.GetPin("SCK"),
+                 Resolver.Device.GetPin("CIPO"),
+                 Resolver.Device.GetPin("COPI"),
+                 Resolver.Device.GetPin("D03"),
+                 Resolver.Device.GetPin("D04"),
+                 Resolver.Device.GetPin("D12"),
+                 Resolver.Device.GetPin("D13"),
+                 Resolver.Device.GetPin("D07"),
+                 Resolver.Device.GetPin("D08"));
         }
 
         public override string RevisionString => revision;
 
         private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin)
-             => new PushButton(Resolver.Device, pin, ResistorMode.InternalPullDown);
+             => new PushButton(pin, ResistorMode.InternalPullDown);
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
-            if (Resolver.Device is F7FeatherV1 device)
+            if (Resolver.Device is F7FeatherBase device)
             {
                 var portName = device.PlatformOS.GetSerialPortName("com4");
                 var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
                 var serialEnable = device.CreateDigitalOutputPort(device.Pins.D09, false);
-                return new ModbusRtuClient(port, serialEnable);
+                return new ProjectLabModbusRtuClient(port, serialEnable);
             }
 
-            // this is v1 instance hardware, so we should never get here
             throw new NotSupportedException();
         }
     }
