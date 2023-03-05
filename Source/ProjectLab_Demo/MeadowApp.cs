@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Peripherals.Leds;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace ProjLab_Demo
 {
