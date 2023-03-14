@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Meadow.Devices
 {
-    public class ProjectLabHardwareV2 : ProjectLabHardwareBase
+    public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     {
         /// <summary>
         /// The MCP23008 IO expander connected to internal peripherals
@@ -28,7 +28,7 @@ namespace Meadow.Devices
         Mcp23008? Mcp_Version { get; set; }
 
         /// <summary>
-        /// Gets the ST7789 Display on the Project Lab board
+        /// Gets the Ili9341 Display on the Project Lab board
         /// </summary>
         public override IGraphicsDisplay? Display { get; }
 
@@ -67,8 +67,8 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareV2(
-            IF7FeatherMeadowDevice device,
+        internal ProjectLabHardwareV3(
+            IF7CoreComputeMeadowDevice device,
             ISpiBus spiBus,
             II2cBus i2cBus,
             Mcp23008 mcp1
@@ -113,12 +113,12 @@ namespace Meadow.Devices
             var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
             Thread.Sleep(50);
 
-            Display = new St7789(
+            Display = new Ili9341(
                 spiBus: SpiBus,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
-                width: 240, height: 240,
+                width: 240, height: 320,
                 colorMode: ColorMode.Format16bppRgb565);
 
             Logger?.Trace("Display up");
@@ -138,7 +138,7 @@ namespace Meadow.Devices
             try
             {
                 Logger?.Trace("Instantiating speaker");
-                Speaker = new PiezoSpeaker(device.Pins.D11);
+                Speaker = new PiezoSpeaker(device.Pins.D20);
                 Logger?.Trace("Speaker up");
             }
             catch (Exception ex)

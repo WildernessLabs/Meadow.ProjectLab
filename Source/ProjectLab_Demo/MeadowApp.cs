@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 namespace ProjLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2> //   F7FeatherV2>
     {
         DisplayController displayController;
         RgbPwmLed onboardLed;
@@ -21,15 +20,6 @@ namespace ProjLab_Demo
             Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
 
             Resolver.Log.Info("Initialize hardware...");
-
-            //==== RGB LED
-            Resolver.Log.Info("Initializing onboard RGB LED");
-            onboardLed = new RgbPwmLed(
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                CommonType.CommonAnode);
-            Resolver.Log.Info("RGB LED up");
 
             //==== instantiate the project lab hardware
             projLab = ProjectLab.Create();

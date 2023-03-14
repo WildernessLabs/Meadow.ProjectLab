@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
@@ -14,7 +15,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
-        public override St7789? Display { get; }
+        public override IGraphicsDisplay? Display { get; }
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -35,6 +36,11 @@ namespace Meadow.Devices
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
         public override PushButton? RightButton { get; }
+
+        /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public override PiezoSpeaker? Speaker { get; }
 
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
@@ -59,8 +65,6 @@ namespace Meadow.Devices
                         width: 240, height: 240,
                         colorMode: ColorMode.Format16bppRgb565);
 
-            Display.SetRotation(RotationType._270Degrees);
-
             Logger?.Trace("Display up");
 
             //---- buttons
@@ -70,6 +74,17 @@ namespace Meadow.Devices
             UpButton = GetPushButton(device, device.Pins.D15);
             DownButton = GetPushButton(device, device.Pins.D02);
             Logger?.Trace("Buttons up");
+
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                Speaker = new PiezoSpeaker(device.Pins.D11);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
 
             SetMikroBusPins();
         }
