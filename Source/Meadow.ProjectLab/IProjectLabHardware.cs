@@ -13,9 +13,11 @@ namespace Meadow.Devices
     {
         public ISpiBus SpiBus { get; }
         public II2cBus I2cBus { get; }
+
+
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
 
-        public IGraphicsDisplay? Display { get; }
+        public IGraphicsDisplay? Display { get; protected set; }
         public Bh1750? LightSensor { get; }
         public Bme688? EnvironmentalSensor { get; }
         public Bmi270? MotionSensor { get; }

@@ -4,6 +4,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Devices
@@ -15,7 +16,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
-        public override IGraphicsDisplay? Display { get; }
+        public override IGraphicsDisplay? Display { get; set; }
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -52,10 +53,25 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
-            : base(device, spiBus, i2cBus)
+        internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
+            : base(device)
         {
-            //---- create our display
+            I2cBus = i2cBus;
+
+            base.Initialize(device);
+
+            var config = new SpiClockConfiguration(
+                new Frequency(48000, Frequency.UnitType.Kilohertz),
+            SpiClockConfiguration.Mode.Mode3);
+
+            SpiBus = Resolver.Device.CreateSpiBus(
+                device.Pins.SCK,
+                device.Pins.COPI,
+                device.Pins.CIPO,
+                config);
+
+            Logger?.Debug("SPI Bus instantiated");
+
             Logger?.Trace("Instantiating display");
             Display = new St7789(
                         spiBus: SpiBus,

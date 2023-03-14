@@ -1,7 +1,5 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -12,7 +10,6 @@ namespace ProjLab_Demo
     public class MeadowApp : App<F7CoreComputeV2> //   F7FeatherV2>
     {
         DisplayController displayController;
-        RgbPwmLed onboardLed;
         IProjectLabHardware projLab;
 
         public override Task Initialize()
@@ -76,8 +73,6 @@ namespace ProjLab_Demo
             }
 
             //---- heartbeat
-            onboardLed.StartPulse(WildernessLabsColors.PearGreen);
-
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
@@ -109,9 +104,6 @@ namespace ProjLab_Demo
             {
                 displayController.Update();
             }
-
-            Resolver.Log.Info("starting blink");
-            onboardLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
 
             return base.Run();
         }

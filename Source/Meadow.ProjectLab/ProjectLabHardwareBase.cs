@@ -24,22 +24,22 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the SPI Bus
         /// </summary>
-        public ISpiBus SpiBus { get; }
+        public ISpiBus SpiBus { get; protected set; }
 
         /// <summary>
         /// Gets the I2C Bus
         /// </summary>
-        public II2cBus I2cBus { get; }
+        public II2cBus I2cBus { get; protected set; }
 
         /// <summary>
         /// Gets the BH1750 Light Sensor on the Project Lab board
         /// </summary>
-        public Bh1750? LightSensor { get; }
+        public Bh1750? LightSensor { get; private set; }
 
         /// <summary>
         /// Gets the BME688 environmental sensor  on the Project Lab board
         /// </summary>
-        public Bme688? EnvironmentalSensor { get; }
+        public Bme688? EnvironmentalSensor { get; private set; }
 
         /// <summary>
         /// Gets the Piezo noise maker on the Project Lab board
@@ -49,12 +49,12 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
         /// </summary>
-        public Bmi270? MotionSensor { get; }
+        public Bmi270? MotionSensor { get; private set; }
 
         /// <summary>
         /// Gets the display on the Project Lab board
         /// </summary>
-        public abstract IGraphicsDisplay? Display { get; }
+        public abstract IGraphicsDisplay? Display { get; set; }
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -90,11 +90,12 @@ namespace Meadow.Devices
         /// </summary>
         public abstract (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareBase(IF7MeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
+        internal ProjectLabHardwareBase(IF7MeadowDevice device)
         {
-            SpiBus = spiBus;
-            I2cBus = i2cBus;
+        }
 
+        internal virtual void Initialize(IF7MeadowDevice device)
+        {
             try
             {
                 Logger?.Trace("Instantiating light sensor");

@@ -5,6 +5,7 @@ using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -30,7 +31,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the Ili9341 Display on the Project Lab board
         /// </summary>
-        public override IGraphicsDisplay? Display { get; }
+        public override IGraphicsDisplay? Display { get; set; }
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -67,33 +68,61 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareV3(
-            IF7CoreComputeMeadowDevice device,
-            ISpiBus spiBus,
-            II2cBus i2cBus,
-            Mcp23008 mcp1
-            ) : base(device, spiBus, i2cBus)
+        internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
+            : base(device)
         {
-            Mcp_1 = mcp1;
-            IDigitalInputPort? mcp2_int = null;
+            I2cBus = i2cBus;
+
+            base.Initialize(device);
+
+            var config = new SpiClockConfiguration(
+                new Frequency(12000, Frequency.UnitType.Kilohertz),
+                SpiClockConfiguration.Mode.Mode0);
+
+            SpiBus = Resolver.Device.CreateSpiBus(
+                device.Pins.SCK,
+                device.Pins.COPI,
+                device.Pins.CIPO,
+                config);
+
+            IDigitalInputPort? mcp1Interrupt = null;
+            IDigitalOutputPort? mcp1Reset = null;
+
+            try
+            {
+                // MCP the First
+                mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.SPI5_SCK, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
+
+                Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
+
+                Logger?.Trace("Mcp_1 up");
+            }
+            catch (Exception e)
+            {
+                Logger?.Trace($"Failed to create MCP1: {e.Message}");
+                mcp1Interrupt?.Dispose();
+            }
+
+            IDigitalInputPort? mcp2Interrupt = null;
 
             try
             {
                 // MCP the Second
                 if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
                 {
-                    mcp2_int = device.CreateDigitalInputPort(
+                    mcp2Interrupt = device.CreateDigitalInputPort(
                         device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 }
 
-                Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
+                Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2Interrupt);
 
                 Logger?.Info("Mcp_2 up");
             }
             catch (Exception e)
             {
                 Logger?.Trace($"Failed to create MCP2: {e.Message}");
-                mcp2_int?.Dispose();
+                mcp2Interrupt?.Dispose();
             }
 
             try
@@ -108,9 +137,10 @@ namespace Meadow.Devices
 
             //---- instantiate display
             Logger?.Trace("Instantiating display");
-            var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
-            var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
-            var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
+
+            var chipSelectPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
+            var dcPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
+            var resetPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP7);
             Thread.Sleep(50);
 
             Display = new Ili9341(
@@ -125,13 +155,13 @@ namespace Meadow.Devices
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");
-            var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var leftPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             LeftButton = new PushButton(leftPort);
-            var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var rightPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             RightButton = new PushButton(rightPort);
-            var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var upPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             UpButton = new PushButton(upPort);
-            var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var downPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             DownButton = new PushButton(downPort);
             Logger?.Trace("Buttons up");
 
