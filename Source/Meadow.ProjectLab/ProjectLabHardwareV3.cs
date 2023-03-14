@@ -68,6 +68,8 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
+        IDigitalOutputPort enablePort;
+
         internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
             : base(device)
         {
@@ -92,6 +94,7 @@ namespace Meadow.Devices
             {
                 // MCP the First
                 mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.SPI5_SCK, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+
                 mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
 
                 Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
@@ -137,6 +140,8 @@ namespace Meadow.Devices
 
             //---- instantiate display
             Logger?.Trace("Instantiating display");
+
+            enablePort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
 
             var chipSelectPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
             var dcPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
