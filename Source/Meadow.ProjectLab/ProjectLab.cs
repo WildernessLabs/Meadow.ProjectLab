@@ -51,10 +51,8 @@ namespace Meadow.Devices
 
             try
             {
-                //feather boards only
                 if (device is IF7FeatherMeadowDevice)
                 {
-                    // MCP the First
                     mcp1Interrupt = device.CreateDigitalInputPort(pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                     mcp1Reset = device.CreateDigitalOutputPort(pins.D14);
 

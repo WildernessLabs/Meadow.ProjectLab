@@ -78,7 +78,7 @@ namespace Meadow.Devices
             base.Initialize(device);
 
             var config = new SpiClockConfiguration(
-                new Frequency(12000, Frequency.UnitType.Kilohertz),
+                new Frequency(48000, Frequency.UnitType.Kilohertz),
                 SpiClockConfiguration.Mode.Mode0);
 
             SpiBus = Resolver.Device.CreateSpiBus(
