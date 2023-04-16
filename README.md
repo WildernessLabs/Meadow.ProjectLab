@@ -26,7 +26,7 @@ Project Lab is the most functional IoT prototyping platform on the planet. No mo
     </tr>
     <tr>
         <td>
-            You can get a Project Lab from the <a href="https://store.wildernesslabs.co/collections/frontpage/products/project-lab-board">Wilderness Labs store</a>.
+            You can get a Project Lab fully assembled from the <a href="https://store.wildernesslabs.co/collections/frontpage/products/project-lab-board">Wilderness Labs store</a>.
         </td>
         <td> 
             It's also designed so that it can be assembled at home for the adventurous. All design files can be found in the <a href="Source/Hardware">Hardware Design</a> folder.
