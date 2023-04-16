@@ -11,7 +11,7 @@ Project Lab is the most functional IoT prototyping platform on the planet. No mo
 * [Pinout Diagram](#pinout-diagram)
   * [Project Lab v1.e](#project-lab-v1e)
   * [Project Lab v2.e](#project-lab-v2e)
-* [Hardware Design](#hardware-design)
+* [Additional Samples](#additional-samples)
 
 ## Purchasing or Building
 
@@ -99,7 +99,7 @@ You can find the schematics and other design files in the [Hardware folder](Sour
 
 ## Pinout Diagram
 
-Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board:
+Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board and its connectors:
 &nbsp;
 
 ### Project Lab v1.e
