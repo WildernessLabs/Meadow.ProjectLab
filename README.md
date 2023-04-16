@@ -49,9 +49,20 @@ public class MeadowApp : App<F7FeatherV2>
     }
 ```
 
+4. To use an I2C peripheral (with a [Grove Character display](https://wiki.seeedstudio.com/Grove-16x2_LCD_Series) as an example):
+```csharp
+    var display = new CharacterDisplay
+    (
+        i2cBus: projLab.I2cBus,
+        address: (byte)I2cCharacterDisplay.Addresses.Grove,
+        rows: 2, columns: 16,
+        isGroveDisplay: true
+    );
+```
+
 ## Hardware Specifications
 
-<img src="Design/project-lab-specs.jpg" />
+<img src="Design/project-lab-specs.jpg" style="margin-top:10px;margin-bottom:10px" />
 
 <table>
     <tr>
@@ -86,18 +97,18 @@ public class MeadowApp : App<F7FeatherV2>
 
 You can find the schematics and other design files in the [Hardware folder](Source/Hardware).
 
-## Project Lab Pinout Diagram
+## Pinout Diagram
 
 Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board:
 &nbsp;
 
 ### Project Lab v1.e
 
-<img src="Design/PinoutV1.jpg" />
+<img src="Design/PinoutV1.jpg" style="margin-top:10px;margin-bottom:10px" />
 
 ### Project Lab v2.e
 
-<img src="Design/PinoutV2.jpg" />
+<img src="Design/PinoutV2.jpg" style="margin-top:10px;margin-bottom:10px" />
 
 ## Additional Samples
 
@@ -107,4 +118,3 @@ Check the diagrams below to see what pins on the Meadow are connected to every p
 <a href="https://github.com/WildernessLabs/Meadow.ProjectLab.Samples">
     <img src="Design/project-lab-samples.png" style="margin-top:10px;margin-bottom:10px" />
 </a>
-4. **[Add the Project Lab Nuget Package to your own app](https://github.com/WildernessLabs/Meadow.ProjectLab/tree/Demo_App_and_Getting_Started#project-lab-nuget)** - We've created a [Nuget package](https://www.nuget.org/packages/Meadow.ProjectLab) that simplifies using the Project Lab hardware by automatically instiantes the hardware classes for you and makes them available for use in your app. More information on how to use is [below](https://github.com/WildernessLabs/Meadow.ProjectLab/tree/Demo_App_and_Getting_Started#project-lab-nuget).
