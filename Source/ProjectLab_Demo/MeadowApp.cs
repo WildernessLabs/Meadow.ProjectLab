@@ -1,5 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
+using Meadow.Foundation.Audio;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -10,6 +12,8 @@ namespace ProjLab_Demo
     public class MeadowApp : App<F7CoreComputeV2> //   F7FeatherV2>
     {
         DisplayController displayController;
+        MicroAudio audio;
+
         IProjectLabHardware projLab;
 
         public override Task Initialize()
@@ -22,6 +26,10 @@ namespace ProjLab_Demo
             projLab = ProjectLab.Create();
 
             Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.RevisionString}");
+
+            projLab.RgbLed?.SetColor(Color.Blue);
+
+            audio = new MicroAudio(projLab.Speaker);
 
             //---- display controller (handles display updates)
             if (projLab.Display is { } display)
@@ -82,6 +90,8 @@ namespace ProjLab_Demo
         {
             Resolver.Log.Info("Run...");
 
+            _ = audio.PlaySystemSound(SystemSoundEffect.Success);
+
             //---- BH1750 Light Sensor
             if (projLab.LightSensor is { } bh1750)
             {
@@ -100,10 +110,7 @@ namespace ProjLab_Demo
                 bmi270.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
-            if (displayController != null)
-            {
-                displayController.Update();
-            }
+            displayController?.Update();
 
             return base.Run();
         }

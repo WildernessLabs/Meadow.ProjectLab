@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
@@ -22,6 +23,8 @@ namespace Meadow.Devices
         public Bme688? EnvironmentalSensor { get; }
         public Bmi270? MotionSensor { get; }
         public PiezoSpeaker? Speaker { get; }
+
+        public RgbPwmLed? RgbLed { get; }
 
         public PushButton? LeftButton { get; }
         public PushButton? RightButton { get; }

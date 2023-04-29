@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
@@ -45,6 +46,11 @@ namespace Meadow.Devices
         /// Gets the Piezo noise maker on the Project Lab board
         /// </summary>
         public abstract PiezoSpeaker? Speaker { get; }
+
+        /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public abstract RgbPwmLed? RgbLed { get; }
 
         /// <summary>
         /// Gets the BMI inertial movement unit (IMU) on the Project Lab board

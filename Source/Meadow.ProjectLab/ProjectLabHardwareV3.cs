@@ -2,9 +2,11 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -59,6 +61,11 @@ namespace Meadow.Devices
         public override PiezoSpeaker? Speaker { get; }
 
         /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public override RgbPwmLed? RgbLed { get; }
+
+        /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
@@ -77,15 +84,11 @@ namespace Meadow.Devices
 
             base.Initialize(device);
 
-            var config = new SpiClockConfiguration(
-                new Frequency(48000, Frequency.UnitType.Kilohertz),
-                SpiClockConfiguration.Mode.Mode0);
-
             SpiBus = Resolver.Device.CreateSpiBus(
                 device.Pins.SCK,
                 device.Pins.COPI,
                 device.Pins.CIPO,
-                config);
+                new Frequency(48000, Frequency.UnitType.Kilohertz));
 
             IDigitalInputPort? mcp1Interrupt = null;
             IDigitalOutputPort? mcp1Reset = null;
@@ -93,7 +96,7 @@ namespace Meadow.Devices
             try
             {
                 // MCP the First
-                mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.SPI5_SCK, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.A05, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
                 mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
 
@@ -112,10 +115,10 @@ namespace Meadow.Devices
             try
             {
                 // MCP the Second
-                if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
+                if (device.Pins.D19.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
                 {
                     mcp2Interrupt = device.CreateDigitalInputPort(
-                        device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                        device.Pins.D19, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 }
 
                 Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2Interrupt);
@@ -154,9 +157,22 @@ namespace Meadow.Devices
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
                 width: 240, height: 320,
-                colorMode: ColorMode.Format16bppRgb565);
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+
+            ((Ili9341)Display).SetRotation(RotationType._270Degrees);
 
             Logger?.Trace("Display up");
+
+            //---- led
+            RgbLed = new RgbPwmLed(
+                redPwmPin: device.Pins.D09,
+                greenPwmPin: device.Pins.D10,
+                bluePwmPin: device.Pins.D11,
+                CommonType.CommonAnode);
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");

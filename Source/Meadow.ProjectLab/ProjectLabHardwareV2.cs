@@ -2,9 +2,11 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -59,6 +61,11 @@ namespace Meadow.Devices
         public override PiezoSpeaker? Speaker { get; }
 
         /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public override RgbPwmLed? RgbLed { get; }
+
+        /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
@@ -75,15 +82,11 @@ namespace Meadow.Devices
 
             base.Initialize(device);
 
-            var config = new SpiClockConfiguration(
-                new Frequency(48000, Frequency.UnitType.Kilohertz),
-                SpiClockConfiguration.Mode.Mode3);
-
             SpiBus = Resolver.Device.CreateSpiBus(
                 device.Pins.SCK,
                 device.Pins.COPI,
                 device.Pins.CIPO,
-                config);
+                new Frequency(48000, Frequency.UnitType.Kilohertz));
 
             Mcp_1 = mcp1;
             IDigitalInputPort? mcp2_int = null;
@@ -130,9 +133,20 @@ namespace Meadow.Devices
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
                 width: 240, height: 240,
-                colorMode: ColorMode.Format16bppRgb565);
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
 
             Logger?.Trace("Display up");
+
+            //---- led
+            RgbLed = new RgbPwmLed(
+                redPwmPin: device.Pins.OnboardLedRed,
+                greenPwmPin: device.Pins.OnboardLedGreen,
+                bluePwmPin: device.Pins.OnboardLedBlue,
+                CommonType.CommonAnode);
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");
