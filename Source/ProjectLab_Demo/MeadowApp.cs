@@ -113,7 +113,7 @@ namespace ProjLab_Demo
             displayController?.Update();
 
             Resolver.Log.Info("starting blink");
-            onboardLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
+            _ = projLab.RgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
 
             return base.Run();
         }
