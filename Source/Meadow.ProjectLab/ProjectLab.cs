@@ -43,15 +43,11 @@ namespace Meadow.Devices
             }
 
             logger?.Debug("Creating comms busses...");
-            var config = new SpiClockConfiguration(
-                           new Frequency(48000, Frequency.UnitType.Kilohertz),
-                           SpiClockConfiguration.Mode.Mode3);
-
             spiBus = Resolver.Device.CreateSpiBus(
                 device.Pins.SCK,
                 device.Pins.COPI,
                 device.Pins.CIPO,
-                config);
+                new Frequency(6000, Frequency.UnitType.Kilohertz));
 
             logger?.Debug("SPI Bus instantiated");
 

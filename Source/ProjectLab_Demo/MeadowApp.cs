@@ -115,10 +115,7 @@ namespace ProjLab_Demo
                 bmi270.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
-            if (displayController != null)
-            {
-                displayController.Update();
-            }
+            displayController?.Update();
 
             Resolver.Log.Info("starting blink");
             onboardLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
