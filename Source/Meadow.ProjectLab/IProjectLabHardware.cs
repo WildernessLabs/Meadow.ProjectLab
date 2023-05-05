@@ -12,10 +12,19 @@ namespace Meadow.Devices
 {
     public interface IProjectLabHardware
     {
+        /// <summary>
+        /// The SPI bus
+        /// </summary>
         public ISpiBus SpiBus { get; }
+
+        /// <summary>
+        /// The I2C bus
+        /// </summary>
         public II2cBus I2cBus { get; }
 
-
+        /// <summary>
+        /// Get a Modbus RTU client
+        /// </summary>
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
 
         public IGraphicsDisplay? Display { get; protected set; }

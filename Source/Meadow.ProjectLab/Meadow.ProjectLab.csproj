@@ -10,10 +10,10 @@
     <PackageProjectUrl>https://github.com/WildernessLabs/Meadow.ProjectLab</PackageProjectUrl>
     <PackageId>Meadow.ProjectLab</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.ProjectLab</RepositoryUrl>
-    <PackageTags>Meadow.ProjectLab, Meadow, ProjectLab</PackageTags>
+    <PackageTags>Meadow.ProjectLab,Meadow,ProjectLab,accelerator</PackageTags>
     <Version>0.92.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Base convenience library for the Meadow ProjLab board</Description>
+    <Description>Library for the Meadow ProjectLab IoT accelerator</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Audio.MicroAudio\Driver\Audio.MicroAudio.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme68x\Driver\Sensors.Atmospheric.Bme68x.csproj" />

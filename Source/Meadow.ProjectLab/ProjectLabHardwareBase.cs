@@ -96,6 +96,10 @@ namespace Meadow.Devices
         /// </summary>
         public abstract (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
+        /// <summary>
+        /// Constructor the Project Lab Hardware base class
+        /// </summary>
+        /// <param name="device">The meadow device</param>
         internal ProjectLabHardwareBase(IF7MeadowDevice device)
         {
         }

@@ -13,6 +13,9 @@ using System.Threading;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Represents Project Lab V2 hardware and exposes its peripherals
+    /// </summary>
     public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
         /// <summary>
@@ -205,6 +208,9 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D08"));
         }
 
+        /// <summary>
+        /// The hardware revision of the board
+        /// </summary>
         public override string RevisionString
         {
             get
@@ -233,7 +239,7 @@ namespace Meadow.Devices
                 var portName = device.PlatformOS.GetSerialPortName("com4");
                 var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
-                var serialEnable = Mcp_2.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
+                var serialEnable = Mcp_2?.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
 
                 return new ProjectLabModbusRtuClient(port, serialEnable);
             }

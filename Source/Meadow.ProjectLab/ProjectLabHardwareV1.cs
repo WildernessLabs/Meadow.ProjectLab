@@ -3,7 +3,6 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Gateways.Bluetooth;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
@@ -12,9 +11,12 @@ using System;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Represents Project Lab V1 hardware and exposes its peripherals
+    /// </summary>
     public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     {
-        private string revision = "v1.x";
+        private readonly string revision = "v1.x";
 
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
@@ -100,10 +102,10 @@ namespace Meadow.Devices
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");
-            LeftButton = GetPushButton(device, device.Pins.D10);
-            RightButton = GetPushButton(device, device.Pins.D05);
-            UpButton = GetPushButton(device, device.Pins.D15);
-            DownButton = GetPushButton(device, device.Pins.D02);
+            LeftButton = GetPushButton(device.Pins.D10);
+            RightButton = GetPushButton(device.Pins.D05);
+            UpButton = GetPushButton(device.Pins.D15);
+            DownButton = GetPushButton(device.Pins.D02);
             Logger?.Trace("Buttons up");
 
             try
@@ -151,11 +153,16 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D08"));
         }
 
+        /// <summary>
+        /// The hardware revision string
+        /// </summary>
         public override string RevisionString => revision;
 
-        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin)
-             => new PushButton(pin, ResistorMode.InternalPullDown);
+        private PushButton GetPushButton(IPin pin) => new(pin, ResistorMode.InternalPullDown);
 
+        /// <summary>
+        /// Get the GetModbus Rtu Client
+        /// </summary>
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             if (Resolver.Device is F7FeatherBase device)

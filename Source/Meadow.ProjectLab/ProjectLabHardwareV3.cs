@@ -13,6 +13,9 @@ using System.Threading;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Represents Project Lab V3 hardware and exposes its peripherals
+    /// </summary>
     public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     {
         /// <summary>
@@ -142,9 +145,9 @@ namespace Meadow.Devices
             //---- instantiate display
             Logger?.Trace("Instantiating display");
 
-            var chipSelectPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
-            var dcPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
-            var resetPort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP7);
+            var chipSelectPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
+            var dcPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
+            var resetPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP7);
             Thread.Sleep(50);
 
             Display = new Ili9341(
@@ -255,7 +258,7 @@ namespace Meadow.Devices
                 var portName = device.PlatformOS.GetSerialPortName("com4");
                 var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
-                var serialEnable = Mcp_2.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
+                var serialEnable = Mcp_2?.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
 
                 return new ProjectLabModbusRtuClient(port, serialEnable);
             }
