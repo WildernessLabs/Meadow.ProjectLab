@@ -10,7 +10,7 @@ namespace ProjLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
     // Change to F7CoreComputeV2 for Project Lab V3.x
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2>
     {
         DisplayController displayController;
         MicroAudio audio;
@@ -30,6 +30,7 @@ namespace ProjLab_Demo
 
             projLab.RgbLed?.SetColor(Color.Blue);
 
+            projLab.Speaker.SetVolume(0.5f);
             audio = new MicroAudio(projLab.Speaker);
 
             //---- display controller (handles display updates)
