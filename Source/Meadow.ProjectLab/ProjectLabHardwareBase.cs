@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
@@ -24,37 +25,42 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the SPI Bus
         /// </summary>
-        public ISpiBus SpiBus { get; }
+        public ISpiBus SpiBus { get; protected set; }
 
         /// <summary>
         /// Gets the I2C Bus
         /// </summary>
-        public II2cBus I2cBus { get; }
+        public II2cBus I2cBus { get; protected set; }
 
         /// <summary>
         /// Gets the BH1750 Light Sensor on the Project Lab board
         /// </summary>
-        public Bh1750? LightSensor { get; }
+        public Bh1750? LightSensor { get; private set; }
 
         /// <summary>
         /// Gets the BME688 environmental sensor  on the Project Lab board
         /// </summary>
-        public Bme688? EnvironmentalSensor { get; }
+        public Bme688? EnvironmentalSensor { get; private set; }
 
         /// <summary>
         /// Gets the Piezo noise maker on the Project Lab board
         /// </summary>
-        public PiezoSpeaker? Speaker { get; }
+        public abstract PiezoSpeaker? Speaker { get; }
+
+        /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public abstract RgbPwmLed? RgbLed { get; }
 
         /// <summary>
         /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
         /// </summary>
-        public Bmi270? MotionSensor { get; }
+        public Bmi270? MotionSensor { get; private set; }
 
         /// <summary>
-        /// Gets the ST7789 Display on the Project Lab board
+        /// Gets the display on the Project Lab board
         /// </summary>
-        public abstract St7789? Display { get; }
+        public abstract IGraphicsDisplay? Display { get; set; }
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -83,18 +89,23 @@ namespace Meadow.Devices
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
-        public abstract (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
+        public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
 
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
-        public abstract (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+        public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareBase(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
+        /// <summary>
+        /// Constructor the Project Lab Hardware base class
+        /// </summary>
+        /// <param name="device">The meadow device</param>
+        internal ProjectLabHardwareBase(IF7MeadowDevice device)
         {
-            SpiBus = spiBus;
-            I2cBus = i2cBus;
+        }
 
+        internal virtual void Initialize(IF7MeadowDevice device)
+        {
             try
             {
                 Logger?.Trace("Instantiating light sensor");
@@ -119,17 +130,6 @@ namespace Meadow.Devices
             catch (Exception ex)
             {
                 Resolver.Log.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
-            }
-
-            try
-            {
-                Logger?.Trace("Instantiating speaker");
-                Speaker = new PiezoSpeaker(device.Pins.D11);
-                Logger?.Trace("Speaker up");
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
             }
 
             try

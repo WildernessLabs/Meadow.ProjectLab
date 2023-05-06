@@ -125,7 +125,7 @@ namespace ProjLab_Demo
         void DrawStatus(string label, string value, Color color, int yPosition)
         {
             graphics.DrawText(x: 2, y: yPosition, label, color: color);
-            graphics.DrawText(x: 238, y: yPosition, value, alignmentH: HorizontalAlignment.Right, color: color);
+            graphics.DrawText(x: graphics.Width - 2, y: yPosition, value, alignmentH: HorizontalAlignment.Right, color: color);
         }
 
         void Draw()

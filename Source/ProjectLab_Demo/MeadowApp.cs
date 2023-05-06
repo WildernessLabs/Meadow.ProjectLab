@@ -1,19 +1,20 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
-using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
+using Meadow.Foundation.Audio;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
 namespace ProjLab_Demo
 {
-    // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
+    // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
+    // Change to F7CoreComputeV2 for Project Lab V3.x
     public class MeadowApp : App<F7FeatherV2>
     {
         DisplayController displayController;
-        RgbPwmLed onboardLed;
+        MicroAudio audio;
+
         IProjectLabHardware projLab;
 
         public override Task Initialize()
@@ -22,19 +23,14 @@ namespace ProjLab_Demo
 
             Resolver.Log.Info("Initialize hardware...");
 
-            //==== RGB LED
-            Resolver.Log.Info("Initializing onboard RGB LED");
-            onboardLed = new RgbPwmLed(
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                CommonType.CommonAnode);
-            Resolver.Log.Info("RGB LED up");
-
             //==== instantiate the project lab hardware
             projLab = ProjectLab.Create();
 
             Resolver.Log.Info($"Running on ProjectLab Hardware {projLab.RevisionString}");
+
+            projLab.RgbLed?.SetColor(Color.Blue);
+
+            audio = new MicroAudio(projLab.Speaker);
 
             //---- display controller (handles display updates)
             if (projLab.Display is { } display)
@@ -86,8 +82,6 @@ namespace ProjLab_Demo
             }
 
             //---- heartbeat
-            onboardLed.StartPulse(WildernessLabsColors.PearGreen);
-
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
@@ -96,6 +90,8 @@ namespace ProjLab_Demo
         public override Task Run()
         {
             Resolver.Log.Info("Run...");
+
+            _ = audio.PlaySystemSound(SystemSoundEffect.Success);
 
             //---- BH1750 Light Sensor
             if (projLab.LightSensor is { } bh1750)
@@ -115,13 +111,10 @@ namespace ProjLab_Demo
                 bmi270.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
-            if (displayController != null)
-            {
-                displayController.Update();
-            }
+            displayController?.Update();
 
             Resolver.Log.Info("starting blink");
-            onboardLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
+            _ = projLab.RgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
 
             return base.Run();
         }
