@@ -56,12 +56,12 @@ namespace Meadow.Devices
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
-        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
+        public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
 
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 2
         /// </summary>
-        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+        public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
         internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
             : base(device)
@@ -136,8 +136,8 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D03"),
                  Resolver.Device.GetPin("D12"),
                  Resolver.Device.GetPin("D13"),
-                 Resolver.Device.GetPin("D07"),
-                 Resolver.Device.GetPin("D08"));
+                 Resolver.Device.GetPin("D08"),
+                 Resolver.Device.GetPin("D07"));
 
             MikroBus2Pins =
                 (Resolver.Device.GetPin("A01"),
@@ -150,8 +150,8 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D04"),
                  Resolver.Device.GetPin("D12"),
                  Resolver.Device.GetPin("D13"),
-                 Resolver.Device.GetPin("D07"),
-                 Resolver.Device.GetPin("D08"));
+                 Resolver.Device.GetPin("D08"),
+                 Resolver.Device.GetPin("D07"));
         }
 
         /// <summary>

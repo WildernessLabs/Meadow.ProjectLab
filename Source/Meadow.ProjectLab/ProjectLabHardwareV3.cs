@@ -71,12 +71,12 @@ namespace Meadow.Devices
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
-        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
+        public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
 
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 2
         /// </summary>
-        public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+        public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
         /// <summary>
         /// Display enable port for backlight control
@@ -209,32 +209,32 @@ namespace Meadow.Devices
         void SetMikroBusPins()
         {
             MikroBus1Pins =
-                (Resolver.Device.GetPin("A02"),
-                 Mcp_2.Pins.GP4,
-                 Mcp_2.Pins.GP5,
-                 Resolver.Device.GetPin("SCK"),
-                 Resolver.Device.GetPin("CIPO"),
-                 Resolver.Device.GetPin("COPI"),
-                 Resolver.Device.GetPin("D03"),
-                 Mcp_2.Pins.GP6,
-                 Resolver.Device.GetPin("D13"),
-                 Resolver.Device.GetPin("D12"),
-                 Resolver.Device.GetPin("D07"),
-                 Resolver.Device.GetPin("D08"));
+                (Resolver.Device.GetPin("PA3"), //A02
+                 Resolver.Device.GetPin("Ph10"), //D02
+                 Resolver.Device.GetPin("PB12"), //D13
+                 Resolver.Device.GetPin("SPI5_SCK"),
+                 Resolver.Device.GetPin("SPI5_CIPO"),
+                 Resolver.Device.GetPin("SPI5_COPI"),
+                 Resolver.Device.GetPin("PB8"), //D03
+                 Resolver.Device.GetPin("PC2"),
+                 Resolver.Device.GetPin("PB15"), //D13
+                 Resolver.Device.GetPin("PB14"), //D12
+                 Resolver.Device.GetPin("I2C3_CLK"),
+                 Resolver.Device.GetPin("I2C3_DAT"));
 
             MikroBus2Pins =
-                (Resolver.Device.GetPin("A03"),
+                (Resolver.Device.GetPin("PB0"), //A03
                  Mcp_2.Pins.GP1,
                  Mcp_2.Pins.GP2,
                  Resolver.Device.GetPin("SCK"),
                  Resolver.Device.GetPin("CIPO"),
                  Resolver.Device.GetPin("COPI"),
-                 Resolver.Device.GetPin("D04"),
+                 Resolver.Device.GetPin("PB9"), //D04
                  Mcp_2.Pins.GP3,
-                 Resolver.Device.GetPin("D13"),
-                 Resolver.Device.GetPin("D12"),
-                 Resolver.Device.GetPin("D07"),
-                 Resolver.Device.GetPin("D08"));
+                 Resolver.Device.GetPin("PB15"), //ToDo UART1_A_RX
+                 Resolver.Device.GetPin("PB14"), //ToDo UART1_A_TX
+                 Resolver.Device.GetPin("I2C1_CLK"),
+                 Resolver.Device.GetPin("I2C1_CLK"));
         }
 
         public override string RevisionString
@@ -245,12 +245,12 @@ namespace Meadow.Devices
                 {
                     if (Mcp_Version == null)
                     {
-                        revision = $"v2.x";
+                        revision = $"v3.x";
                     }
                     else
                     {
                         byte rev = Mcp_Version.ReadFromPorts(Mcp23xxx.PortBank.A);
-                        revision = $"v2.{rev}";
+                        revision = $"v3.{rev}";
                     }
                 }
                 return revision;
