@@ -78,6 +78,11 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
+        /// <summary>
+        /// Display enable port for backlight control
+        /// </summary>
+        public IDigitalOutputPort DisplayEnablePort { get; protected set; }
+
         internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
             : base(device)
         {
@@ -144,6 +149,8 @@ namespace Meadow.Devices
 
             //---- instantiate display
             Logger?.Trace("Instantiating display");
+
+            DisplayEnablePort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
 
             var chipSelectPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
             var dcPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
