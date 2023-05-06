@@ -141,7 +141,7 @@ namespace Meadow.Devices
                 SpiBusMode = SpiClockConfiguration.Mode.Mode3,
                 SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
             };
-            ((St7789)Display).SetRotation(RotationType._90Degrees);
+            ((St7789)Display).SetRotation(RotationType._270Degrees);
 
             Logger?.Trace("Display up");
 
