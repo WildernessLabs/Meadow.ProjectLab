@@ -14,9 +14,9 @@ using System.Threading;
 namespace Meadow.Devices
 {
     /// <summary>
-    /// Represents Project Lab V2 hardware and exposes its peripherals
+    /// Represents Project Lab V3 hardware and exposes its peripherals
     /// </summary>
-    public class ProjectLabHardwareV2 : ProjectLabHardwareBase
+    public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     {
         /// <summary>
         /// The MCP23008 IO expander connected to internal peripherals
@@ -34,7 +34,7 @@ namespace Meadow.Devices
         Mcp23008? Mcp_Version { get; set; }
 
         /// <summary>
-        /// Gets the ST7789 Display on the Project Lab board
+        /// Gets the Ili9341 Display on the Project Lab board
         /// </summary>
         public override IGraphicsDisplay? Display { get; set; }
 
@@ -78,7 +78,12 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1)
+        /// <summary>
+        /// Display enable port for backlight control
+        /// </summary>
+        public IDigitalOutputPort DisplayEnablePort { get; protected set; }
+
+        internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
             : base(device)
         {
             I2cBus = i2cBus;
@@ -91,26 +96,45 @@ namespace Meadow.Devices
                 device.Pins.CIPO,
                 new Frequency(48000, Frequency.UnitType.Kilohertz));
 
-            Mcp_1 = mcp1;
-            IDigitalInputPort? mcp2_int = null;
+            IDigitalInputPort? mcp1Interrupt = null;
+            IDigitalOutputPort? mcp1Reset = null;
+
+            try
+            {
+                // MCP the First
+                mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.A05, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+
+                mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
+
+                Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
+
+                Logger?.Trace("Mcp_1 up");
+            }
+            catch (Exception e)
+            {
+                Logger?.Trace($"Failed to create MCP1: {e.Message}");
+                mcp1Interrupt?.Dispose();
+            }
+
+            IDigitalInputPort? mcp2Interrupt = null;
 
             try
             {
                 // MCP the Second
-                if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
+                if (device.Pins.D19.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
                 {
-                    mcp2_int = device.CreateDigitalInputPort(
-                        device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                    mcp2Interrupt = device.CreateDigitalInputPort(
+                        device.Pins.D19, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 }
 
-                Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
+                Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2Interrupt);
 
                 Logger?.Info("Mcp_2 up");
             }
             catch (Exception e)
             {
                 Logger?.Trace($"Failed to create MCP2: {e.Message}");
-                mcp2_int?.Dispose();
+                mcp2Interrupt?.Dispose();
             }
 
             try
@@ -125,49 +149,53 @@ namespace Meadow.Devices
 
             //---- instantiate display
             Logger?.Trace("Instantiating display");
-            var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
-            var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
-            var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
+
+            DisplayEnablePort = Mcp_1.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
+
+            var chipSelectPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
+            var dcPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
+            var resetPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP7);
             Thread.Sleep(50);
 
-            Display = new St7789(
+            Display = new Ili9341(
                 spiBus: SpiBus,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
-                width: 240, height: 240,
+                width: 240, height: 320,
                 colorMode: ColorMode.Format16bppRgb565)
             {
                 SpiBusMode = SpiClockConfiguration.Mode.Mode3,
                 SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
             };
-            ((St7789)Display).SetRotation(RotationType._270Degrees);
+
+            ((Ili9341)Display).SetRotation(RotationType._270Degrees);
 
             Logger?.Trace("Display up");
 
             //---- led
             RgbLed = new RgbPwmLed(
-                redPwmPin: device.Pins.OnboardLedRed,
-                greenPwmPin: device.Pins.OnboardLedGreen,
-                bluePwmPin: device.Pins.OnboardLedBlue,
+                redPwmPin: device.Pins.D09,
+                greenPwmPin: device.Pins.D10,
+                bluePwmPin: device.Pins.D11,
                 CommonType.CommonAnode);
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");
-            var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var leftPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             LeftButton = new PushButton(leftPort);
-            var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var rightPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             RightButton = new PushButton(rightPort);
-            var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var upPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             UpButton = new PushButton(upPort);
-            var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var downPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             DownButton = new PushButton(downPort);
             Logger?.Trace("Buttons up");
 
             try
             {
                 Logger?.Trace("Instantiating speaker");
-                Speaker = new PiezoSpeaker(device.Pins.D11);
+                Speaker = new PiezoSpeaker(device.Pins.D20);
                 Logger?.Trace("Speaker up");
             }
             catch (Exception ex)
@@ -209,9 +237,6 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D08"));
         }
 
-        /// <summary>
-        /// The hardware revision of the board
-        /// </summary>
         public override string RevisionString
         {
             get

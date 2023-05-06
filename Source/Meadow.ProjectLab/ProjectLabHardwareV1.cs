@@ -1,20 +1,27 @@
-﻿using Meadow.Foundation.Displays;
+﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Leds;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Represents Project Lab V1 hardware and exposes its peripherals
+    /// </summary>
     public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     {
-        private string revision = "v1.x";
+        private readonly string revision = "v1.x";
 
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
         /// </summary>
-        public override St7789? Display { get; }
+        public override IGraphicsDisplay? Display { get; set; }
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -37,6 +44,16 @@ namespace Meadow.Devices
         public override PushButton? RightButton { get; }
 
         /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public override PiezoSpeaker? Speaker { get; }
+
+        /// <summary>
+        /// Gets the Piezo noise maker on the Project Lab board
+        /// </summary>
+        public override RgbPwmLed? RgbLed { get; }
+
+        /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
@@ -46,10 +63,21 @@ namespace Meadow.Devices
         /// </summary>
         public override (IPin AN, IPin RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
-        internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, ISpiBus spiBus, II2cBus i2cBus)
-            : base(device, spiBus, i2cBus)
+        internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
+            : base(device)
         {
-            //---- create our display
+            I2cBus = i2cBus;
+
+            base.Initialize(device);
+
+            SpiBus = Resolver.Device.CreateSpiBus(
+                device.Pins.SCK,
+                device.Pins.COPI,
+                device.Pins.CIPO,
+                new Frequency(48000, Frequency.UnitType.Kilohertz));
+
+            Logger?.Debug("SPI Bus instantiated");
+
             Logger?.Trace("Instantiating display");
             Display = new St7789(
                         spiBus: SpiBus,
@@ -57,19 +85,40 @@ namespace Meadow.Devices
                         dcPin: device.Pins.A04,
                         resetPin: device.Pins.A05,
                         width: 240, height: 240,
-                        colorMode: ColorMode.Format16bppRgb565);
-
-            Display.SetRotation(RotationType._270Degrees);
+                        colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+            ((St7789)Display).SetRotation(RotationType._270Degrees);
 
             Logger?.Trace("Display up");
 
+            //---- led
+            RgbLed = new RgbPwmLed(
+                redPwmPin: device.Pins.OnboardLedRed,
+                greenPwmPin: device.Pins.OnboardLedGreen,
+                bluePwmPin: device.Pins.OnboardLedBlue,
+                CommonType.CommonAnode);
+
             //---- buttons
             Logger?.Trace("Instantiating buttons");
-            LeftButton = GetPushButton(device, device.Pins.D10);
-            RightButton = GetPushButton(device, device.Pins.D05);
-            UpButton = GetPushButton(device, device.Pins.D15);
-            DownButton = GetPushButton(device, device.Pins.D02);
+            LeftButton = GetPushButton(device.Pins.D10);
+            RightButton = GetPushButton(device.Pins.D05);
+            UpButton = GetPushButton(device.Pins.D15);
+            DownButton = GetPushButton(device.Pins.D02);
             Logger?.Trace("Buttons up");
+
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                Speaker = new PiezoSpeaker(device.Pins.D11);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
 
             SetMikroBusPins();
         }
@@ -105,11 +154,16 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D08"));
         }
 
+        /// <summary>
+        /// The hardware revision string
+        /// </summary>
         public override string RevisionString => revision;
 
-        private PushButton GetPushButton(IF7FeatherMeadowDevice device, IPin pin)
-             => new PushButton(pin, ResistorMode.InternalPullDown);
+        private PushButton GetPushButton(IPin pin) => new(pin, ResistorMode.InternalPullDown);
 
+        /// <summary>
+        /// Get the GetModbus Rtu Client
+        /// </summary>
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
             if (Resolver.Device is F7FeatherBase device)

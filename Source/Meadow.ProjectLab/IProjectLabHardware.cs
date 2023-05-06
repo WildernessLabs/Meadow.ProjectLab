@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
@@ -11,15 +12,28 @@ namespace Meadow.Devices
 {
     public interface IProjectLabHardware
     {
+        /// <summary>
+        /// The SPI bus
+        /// </summary>
         public ISpiBus SpiBus { get; }
+
+        /// <summary>
+        /// The I2C bus
+        /// </summary>
         public II2cBus I2cBus { get; }
+
+        /// <summary>
+        /// Get a Modbus RTU client
+        /// </summary>
         public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
 
-        public St7789? Display { get; }
+        public IGraphicsDisplay? Display { get; protected set; }
         public Bh1750? LightSensor { get; }
         public Bme688? EnvironmentalSensor { get; }
         public Bmi270? MotionSensor { get; }
         public PiezoSpeaker? Speaker { get; }
+
+        public RgbPwmLed? RgbLed { get; }
 
         public PushButton? LeftButton { get; }
         public PushButton? RightButton { get; }
@@ -39,7 +53,8 @@ namespace Meadow.Devices
                 IPin RX,
                 IPin TX,
                 IPin SCL,
-                IPin SCA) MikroBus1Pins { get; }
+                IPin SCA) MikroBus1Pins
+        { get; }
 
         public (IPin AN,
                 IPin RST,
@@ -52,6 +67,7 @@ namespace Meadow.Devices
                 IPin RX,
                 IPin TX,
                 IPin SCL,
-                IPin SCA) MikroBus2Pins { get; }
+                IPin SCA) MikroBus2Pins
+        { get; }
     }
 }

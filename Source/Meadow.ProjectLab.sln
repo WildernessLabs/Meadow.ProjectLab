@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meado
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{EF2050F4-6422-4AB2-BF60-9E5428E474AF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.MicroAudio", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Audio.MicroAudio\Driver\Audio.MicroAudio.csproj", "{12C58A2F-9D0E-417F-B138-BA25B166C56B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,12 @@ Global
 		{EF2050F4-6422-4AB2-BF60-9E5428E474AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF2050F4-6422-4AB2-BF60-9E5428E474AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF2050F4-6422-4AB2-BF60-9E5428E474AF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +153,7 @@ Global
 		{E56BD47C-4997-4831-833C-EA35C83F89B7} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{35B3DDB4-71EF-4A68-B242-982C71126F3E} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{EF2050F4-6422-4AB2-BF60-9E5428E474AF} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
+		{12C58A2F-9D0E-417F-B138-BA25B166C56B} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A24E3C-F7F9-4EB3-8A7F-5C6AB7C2A43D}
