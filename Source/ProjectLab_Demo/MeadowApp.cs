@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace ProjLab_Demo
 {
-    // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7CoreComputeV2> //   F7FeatherV2>
+    // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
+    // Change to F7CoreComputeV2 for Project Lab V3.x
+    public class MeadowApp : App<F7FeatherV2>
     {
         DisplayController displayController;
         MicroAudio audio;
