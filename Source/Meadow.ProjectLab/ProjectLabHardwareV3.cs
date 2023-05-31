@@ -31,7 +31,7 @@ namespace Meadow.Devices
         /// <summary>
         /// The MCP23008 IO expander that contains the ProjectLab hardware version 
         /// </summary>
-        Mcp23008? Mcp_Version { get; set; }
+        private Mcp23008? Mcp_Version { get; set; }
 
         /// <summary>
         /// Gets the Ili9341 Display on the Project Lab board
@@ -96,13 +96,13 @@ namespace Meadow.Devices
                 device.Pins.CIPO,
                 new Frequency(48000, Frequency.UnitType.Kilohertz));
 
-            IDigitalInputPort? mcp1Interrupt = null;
+            IDigitalInterruptPort? mcp1Interrupt = null;
             IDigitalOutputPort? mcp1Reset = null;
 
             try
             {
                 // MCP the First
-                mcp1Interrupt = device.CreateDigitalInputPort(device.Pins.A05, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.A05, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
                 mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
 
@@ -116,14 +116,14 @@ namespace Meadow.Devices
                 mcp1Interrupt?.Dispose();
             }
 
-            IDigitalInputPort? mcp2Interrupt = null;
+            IDigitalInterruptPort? mcp2Interrupt = null;
 
             try
             {
                 // MCP the Second
                 if (device.Pins.D19.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
                 {
-                    mcp2Interrupt = device.CreateDigitalInputPort(
+                    mcp2Interrupt = device.CreateDigitalInterruptPort(
                         device.Pins.D19, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 }
 
@@ -182,13 +182,13 @@ namespace Meadow.Devices
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");
-            var leftPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var leftPort = Mcp_1.CreateDigitalInterruptPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             LeftButton = new PushButton(leftPort);
-            var rightPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var rightPort = Mcp_1.CreateDigitalInterruptPort(Mcp_1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             RightButton = new PushButton(rightPort);
-            var upPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var upPort = Mcp_1.CreateDigitalInterruptPort(Mcp_1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             UpButton = new PushButton(upPort);
-            var downPort = Mcp_1.CreateDigitalInputPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var downPort = Mcp_1.CreateDigitalInterruptPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             DownButton = new PushButton(downPort);
             Logger?.Trace("Buttons up");
 
@@ -206,7 +206,7 @@ namespace Meadow.Devices
             SetMikroBusPins();
         }
 
-        void SetMikroBusPins()
+        private void SetMikroBusPins()
         {
             MikroBus1Pins =
                 (Resolver.Device.GetPin("PA3"), //A02
@@ -256,7 +256,8 @@ namespace Meadow.Devices
                 return revision;
             }
         }
-        string? revision;
+
+        private string? revision;
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {
@@ -265,9 +266,8 @@ namespace Meadow.Devices
                 var portName = device.PlatformOS.GetSerialPortName("com4");
                 var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
                 port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
-                var serialEnable = Mcp_2?.CreateDigitalOutputPort(Mcp_2.Pins.GP0, false);
 
-                return new ProjectLabModbusRtuClient(port, serialEnable);
+                return new ModbusRtuClient(port);
             }
 
             throw new NotSupportedException();
