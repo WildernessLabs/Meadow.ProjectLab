@@ -110,7 +110,7 @@ public class MeadowApp : App<F7FeatherV2>
     </tr>
 </table>
 
-You can find the schematics and other design files in the [Hardware folder](Source/Hardware).
+You can find the schematics and other design files in the [Hardware folder](/Hardware).
 
 ## Pinout Diagram
 
