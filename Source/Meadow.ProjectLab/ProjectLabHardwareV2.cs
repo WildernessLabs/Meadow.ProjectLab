@@ -7,6 +7,7 @@ using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
+using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -41,22 +42,22 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? UpButton { get; }
+        public override IButton? UpButton { get; }
 
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? DownButton { get; }
+        public override IButton? DownButton { get; }
 
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? LeftButton { get; }
+        public override IButton? LeftButton { get; }
 
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? RightButton { get; }
+        public override IButton? RightButton { get; }
 
         /// <summary>
         /// Gets the Piezo noise maker on the Project Lab board
