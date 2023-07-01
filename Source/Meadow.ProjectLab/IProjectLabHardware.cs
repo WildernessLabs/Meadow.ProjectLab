@@ -3,10 +3,10 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Sensors.Buttons;
 
 namespace Meadow.Devices
 {
@@ -35,10 +35,10 @@ namespace Meadow.Devices
 
         public RgbPwmLed? RgbLed { get; }
 
-        public PushButton? LeftButton { get; }
-        public PushButton? RightButton { get; }
-        public PushButton? UpButton { get; }
-        public PushButton? DownButton { get; }
+        public IButton? LeftButton { get; }
+        public IButton? RightButton { get; }
+        public IButton? UpButton { get; }
+        public IButton? DownButton { get; }
 
         public string RevisionString { get; }
 

@@ -3,11 +3,11 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
+using Meadow.Peripherals.Sensors.Buttons;
 using System;
 
 namespace Meadow.Devices
@@ -65,21 +65,21 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
-        public abstract PushButton? UpButton { get; }
+        public abstract IButton? UpButton { get; }
 
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
-        public abstract PushButton? DownButton { get; }
+        public abstract IButton? DownButton { get; }
 
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
-        public abstract PushButton? LeftButton { get; }
+        public abstract IButton? LeftButton { get; }
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
-        public abstract PushButton? RightButton { get; }
+        public abstract IButton? RightButton { get; }
 
         /// <summary>
         /// Gets the ProjectLab board hardware revision
