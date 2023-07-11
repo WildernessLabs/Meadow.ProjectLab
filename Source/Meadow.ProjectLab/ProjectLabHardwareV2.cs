@@ -7,6 +7,7 @@ using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
+using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -31,7 +32,7 @@ namespace Meadow.Devices
         /// <summary>
         /// The MCP23008 IO expander that contains the ProjectLab hardware version 
         /// </summary>
-        Mcp23008? Mcp_Version { get; set; }
+        private Mcp23008? Mcp_Version { get; set; }
 
         /// <summary>
         /// Gets the ST7789 Display on the Project Lab board
@@ -41,22 +42,22 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? UpButton { get; }
+        public override IButton? UpButton { get; }
 
         /// <summary>
         /// Gets the Down PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? DownButton { get; }
+        public override IButton? DownButton { get; }
 
         /// <summary>
         /// Gets the Left PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? LeftButton { get; }
+        public override IButton? LeftButton { get; }
 
         /// <summary>
         /// Gets the Right PushButton on the Project Lab board
         /// </summary>
-        public override PushButton? RightButton { get; }
+        public override IButton? RightButton { get; }
 
         /// <summary>
         /// Gets the Piezo noise maker on the Project Lab board
@@ -92,14 +93,14 @@ namespace Meadow.Devices
                 new Frequency(48000, Frequency.UnitType.Kilohertz));
 
             Mcp_1 = mcp1;
-            IDigitalInputPort? mcp2_int = null;
+            IDigitalInterruptPort? mcp2_int = null;
 
             try
             {
                 // MCP the Second
                 if (device.Pins.D10.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
                 {
-                    mcp2_int = device.CreateDigitalInputPort(
+                    mcp2_int = device.CreateDigitalInterruptPort(
                         device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 }
 
@@ -154,13 +155,13 @@ namespace Meadow.Devices
 
             //---- buttons
             Logger?.Trace("Instantiating buttons");
-            var leftPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var leftPort = mcp1.CreateDigitalInterruptPort(mcp1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             LeftButton = new PushButton(leftPort);
-            var rightPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var rightPort = mcp1.CreateDigitalInterruptPort(mcp1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             RightButton = new PushButton(rightPort);
-            var upPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var upPort = mcp1.CreateDigitalInterruptPort(mcp1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             UpButton = new PushButton(upPort);
-            var downPort = mcp1.CreateDigitalInputPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var downPort = mcp1.CreateDigitalInterruptPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             DownButton = new PushButton(downPort);
             Logger?.Trace("Buttons up");
 
@@ -178,7 +179,7 @@ namespace Meadow.Devices
             SetMikroBusPins();
         }
 
-        void SetMikroBusPins()
+        private void SetMikroBusPins()
         {
             MikroBus1Pins =
                 (Resolver.Device.GetPin("A02"),
@@ -231,7 +232,8 @@ namespace Meadow.Devices
                 return revision;
             }
         }
-        string? revision;
+
+        private string? revision;
 
         public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
         {

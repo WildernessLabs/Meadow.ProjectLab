@@ -46,14 +46,14 @@ namespace Meadow.Devices
 
             logger?.Debug("I2C Bus instantiated");
 
-            IDigitalInputPort? mcp1Interrupt = null;
+            IDigitalInterruptPort? mcp1Interrupt = null;
             IDigitalOutputPort? mcp1Reset = null;
 
             try
             {
                 if (device is IF7FeatherMeadowDevice)
                 {
-                    mcp1Interrupt = device.CreateDigitalInputPort(pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                    mcp1Interrupt = device.CreateDigitalInterruptPort(pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                     mcp1Reset = device.CreateDigitalOutputPort(pins.D14);
 
                     mcp1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
