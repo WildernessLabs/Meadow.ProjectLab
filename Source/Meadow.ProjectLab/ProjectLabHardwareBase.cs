@@ -88,16 +88,17 @@ namespace Meadow.Devices
         /// </summary>
         public virtual string RevisionString { get; set; } = "unknown";
 
-        /// <summary>
-        /// Get the ProjectLab pins for mikroBUS header 1
-        /// </summary>
-        public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
+        /*
+                /// <summary>
+                /// Get the ProjectLab pins for mikroBUS header 1
+                /// </summary>
+                public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
 
-        /// <summary>
-        /// Get the ProjectLab pins for mikroBUS header 1
-        /// </summary>
-        public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
-
+                /// <summary>
+                /// Get the ProjectLab pins for mikroBUS header 1
+                /// </summary>
+                public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+        */
 
         public MikroBusConnector MikroBus1 => (MikroBusConnector)Connectors[0];
         public MikroBusConnector MikroBus2 => (MikroBusConnector)Connectors[1];

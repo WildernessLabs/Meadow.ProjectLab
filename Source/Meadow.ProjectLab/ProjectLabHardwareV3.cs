@@ -72,17 +72,17 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// Gets the Piezo noise maker on the Project Lab board
     /// </summary>
     public override RgbPwmLed? RgbLed { get; }
+    /*
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 1
+        /// </summary>
+        public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
 
-    /// <summary>
-    /// Get the ProjectLab pins for mikroBUS header 1
-    /// </summary>
-    public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
-
-    /// <summary>
-    /// Get the ProjectLab pins for mikroBUS header 2
-    /// </summary>
-    public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
-
+        /// <summary>
+        /// Get the ProjectLab pins for mikroBUS header 2
+        /// </summary>
+        public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+    */
     /// <summary>
     /// Display enable port for backlight control
     /// </summary>

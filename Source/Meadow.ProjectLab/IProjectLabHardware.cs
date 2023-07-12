@@ -42,6 +42,10 @@ namespace Meadow.Devices
 
         public string RevisionString { get; }
 
+        MikroBusConnector MikroBus1 { get; }
+        MikroBusConnector MikroBus2 { get; }
+
+        /*
         public (IPin AN,
                 IPin RST,
                 IPin CS,
@@ -69,5 +73,6 @@ namespace Meadow.Devices
                 IPin SCL,
                 IPin SCA) MikroBus2Pins
         { get; }
+    */
     }
 }

@@ -71,6 +71,7 @@ namespace Meadow.Devices
         /// </summary>
         public override RgbPwmLed? RgbLed { get; }
 
+        /*
         /// <summary>
         /// Get the ProjectLab pins for mikroBUS header 1
         /// </summary>
@@ -80,6 +81,7 @@ namespace Meadow.Devices
         /// Get the ProjectLab pins for mikroBUS header 2
         /// </summary>
         public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
+        */
 
         internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1)
             : base(device)
@@ -179,7 +181,7 @@ namespace Meadow.Devices
                 Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
             }
 
-            SetMikroBusPins();
+            //            SetMikroBusPins();
         }
 
         internal override MikroBusConnector CreateMikroBus1()
@@ -225,7 +227,7 @@ namespace Meadow.Devices
                     new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C_SDA),
                 });
         }
-
+        /*
         private void SetMikroBusPins()
         {
             MikroBus1Pins =
@@ -256,7 +258,7 @@ namespace Meadow.Devices
                  Resolver.Device.GetPin("D08"),
                  Resolver.Device.GetPin("D07"));
         }
-
+        */
         /// <summary>
         /// The hardware revision of the board
         /// </summary>
