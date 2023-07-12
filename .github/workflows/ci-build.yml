@@ -3,68 +3,77 @@ name: CI Build
 on:
   workflow_dispatch:
   push:
-    branches: [ main, develop ]
+    branches: [ develop ]
   pull_request:
     branches: [ main, develop ]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout ProjectLab
       uses: actions/checkout@v3
       with:
         path: Meadow.ProjLab
+        
     - name: Checkout Meadow.Contracts
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Contracts
         path: Meadow.Contracts
         ref: develop
+        
     - name: Checkout Meadow.Units
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Units
         path: Meadow.Units
         ref: develop
+        
     - name: Checkout Meadow.Logging
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Logging
         path: Meadow.Logging
+        ref: develop
+        
     - name: Checkout MQTTnet fork
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/MQTTnet
         path: MQTTnet
-        ref: meadow
+        ref: develop
+
     - name: Checkout Meadow.Core
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Core
         path: Meadow.Core
         ref: develop
-        token: ${{ secrets.CI_ACCESS_TOKEN }}
+
     - name: Checkout Meadow.Foundation
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Foundation
         path: Meadow.Foundation
-        ref: ${{ env.GITHUB_REF_NAME }}
+        ref: develop
+        
     - name: Checkout Meadow.Modbus
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Modbus
         path: Meadow.Modbus
-        ref: ${{ env.GITHUB_REF_NAME }}
+        ref: develop
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+        
     - name: Restore dependencies
       run: dotnet restore Meadow.ProjLab/Source/Meadow.ProjectLab.sln
+      
     - name: Build
       run: dotnet build -c Release Meadow.ProjLab/Source/Meadow.ProjectLab.sln --no-restore
