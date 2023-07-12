@@ -21,6 +21,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 {
     private string? revisionString;
     private byte? revisionNumber;
+    private IF7CoreComputeMeadowDevice _device;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -90,6 +91,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
         : base(device)
     {
+        _device = device;
+
         I2cBus = i2cBus;
 
         base.Initialize(device);
@@ -207,9 +210,55 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
         }
 
-        SetMikroBusPins();
+        //        SetMikroBusPins();
     }
 
+    internal override MikroBusConnector CreateMikroBus1()
+    {
+        // todo: verify 3.e and later
+        Logger?.Trace("Creating MikroBus1 connector");
+        return new MikroBusConnector(
+            "MikroBus1",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.PA3),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, _device.Pins.PH10),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, _device.Pins.PB12),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SPI5_SCK),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.SPI5_CIPO),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, _device.Pins.SPI5_COPI),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _device.Pins.PB8),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, _device.Pins.PC2),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, _device.Pins.PB15),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, _device.Pins.PB14),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C3_SCL),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C3_SDA),
+            });
+    }
+
+    internal override MikroBusConnector CreateMikroBus2()
+    {
+        Logger?.Trace("Creating MikroBus2 connector");
+        return new MikroBusConnector(
+            "MikroBus2",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.PB0),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, Mcp_2.Pins.GP1),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, Mcp_2.Pins.GP2),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SCK),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.CIPO),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, _device.Pins.COPI),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _device.Pins.PB9),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, Mcp_2.Pins.GP3),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, _device.Pins.PB15),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, _device.Pins.PB14),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C1_SCL),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C1_SDA),
+            });
+    }
+
+    /*
     private void SetMikroBusPins()
     {
         MikroBus1Pins =
@@ -240,7 +289,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
              Resolver.Device.GetPin("I2C1_CLK"),
              Resolver.Device.GetPin("I2C1_CLK"));
     }
-
+    */
     protected byte RevisionNumber
     {
         get

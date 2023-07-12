@@ -17,6 +17,8 @@ namespace Meadow.Devices
     /// </summary>
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
+        private IConnector[]? _connectors;
+
         /// <summary>
         /// Get a reference to Meadow Logger
         /// </summary>
@@ -96,12 +98,34 @@ namespace Meadow.Devices
         /// </summary>
         public abstract (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
 
+
+        public MikroBusConnector MikroBus1 => (MikroBusConnector)Connectors[0];
+        public MikroBusConnector MikroBus2 => (MikroBusConnector)Connectors[1];
+
         /// <summary>
         /// Constructor the Project Lab Hardware base class
         /// </summary>
         /// <param name="device">The meadow device</param>
         internal ProjectLabHardwareBase(IF7MeadowDevice device)
         {
+        }
+
+        internal abstract MikroBusConnector CreateMikroBus1();
+        internal abstract MikroBusConnector CreateMikroBus2();
+
+        public IConnector[] Connectors
+        {
+            get
+            {
+                if (_connectors == null)
+                {
+                    _connectors = new IConnector[2]; // mikroe1, mikroe2, display (485?)
+                    _connectors[0] = CreateMikroBus1();
+                    _connectors[1] = CreateMikroBus2();
+                }
+
+                return _connectors;
+            }
         }
 
         internal virtual void Initialize(IF7MeadowDevice device)

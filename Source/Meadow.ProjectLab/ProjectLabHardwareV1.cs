@@ -17,6 +17,8 @@ namespace Meadow.Devices
     /// </summary>
     public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     {
+        private IF7FeatherMeadowDevice _device;
+
         private readonly string revision = "v1.x";
 
         /// <summary>
@@ -67,6 +69,7 @@ namespace Meadow.Devices
         internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
             : base(device)
         {
+            _device = device;
             I2cBus = i2cBus;
 
             base.Initialize(device);
@@ -124,7 +127,51 @@ namespace Meadow.Devices
             SetMikroBusPins();
         }
 
-        void SetMikroBusPins()
+        internal override MikroBusConnector CreateMikroBus1()
+        {
+            Logger?.Trace("Creating MikroBus1 connector");
+            return new MikroBusConnector(
+                "MikroBus1",
+                new PinMapping
+                {
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.A00),
+                    // no RST connected
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, _device.Pins.D14),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SCK),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.CIPO),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, _device.Pins.COPI),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _device.Pins.D04),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, _device.Pins.D03),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, _device.Pins.D12),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, _device.Pins.D13),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C_SCL),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C_SDA),
+                });
+        }
+
+        internal override MikroBusConnector CreateMikroBus2()
+        {
+            Logger?.Trace("Creating MikroBus2 connector");
+            return new MikroBusConnector(
+                "MikroBus2",
+                new PinMapping
+                {
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.A01),
+                    // no RST connected
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, _device.Pins.A02),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SCK),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.CIPO),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, _device.Pins.COPI),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _device.Pins.D03),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, _device.Pins.D04),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, _device.Pins.D12),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, _device.Pins.D13),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C_SCL),
+                    new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C_SDA),
+                });
+        }
+
+        private void SetMikroBusPins()
         {
             MikroBus1Pins =
                 (Resolver.Device.GetPin("A00"),
