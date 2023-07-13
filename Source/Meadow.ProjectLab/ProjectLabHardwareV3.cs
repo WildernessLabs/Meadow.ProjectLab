@@ -99,8 +99,10 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
         try
         {
-            // MCP the First
-            mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.A05, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+            mcp1Interrupt = device.CreateDigitalInterruptPort(
+                device.Pins.A05,
+                InterruptMode.EdgeRising,
+                ResistorMode.InternalPullDown);
 
             mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
 
@@ -209,7 +211,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         else
         {
             Logger?.Trace("Hardware is 3.e or later");
-            _connectors = new ConnectorProviderV3e();
+            _connectors = new ConnectorProviderV3e(this);
         }
     }
 
