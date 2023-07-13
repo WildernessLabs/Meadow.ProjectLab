@@ -25,7 +25,7 @@ internal class ConnectorProviderV3 : IConnectorProvider
             {
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, device.Pins.PA3),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, device.Pins.PH10),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, device.Pins.PB12),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, device.Pins.PB12),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, device.Pins.SPI5_SCK),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, device.Pins.SPI5_CIPO),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, device.Pins.SPI5_COPI),
@@ -50,7 +50,7 @@ internal class ConnectorProviderV3 : IConnectorProvider
             {
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, device.Pins.PB0),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, mcp2.Pins.GP1),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, mcp2.Pins.GP2),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, mcp2.Pins.GP2),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, device.Pins.SCK),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, device.Pins.CIPO),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, device.Pins.COPI),
