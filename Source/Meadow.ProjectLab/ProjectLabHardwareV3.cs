@@ -227,6 +227,19 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         return _connectors.CreateMikroBus2(_device, Mcp_2);
     }
 
+    internal override GroveDigitalConnector? CreateGroveDigitalConnector()
+    {
+        Logger?.Trace("Creating Grove digital connector");
+
+        return new GroveDigitalConnector(
+           "GroveDigital",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.D16),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, _device.Pins.D17),
+            });
+    }
+
     /// <summary>
     /// The hardware revision number, read from the on-board MCP
     /// </summary>

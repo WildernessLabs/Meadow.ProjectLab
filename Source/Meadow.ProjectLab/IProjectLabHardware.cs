@@ -45,34 +45,6 @@ namespace Meadow.Devices
         MikroBusConnector MikroBus1 { get; }
         MikroBusConnector MikroBus2 { get; }
 
-        /*
-        public (IPin AN,
-                IPin RST,
-                IPin CS,
-                IPin SCK,
-                IPin CIPO,
-                IPin COPI,
-                IPin PWM,
-                IPin INT,
-                IPin RX,
-                IPin TX,
-                IPin SCL,
-                IPin SCA) MikroBus1Pins
-        { get; }
-
-        public (IPin AN,
-                IPin RST,
-                IPin CS,
-                IPin SCK,
-                IPin CIPO,
-                IPin COPI,
-                IPin PWM,
-                IPin INT,
-                IPin RX,
-                IPin TX,
-                IPin SCL,
-                IPin SCA) MikroBus2Pins
-        { get; }
-    */
+        GroveDigitalConnector? GroveDigital { get; }
     }
 }
