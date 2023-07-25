@@ -10,6 +10,9 @@ using Meadow.Peripherals.Sensors.Buttons;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Interface for ProjectLab hardware
+    /// </summary>
     public interface IProjectLabHardware
     {
         /// <summary>
@@ -46,5 +49,11 @@ namespace Meadow.Devices
         MikroBusConnector MikroBus2 { get; }
 
         GroveDigitalConnector? GroveDigital { get; }
+
+        GroveDigitalConnector GroveAnalog { get; }
+
+        UartConnector GroveUart { get; }
+
+        I2cConnector QwiicConnector { get; }
     }
 }

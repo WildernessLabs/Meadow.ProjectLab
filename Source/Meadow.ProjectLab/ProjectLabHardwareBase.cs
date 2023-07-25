@@ -93,6 +93,12 @@ namespace Meadow.Devices
 
         public GroveDigitalConnector? GroveDigital => (GroveDigitalConnector?)Connectors[2];
 
+        public GroveDigitalConnector GroveAnalog => (GroveDigitalConnector)Connectors[3];
+
+        public UartConnector GroveUart => (UartConnector)Connectors[4];
+
+        public I2cConnector QwiicConnector => (I2cConnector)Connectors[5];
+
         /// <summary>
         /// Constructor the Project Lab Hardware base class
         /// </summary>
@@ -108,16 +114,25 @@ namespace Meadow.Devices
             return null;
         }
 
+        internal abstract GroveDigitalConnector CreateGroveAnalogConnector();
+
+        internal abstract UartConnector CreateGroveUartConnector();
+
+        internal abstract I2cConnector CreateQwiicConnector();
+
         public IConnector?[] Connectors
         {
             get
             {
                 if (_connectors == null)
                 {
-                    _connectors = new IConnector[3]; // mikroe1, mikroe2, display (485?)
+                    _connectors = new IConnector[6]; // mikroe1, mikroe2, display (485?)
                     _connectors[0] = CreateMikroBus1();
                     _connectors[1] = CreateMikroBus2();
                     _connectors[2] = CreateGroveDigitalConnector();
+                    _connectors[3] = CreateGroveAnalogConnector();
+                    _connectors[4] = CreateGroveUartConnector();
+                    _connectors[5] = CreateQwiicConnector();
                 }
 
                 return _connectors;

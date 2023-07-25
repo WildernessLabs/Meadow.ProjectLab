@@ -17,7 +17,7 @@ namespace Meadow.Devices;
 /// </summary>
 public class ProjectLabHardwareV1 : ProjectLabHardwareBase
 {
-    private IF7FeatherMeadowDevice _device;
+    private readonly IF7FeatherMeadowDevice _device;
 
     private readonly string revision = "v1.x";
 
@@ -165,6 +165,47 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             new I2cBusMapping(_device, 1),
             new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO)
             );
+    }
+
+    internal override GroveDigitalConnector CreateGroveAnalogConnector()
+    {
+        Logger?.Trace("Creating Grove analog connector");
+
+        return new GroveDigitalConnector(
+           "GroveAnalog",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.A01),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, _device.Pins.A02),
+            });
+    }
+
+    internal override UartConnector CreateGroveUartConnector()
+    {
+        Logger?.Trace("Creating Grove UART connector");
+
+        return new UartConnector(
+           "GroveUart",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(UartConnector.PinNames.RX, _device.Pins.D13),
+                new PinMapping.PinAlias(UartConnector.PinNames.TX, _device.Pins.D12),
+            },
+            _device.PlatformOS.GetSerialPortName("com1"));
+    }
+
+    internal override I2cConnector CreateQwiicConnector()
+    {
+        Logger?.Trace("Creating Grove analog connector");
+
+        return new I2cConnector(
+           "GroveQwiic",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.D08),
+                new PinMapping.PinAlias(I2cConnector.PinNames.SDA, _device.Pins.D07),
+            },
+            new I2cBusMapping(_device, 1));
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Gateways.Bluetooth;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
@@ -21,8 +22,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 {
     private string? revisionString;
     private byte? revisionNumber;
-    private IF7CoreComputeMeadowDevice _device;
-    private IConnectorProvider _connectors;
+    private readonly IF7CoreComputeMeadowDevice _device;
+    private readonly IConnectorProvider _connectors;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -240,6 +241,47 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             });
     }
 
+    internal override GroveDigitalConnector CreateGroveAnalogConnector()
+    {
+        Logger?.Trace("Creating Grove analog connector");
+
+        return new GroveDigitalConnector(
+           "GroveAnalog",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.A00),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, _device.Pins.A01),
+            });
+    }
+
+    internal override UartConnector CreateGroveUartConnector()
+    {
+        Logger?.Trace("Creating Grove UART connector");
+
+        return new UartConnector(
+           "GroveUart",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(UartConnector.PinNames.RX, _device.Pins.D00),
+                new PinMapping.PinAlias(UartConnector.PinNames.TX, _device.Pins.D01),
+            },
+            _device.PlatformOS.GetSerialPortName("com4"));
+    }
+
+    internal override I2cConnector CreateQwiicConnector()
+    {
+        Logger?.Trace("Creating Grove analog connector");
+
+        return new I2cConnector(
+           "GroveQwiic",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.D08),
+                new PinMapping.PinAlias(I2cConnector.PinNames.SDA, _device.Pins.D07),
+            },
+            new I2cBusMapping(_device, 1));
+    }
+
     /// <summary>
     /// The hardware revision number, read from the on-board MCP
     /// </summary>
@@ -247,10 +289,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     {
         get
         {
-            if (revisionNumber == null)
-            {
-                revisionNumber = Mcp_Version?.ReadFromPorts(Mcp23xxx.PortBank.A) ?? 0;
-            }
+            revisionNumber ??= Mcp_Version?.ReadFromPorts(Mcp23xxx.PortBank.A) ?? 0;
 
             return revisionNumber.Value;
         }
