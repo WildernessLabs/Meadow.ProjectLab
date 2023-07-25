@@ -4,6 +4,7 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Gateways.Bluetooth;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
@@ -21,6 +22,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 {
     private string? revisionString;
     private byte? revisionNumber;
+    private readonly IF7CoreComputeMeadowDevice _device;
+    private readonly IConnectorProvider _connectors;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -73,16 +76,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     public override RgbPwmLed? RgbLed { get; }
 
     /// <summary>
-    /// Get the ProjectLab pins for mikroBUS header 1
-    /// </summary>
-    public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus1Pins { get; protected set; }
-
-    /// <summary>
-    /// Get the ProjectLab pins for mikroBUS header 2
-    /// </summary>
-    public override (IPin AN, IPin? RST, IPin CS, IPin SCK, IPin CIPO, IPin COPI, IPin PWM, IPin INT, IPin RX, IPin TX, IPin SCL, IPin SCA) MikroBus2Pins { get; protected set; }
-
-    /// <summary>
     /// Display enable port for backlight control
     /// </summary>
     public IDigitalOutputPort DisplayEnablePort { get; protected set; }
@@ -90,6 +83,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
         : base(device)
     {
+        _device = device;
+
         I2cBus = i2cBus;
 
         base.Initialize(device);
@@ -105,8 +100,10 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
         try
         {
-            // MCP the First
-            mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.A05, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+            mcp1Interrupt = device.CreateDigitalInterruptPort(
+                device.Pins.A05,
+                InterruptMode.EdgeRising,
+                ResistorMode.InternalPullDown);
 
             mcp1Reset = device.CreateDigitalOutputPort(device.Pins.D05);
 
@@ -207,48 +204,92 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
         }
 
-        SetMikroBusPins();
+        if (RevisionNumber < 15) // before 3.e
+        {
+            Logger?.Trace("Hardware is 3.d or earlier");
+            _connectors = new ConnectorProviderV3();
+        }
+        else
+        {
+            Logger?.Trace("Hardware is 3.e or later");
+            _connectors = new ConnectorProviderV3e(this);
+        }
     }
 
-    private void SetMikroBusPins()
+    internal override MikroBusConnector CreateMikroBus1()
     {
-        MikroBus1Pins =
-            (Resolver.Device.GetPin("PA3"), //A02
-             Resolver.Device.GetPin("Ph10"), //D02
-             Resolver.Device.GetPin("PB12"), //D13
-             Resolver.Device.GetPin("SPI5_SCK"),
-             Resolver.Device.GetPin("SPI5_CIPO"),
-             Resolver.Device.GetPin("SPI5_COPI"),
-             Resolver.Device.GetPin("PB8"), //D03
-             Resolver.Device.GetPin("PC2"),
-             Resolver.Device.GetPin("PB15"), //D13
-             Resolver.Device.GetPin("PB14"), //D12
-             Resolver.Device.GetPin("I2C3_CLK"),
-             Resolver.Device.GetPin("I2C3_DAT"));
-
-        MikroBus2Pins =
-            (Resolver.Device.GetPin("PB0"), //A03
-             Mcp_2.Pins.GP1,
-             Mcp_2.Pins.GP2,
-             Resolver.Device.GetPin("SCK"),
-             Resolver.Device.GetPin("CIPO"),
-             Resolver.Device.GetPin("COPI"),
-             Resolver.Device.GetPin("PB9"), //D04
-             Mcp_2.Pins.GP3,
-             Resolver.Device.GetPin("PB15"), //ToDo UART1_A_RX
-             Resolver.Device.GetPin("PB14"), //ToDo UART1_A_TX
-             Resolver.Device.GetPin("I2C1_CLK"),
-             Resolver.Device.GetPin("I2C1_CLK"));
+        Logger?.Trace("Creating MikroBus1 connector");
+        return _connectors.CreateMikroBus1(_device, Mcp_2);
     }
 
+    internal override MikroBusConnector CreateMikroBus2()
+    {
+        Logger?.Trace("Creating MikroBus2 connector");
+        return _connectors.CreateMikroBus2(_device, Mcp_2);
+    }
+
+    internal override GroveDigitalConnector? CreateGroveDigitalConnector()
+    {
+        Logger?.Trace("Creating Grove digital connector");
+
+        return new GroveDigitalConnector(
+           "GroveDigital",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.D16),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, _device.Pins.D17),
+            });
+    }
+
+    internal override GroveDigitalConnector CreateGroveAnalogConnector()
+    {
+        Logger?.Trace("Creating Grove analog connector");
+
+        return new GroveDigitalConnector(
+           "GroveAnalog",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.A00),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, _device.Pins.A01),
+            });
+    }
+
+    internal override UartConnector CreateGroveUartConnector()
+    {
+        Logger?.Trace("Creating Grove UART connector");
+
+        return new UartConnector(
+           "GroveUart",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(UartConnector.PinNames.RX, _device.Pins.D00),
+                new PinMapping.PinAlias(UartConnector.PinNames.TX, _device.Pins.D01),
+            },
+            _device.PlatformOS.GetSerialPortName("com4"));
+    }
+
+    internal override I2cConnector CreateQwiicConnector()
+    {
+        Logger?.Trace("Creating Grove analog connector");
+
+        return new I2cConnector(
+           "GroveQwiic",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.D08),
+                new PinMapping.PinAlias(I2cConnector.PinNames.SDA, _device.Pins.D07),
+            },
+            new I2cBusMapping(_device, 1));
+    }
+
+    /// <summary>
+    /// The hardware revision number, read from the on-board MCP
+    /// </summary>
     protected byte RevisionNumber
     {
         get
         {
-            if (revisionNumber == null)
-            {
-                revisionNumber = Mcp_Version?.ReadFromPorts(Mcp23xxx.PortBank.A) ?? 0;
-            }
+            revisionNumber ??= Mcp_Version?.ReadFromPorts(Mcp23xxx.PortBank.A) ?? 0;
 
             return revisionNumber.Value;
         }
@@ -274,38 +315,9 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         }
     }
 
-    private const byte UART_I2C_ADDRESS = 0x4D; // <- the schematic labels this incorrectly
-
     /// <inheritdoc/>
     public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
-        if (Resolver.Device is F7CoreComputeV2 device)
-        {
-            if (RevisionNumber < 15)
-            {
-                throw new PlatformNotSupportedException("RS485 is not supported on hardware revisions before 3.e");
-            }
-
-            ISerialPort port;
-            var address = UART_I2C_ADDRESS;
-
-            // v3e+ uses an SC16is I2C UART expander for the RS485
-            try
-            {
-
-                Resolver.Log.Info($"ADDRESS: 0x{address:X2}");
-                var uart = new Sc16is752(I2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), (Sc16is7x2.Addresses)address);
-                port = uart.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
-                Resolver.Log.Info($"485 port created");
-                return new ModbusRtuClient(port);
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Info($"Error creating I2C UART: {ex.Message}");
-                throw new Exception("Unable to connect to UART expander");
-            }
-        }
-
-        throw new NotSupportedException();
+        return _connectors.GetModbusRtuClient(this, baudRate, dataBits, parity, stopBits);
     }
 }
