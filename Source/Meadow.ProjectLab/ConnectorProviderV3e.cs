@@ -52,7 +52,7 @@ internal class ConnectorProviderV3e : IConnectorProvider
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, device.Pins.SPI5_CIPO),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, device.Pins.SPI5_COPI),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, device.Pins.PB8),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, device.Pins.PC0),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, device.Pins.PC2),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, device.Pins.PB15),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, device.Pins.PB14),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, device.Pins.I2C3_SCL),
