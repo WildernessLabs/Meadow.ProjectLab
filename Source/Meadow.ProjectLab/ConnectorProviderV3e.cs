@@ -85,7 +85,7 @@ internal class ConnectorProviderV3e : IConnectorProvider
             },
             _uartExpander.PortA,
             new I2cBusMapping(device, 1),
-            new SpiBusMapping(device, device.Pins.SPI5_SCK, device.Pins.SPI5_COPI, device.Pins.SPI5_CIPO)
+            new SpiBusMapping(device, device.Pins.SCK, device.Pins.COPI, device.Pins.CIPO)
             );
     }
 }
