@@ -9,8 +9,9 @@ Project Lab is the most functional IoT prototyping platform on the planet. No mo
 * [Getting Started](#getting-started)
 * [Hardware Specifications](#hardware-specifications)
 * [Pinout Diagram](#pinout-diagram)
-  * [Project Lab v1.e](#project-lab-v1e)
+  * [Project Lab v3.e](#project-lab-v3e)
   * [Project Lab v2.e](#project-lab-v2e)
+  * [Project Lab v1.e](#project-lab-v1e)
 * [Additional Samples](#additional-samples)
 
 ## Purchasing or Building
@@ -85,7 +86,7 @@ public class MeadowApp : App<F7FeatherV2>
         <th>Connectivity</th>
     </tr>
     <tr>
-        <td><strong>ST7789</strong> - SPI 240x240 color display</li></td>
+        <td><strong>ILI9341</strong> - SPI 320x240 color display</li></td>
         <td><strong>MikroBUS</strong> - Two sets of MikroBUS pin headers</td>
     </tr>
     <tr>
@@ -117,13 +118,17 @@ You can find the schematics and other design files in the [Hardware folder](/Har
 Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board and its connectors:
 &nbsp;
 
-### Project Lab v1.e
+### Project Lab v3.e
 
-<img src="Design/PinoutV1.jpg" style="margin-top:10px;margin-bottom:10px" />
+<img src="Design/PinoutV3.jpg" style="margin-top:10px;margin-bottom:10px" />
 
 ### Project Lab v2.e
 
 <img src="Design/PinoutV2.jpg" style="margin-top:10px;margin-bottom:10px" />
+
+### Project Lab v1.e
+
+<img src="Design/PinoutV1.jpg" style="margin-top:10px;margin-bottom:10px" />
 
 ## Additional Samples
 
