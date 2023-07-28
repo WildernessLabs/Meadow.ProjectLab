@@ -12,7 +12,9 @@ Project Lab is the most functional IoT prototyping platform on the planet. No mo
   * [Project Lab v3.e](#project-lab-v3e)
   * [Project Lab v2.e](#project-lab-v2e)
   * [Project Lab v1.e](#project-lab-v1e)
+* [Industrial Enclosure Design](#industrial-enclosure-design)
 * [Additional Samples](#additional-samples)
+* [Support](#support)
 
 ## Purchasing or Building
 
@@ -130,6 +132,12 @@ Check the diagrams below to see what pins on the Meadow are connected to every p
 
 <img src="Design/PinoutV1.jpg" style="margin-top:10px;margin-bottom:10px" />
 
+## Industrial Enclosure Design
+
+The enclosure was designed in Autodesk Fusion 360. The source file can be found and STL files can be found [here](Design/Enclosure/STLs_For_Printing/).
+
+<img src="Design/project-lab-v3-enclosure.jpg" style="margin-top:10px;margin-bottom:10px" />
+
 ## Additional Samples
 
 1. **[Setup your Meadow Build Environment](http://developer.wildernesslabs.co/Meadow/Getting_Started/Deploying_Meadow/)** - If you haven't deployed a Meadow app before, you'll need to setup your IDE extension(s), deploy Meadow.OS, etc.
@@ -138,3 +146,9 @@ Check the diagrams below to see what pins on the Meadow are connected to every p
 <a href="https://github.com/WildernessLabs/Meadow.ProjectLab.Samples">
     <img src="Design/project-lab-samples.png" style="margin-top:10px;margin-bottom:10px" />
 </a>
+
+## Support
+
+Having trouble building/running these projects? 
+* File an [issue](https://github.com/WildernessLabs/Meadow.Desktop.Samples/issues) with a repro case to investigate, and/or
+* Join our [public Slack](http://slackinvite.wildernesslabs.co/), where we have an awesome community helping, sharing and building amazing things using Meadow.
