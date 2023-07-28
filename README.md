@@ -1,4 +1,4 @@
-<img src="Design/banner.jpg" style="margin-bottom:10px" />
+<img src="Design/meadow-projectlab.jpg"  alt="Meadow.ProjectLab, C#, iot" style="margin-bottom:10px" />
 
 # Meadow.ProjectLab
 
@@ -9,19 +9,22 @@ Project Lab is the most functional IoT prototyping platform on the planet. No mo
 * [Getting Started](#getting-started)
 * [Hardware Specifications](#hardware-specifications)
 * [Pinout Diagram](#pinout-diagram)
-  * [Project Lab v1.e](#project-lab-v1e)
+  * [Project Lab v3.e](#project-lab-v3e)
   * [Project Lab v2.e](#project-lab-v2e)
+  * [Project Lab v1.e](#project-lab-v1e)
+* [Industrial Enclosure Design](#industrial-enclosure-design)
 * [Additional Samples](#additional-samples)
+* [Support](#support)
 
 ## Purchasing or Building
 
 <table width="100%">
     <tr>
         <td>
-            <img src="Design/ProjectLab-Store.jpg" />
+            <img src="Design/projectlab-store.jpg" alt="ProjectLab, C#, iot" />
         </td>
         <td>
-            <img src="Design/ProjectLab-PCB.jpg" /> 
+            <img src="Design/projectlab-pcb.jpg" alt="ProjectLab, C#, iot" /> 
         </td>
     </tr>
     <tr>
@@ -77,7 +80,7 @@ public class MeadowApp : App<F7FeatherV2>
 
 ## Hardware Specifications
 
-<img src="Design/project-lab-specs.jpg" style="margin-top:10px;margin-bottom:10px" />
+<img src="Design/project-lab-specs.jpg" alt="project-lab, specs, iot, dotnet" style="margin-top:10px;margin-bottom:10px" />
 
 <table>
     <tr>
@@ -85,7 +88,7 @@ public class MeadowApp : App<F7FeatherV2>
         <th>Connectivity</th>
     </tr>
     <tr>
-        <td><strong>ST7789</strong> - SPI 240x240 color display</li></td>
+        <td><strong>ILI9341</strong> - SPI 320x240 color display</li></td>
         <td><strong>MikroBUS</strong> - Two sets of MikroBUS pin headers</td>
     </tr>
     <tr>
@@ -117,13 +120,23 @@ You can find the schematics and other design files in the [Hardware folder](/Har
 Check the diagrams below to see what pins on the Meadow are connected to every peripheral on board and its connectors:
 &nbsp;
 
-### Project Lab v1.e
+### Project Lab v3.e
 
-<img src="Design/PinoutV1.jpg" style="margin-top:10px;margin-bottom:10px" />
+<img src="Design/projectlab-pinout-v3.jpg" alt="project-lab-v3, pinout, iot, dotnet" style="margin-top:10px;margin-bottom:10px" />
 
 ### Project Lab v2.e
 
-<img src="Design/PinoutV2.jpg" style="margin-top:10px;margin-bottom:10px" />
+<img src="Design/projectlab-pinout-v2.jpg" alt="project-lab-v2, specs, iot, dotnet" style="margin-top:10px;margin-bottom:10px" />
+
+### Project Lab v1.e
+
+<img src="Design/projectlab-pinout-v1.jpg" alt="project-lab-v1, specs, iot, dotnet" style="margin-top:10px;margin-bottom:10px" />
+
+## Industrial Enclosure Design
+
+The enclosure was designed in Autodesk Fusion 360. The source file can be found and STL files can be found [here](Design/Enclosure/STLs_For_Printing/).
+
+<img src="Design/project-lab-v3-enclosure.jpg" alt="project-lab, enclosure, 3d-print, iot" style="margin-top:10px;margin-bottom:10px" />
 
 ## Additional Samples
 
@@ -131,5 +144,11 @@ Check the diagrams below to see what pins on the Meadow are connected to every p
 2. **[Run the Demo App](Source/ProjectLab_Demo)** - Deploy the Project Lab demonstration app to see the built in peripherals at work.
 3. **[Check out the Project Lab Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples)** - We recommend cloning the [Meadow.ProjectLab.Samples](https://github.com/WildernessLabs/Meadow.ProjectLab.Samples) repo. There you'll find a bunch of awesome samples that you can run right out-of-the box! 
 <a href="https://github.com/WildernessLabs/Meadow.ProjectLab.Samples">
-    <img src="Design/project-lab-samples.png" style="margin-top:10px;margin-bottom:10px" />
+    <img src="Design/project-lab-samples.png" alt="project-lab, iot, project, samples" style="margin-top:10px;margin-bottom:10px" />
 </a>
+
+## Support
+
+Having trouble building/running these projects? 
+* File an [issue](https://github.com/WildernessLabs/Meadow.Desktop.Samples/issues) with a repro case to investigate, and/or
+* Join our [public Slack](http://slackinvite.wildernesslabs.co/), where we have an awesome community helping, sharing and building amazing things using Meadow.
