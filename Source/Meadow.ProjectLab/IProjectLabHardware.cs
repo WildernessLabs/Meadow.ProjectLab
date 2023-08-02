@@ -10,6 +10,9 @@ using Meadow.Peripherals.Sensors.Buttons;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Interface for ProjectLab hardware
+    /// </summary>
     public interface IProjectLabHardware
     {
         /// <summary>
@@ -42,32 +45,15 @@ namespace Meadow.Devices
 
         public string RevisionString { get; }
 
-        public (IPin AN,
-                IPin RST,
-                IPin CS,
-                IPin SCK,
-                IPin CIPO,
-                IPin COPI,
-                IPin PWM,
-                IPin INT,
-                IPin RX,
-                IPin TX,
-                IPin SCL,
-                IPin SCA) MikroBus1Pins
-        { get; }
+        MikroBusConnector MikroBus1 { get; }
+        MikroBusConnector MikroBus2 { get; }
 
-        public (IPin AN,
-                IPin RST,
-                IPin CS,
-                IPin SCK,
-                IPin CIPO,
-                IPin COPI,
-                IPin PWM,
-                IPin INT,
-                IPin RX,
-                IPin TX,
-                IPin SCL,
-                IPin SCA) MikroBus2Pins
-        { get; }
+        GroveDigitalConnector? GroveDigital { get; }
+
+        GroveDigitalConnector GroveAnalog { get; }
+
+        UartConnector GroveUart { get; }
+
+        I2cConnector QwiicConnector { get; }
     }
 }

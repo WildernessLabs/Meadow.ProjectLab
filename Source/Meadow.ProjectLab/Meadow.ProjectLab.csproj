@@ -28,9 +28,9 @@
     <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="*" />
     <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="*" />
     <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23xxx" Version="*" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="*" />
     <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bme68x" Version="*" />
     <PackageReference Include="Meadow.Foundation.Sensors.Light.Bh1750" Version="*" />
     <PackageReference Include="Meadow.Foundation.Sensors.Motion.Bmi270" Version="*" />
-    <PackageReference Include="Meadow.Modbus" Version="*" />
   </ItemGroup>
 </Project>

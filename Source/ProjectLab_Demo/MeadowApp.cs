@@ -6,20 +6,19 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace ProjLab_Demo
+namespace ProjectLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
     // Change to F7CoreComputeV2 for Project Lab V3.x
-    public class MeadowApp : App<F7CoreComputeV2>
+    public class MeadowApp : App<F7FeatherV2>
     {
-        DisplayController displayController;
-        MicroAudio audio;
-
-        IProjectLabHardware projLab;
+        private DisplayController displayController;
+        private MicroAudio audio;
+        private IProjectLabHardware projLab;
 
         public override Task Initialize()
         {
-            Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
+            Resolver.Log.LogLevel = Meadow.Logging.LogLevel.Trace;
 
             Resolver.Log.Info("Initialize hardware...");
 
