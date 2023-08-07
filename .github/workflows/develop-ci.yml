@@ -64,7 +64,7 @@ jobs:
     - name: Checkout Meadow.ProjectLab
       uses: actions/checkout@v3
       with:
-        path: Clima
+        path: Meadow.ProjectLab
         ref: develop
         
     - name: Setup .NET SDK
