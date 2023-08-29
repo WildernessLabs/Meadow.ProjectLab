@@ -17,9 +17,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-	<LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
