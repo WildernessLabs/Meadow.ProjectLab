@@ -4,7 +4,6 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Gateways.Bluetooth;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
@@ -270,16 +269,30 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
     internal override I2cConnector CreateQwiicConnector()
     {
-        Logger?.Trace("Creating Grove analog connector");
+        Logger?.Trace("Creating Qwiic I2C connector");
 
         return new I2cConnector(
-           "GroveQwiic",
+           "Qwiic",
             new PinMapping
             {
                 new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.D08),
                 new PinMapping.PinAlias(I2cConnector.PinNames.SDA, _device.Pins.D07),
             },
             new I2cBusMapping(_device, 1));
+    }
+
+    internal override IOTerminalConnector CreateIOTerminalConnector()
+    {
+        Logger?.Trace("Creating IO terminal connector");
+
+        return new IOTerminalConnector(
+           "IOTerminal",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.A1, _device.Pins.PB1),
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D2, Mcp_2.Pins.GP6),
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D3, Mcp_2.Pins.GP5),
+            });
     }
 
     /// <summary>

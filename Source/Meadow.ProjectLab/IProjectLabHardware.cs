@@ -54,6 +54,8 @@ namespace Meadow.Devices
 
         UartConnector GroveUart { get; }
 
-        I2cConnector QwiicConnector { get; }
+        I2cConnector Qwiic { get; }
+
+        IOTerminalConnector IOTerminal { get; }
     }
 }
