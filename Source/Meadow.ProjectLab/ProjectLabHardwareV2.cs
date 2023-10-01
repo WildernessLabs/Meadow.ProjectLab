@@ -284,7 +284,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
         Logger?.Trace("Creating display connector");
 
         return new DisplayConnector(
-           "IOTerminal",
+           "Display",
             new PinMapping
             {
                 new PinMapping.PinAlias(DisplayConnector.PinNames.CS, Mcp_1.Pins.GP5),
