@@ -295,6 +295,22 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             });
     }
 
+    internal override DisplayConnector CreateDisplayConnector()
+    {
+        Logger?.Trace("Creating display connector");
+
+        return new DisplayConnector(
+           "IOTerminal",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(DisplayConnector.PinNames.CS, Mcp_1.Pins.GP5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.RST, Mcp_1.Pins.GP7),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DC, Mcp_1.Pins.GP6),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
+            });
+    }
+
     /// <summary>
     /// The hardware revision number, read from the on-board MCP
     /// </summary>
