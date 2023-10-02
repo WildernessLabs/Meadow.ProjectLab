@@ -222,6 +222,22 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             });
     }
 
+    internal override DisplayConnector CreateDisplayConnector()
+    {
+        Logger?.Trace("Creating display connector");
+
+        return new DisplayConnector(
+           "Display",
+            new PinMapping
+            {
+                new PinMapping.PinAlias(DisplayConnector.PinNames.CS, _device.Pins.A03),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.RST, _device.Pins.A05),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DC, _device.Pins.A04),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
+            });
+    }
+
     /// <summary>
     /// The hardware revision string
     /// </summary>

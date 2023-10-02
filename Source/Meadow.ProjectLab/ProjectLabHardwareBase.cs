@@ -88,18 +88,46 @@ namespace Meadow.Devices
         /// </summary>
         public virtual string RevisionString { get; set; } = "unknown";
 
+        /// <summary>
+        /// Gets the MikroBus connector for slot 1 on the Project Lab board.
+        /// </summary>
         public MikroBusConnector MikroBus1 => (MikroBusConnector)Connectors[0];
+
+        /// <summary>
+        /// Gets the MikroBus connector for slot 2 on the Project Lab board.
+        /// </summary>
         public MikroBusConnector MikroBus2 => (MikroBusConnector)Connectors[1];
 
+        /// <summary>
+        /// Gets the Grove Digital connector on the Project Lab board.
+        /// </summary>
         public GroveDigitalConnector? GroveDigital => (GroveDigitalConnector?)Connectors[2];
 
+        /// <summary>
+        /// Gets the Grove Analog connector on the Project Lab board.
+        /// </summary>
         public GroveDigitalConnector GroveAnalog => (GroveDigitalConnector)Connectors[3];
 
+        /// <summary>
+        /// Gets the Grove UART connector on the Project Lab board.
+        /// </summary>
         public UartConnector GroveUart => (UartConnector)Connectors[4];
 
+        /// <summary>
+        /// Gets the Qwiic connector on the Project Lab board.
+        /// </summary>
         public I2cConnector Qwiic => (I2cConnector)Connectors[5];
 
+        /// <summary>
+        /// Gets the IO Terminal connector on the Project Lab board.
+        /// </summary>
         public IOTerminalConnector IOTerminal => (IOTerminalConnector)Connectors[6];
+
+        /// <summary>
+        /// Gets the display header connector on the Project Lab board.
+        /// </summary>
+        public DisplayConnector DisplayHeader => (DisplayConnector)Connectors[7];
+
 
         /// <summary>
         /// Constructor the Project Lab Hardware base class
@@ -124,13 +152,18 @@ namespace Meadow.Devices
 
         internal abstract IOTerminalConnector CreateIOTerminalConnector();
 
+        internal abstract DisplayConnector CreateDisplayConnector();
+
+        /// <summary>
+        /// Collection of connectors on the Project Lab board
+        /// </summary>
         public IConnector?[] Connectors
         {
             get
             {
                 if (_connectors == null)
                 {
-                    _connectors = new IConnector[7]; // mikroe1, mikroe2, display (485?)
+                    _connectors = new IConnector[8];
                     _connectors[0] = CreateMikroBus1();
                     _connectors[1] = CreateMikroBus2();
                     _connectors[2] = CreateGroveDigitalConnector();
@@ -138,6 +171,7 @@ namespace Meadow.Devices
                     _connectors[4] = CreateGroveUartConnector();
                     _connectors[5] = CreateQwiicConnector();
                     _connectors[6] = CreateIOTerminalConnector();
+                    _connectors[7] = CreateDisplayConnector();
                 }
 
                 return _connectors;
