@@ -160,7 +160,7 @@ namespace Meadow.Devices
             {
                 if (_connectors == null)
                 {
-                    _connectors = new IConnector[7]; // mikroe1, mikroe2, display (485?)
+                    _connectors = new IConnector[8];
                     _connectors[0] = CreateMikroBus1();
                     _connectors[1] = CreateMikroBus2();
                     _connectors[2] = CreateGroveDigitalConnector();
