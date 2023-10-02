@@ -154,6 +154,9 @@ namespace Meadow.Devices
 
         internal abstract DisplayConnector CreateDisplayConnector();
 
+        /// <summary>
+        /// Collection of connectors on the Project Lab board
+        /// </summary>
         public IConnector?[] Connectors
         {
             get
