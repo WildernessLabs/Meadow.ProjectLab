@@ -273,7 +273,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
            "IOTerminal",
             new PinMapping
             {
-                new PinMapping.PinAlias(IOTerminalConnector.PinNames.A1, _device.Pins.A00),
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.A1, _device.Pins.A04),
                 new PinMapping.PinAlias(IOTerminalConnector.PinNames.D2, _device.Pins.D03),
                 new PinMapping.PinAlias(IOTerminalConnector.PinNames.D3, _device.Pins.D04),
             });
