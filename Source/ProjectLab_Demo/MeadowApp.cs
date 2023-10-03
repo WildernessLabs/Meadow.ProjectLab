@@ -81,7 +81,6 @@ namespace ProjectLab_Demo
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
-            //---- heartbeat
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
