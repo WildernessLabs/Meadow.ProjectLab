@@ -25,7 +25,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     private readonly IConnectorProvider _connectors;
 
     /// <summary>
-    /// The MCP23008 IO expander connected to internal peripherals
+    /// The MCP23008 IO expander connected to internal peripherals on Project Lab
     /// </summary>
     public Mcp23008 Mcp_1 { get; protected set; }
 
@@ -39,39 +39,25 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
 
-    /// <summary>
-    /// Gets the Ili9341 Display on the Project Lab board
-    /// </summary>
     public override IGraphicsDisplay? Display { get; set; }
+    /// <inheritdoc/>
 
-    /// <summary>
-    /// Gets the Up PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? UpButton { get; }
 
-    /// <summary>
-    /// Gets the Down PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? DownButton { get; }
 
-    /// <summary>
-    /// Gets the Left PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? LeftButton { get; }
 
-    /// <summary>
-    /// Gets the Right PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? RightButton { get; }
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override PiezoSpeaker? Speaker { get; }
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override RgbPwmLed? RgbLed { get; }
 
     /// <summary>

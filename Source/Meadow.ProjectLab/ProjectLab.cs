@@ -5,6 +5,9 @@ using System;
 
 namespace Meadow.Devices
 {
+    /// <summary>
+    /// Represents Project Lab hardware and exposes its peripherals
+    /// </summary>
     public class ProjectLab
     {
         private ProjectLab() { }

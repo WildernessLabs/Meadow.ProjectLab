@@ -24,14 +24,10 @@ namespace Meadow.Devices
         /// </summary>
         protected Logger? Logger { get; } = Resolver.Log;
 
-        /// <summary>
-        /// Gets the SPI Bus
-        /// </summary>
+        /// <inheritdoc/>
         public ISpiBus SpiBus { get; protected set; }
 
-        /// <summary>
-        /// Gets the I2C Bus
-        /// </summary>
+        /// <inheritdoc/>
         public II2cBus I2cBus { get; protected set; }
 
         /// <summary>
@@ -44,14 +40,10 @@ namespace Meadow.Devices
         /// </summary>
         public Bme688? EnvironmentalSensor { get; private set; }
 
-        /// <summary>
-        /// Gets the Piezo noise maker on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public abstract PiezoSpeaker? Speaker { get; }
 
-        /// <summary>
-        /// Gets the Piezo noise maker on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public abstract RgbPwmLed? RgbLed { get; }
 
         /// <summary>
@@ -59,74 +51,47 @@ namespace Meadow.Devices
         /// </summary>
         public Bmi270? MotionSensor { get; private set; }
 
-        /// <summary>
-        /// Gets the display on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public abstract IGraphicsDisplay? Display { get; set; }
 
-        /// <summary>
-        /// Gets the Up PushButton on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public abstract IButton? UpButton { get; }
 
-        /// <summary>
-        /// Gets the Down PushButton on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public abstract IButton? DownButton { get; }
 
-        /// <summary>
-        /// Gets the Left PushButton on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public abstract IButton? LeftButton { get; }
-        /// <summary>
-        /// Gets the Right PushButton on the Project Lab board
-        /// </summary>
+        
+        /// <inheritdoc/>
         public abstract IButton? RightButton { get; }
 
-        /// <summary>
-        /// Gets the ProjectLab board hardware revision
-        /// </summary>
+        /// <inheritdoc/>
         public virtual string RevisionString { get; set; } = "unknown";
 
-        /// <summary>
-        /// Gets the MikroBus connector for slot 1 on the Project Lab board.
-        /// </summary>
-        public MikroBusConnector MikroBus1 => (MikroBusConnector)Connectors[0];
+        /// <inheritdoc/>
+        public MikroBusConnector MikroBus1 => (MikroBusConnector)Connectors[0]!;
 
-        /// <summary>
-        /// Gets the MikroBus connector for slot 2 on the Project Lab board.
-        /// </summary>
-        public MikroBusConnector MikroBus2 => (MikroBusConnector)Connectors[1];
+        /// <inheritdoc/>
+        public MikroBusConnector MikroBus2 => (MikroBusConnector)Connectors[1]!;
 
-        /// <summary>
-        /// Gets the Grove Digital connector on the Project Lab board.
-        /// </summary>
+        /// <inheritdoc/>
         public GroveDigitalConnector? GroveDigital => (GroveDigitalConnector?)Connectors[2];
 
-        /// <summary>
-        /// Gets the Grove Analog connector on the Project Lab board.
-        /// </summary>
-        public GroveDigitalConnector GroveAnalog => (GroveDigitalConnector)Connectors[3];
+        /// <inheritdoc/>
+        public GroveDigitalConnector GroveAnalog => (GroveDigitalConnector)Connectors[3]!;
 
-        /// <summary>
-        /// Gets the Grove UART connector on the Project Lab board.
-        /// </summary>
-        public UartConnector GroveUart => (UartConnector)Connectors[4];
+        /// <inheritdoc/>
+        public UartConnector GroveUart => (UartConnector)Connectors[4]!;
 
-        /// <summary>
-        /// Gets the Qwiic connector on the Project Lab board.
-        /// </summary>
-        public I2cConnector Qwiic => (I2cConnector)Connectors[5];
+        /// <inheritdoc/>
+        public I2cConnector Qwiic => (I2cConnector)Connectors[5]!;
 
-        /// <summary>
-        /// Gets the IO Terminal connector on the Project Lab board.
-        /// </summary>
-        public IOTerminalConnector IOTerminal => (IOTerminalConnector)Connectors[6];
+        /// <inheritdoc/>
+        public IOTerminalConnector IOTerminal => (IOTerminalConnector)Connectors[6]!;
 
-        /// <summary>
-        /// Gets the display header connector on the Project Lab board.
-        /// </summary>
-        public DisplayConnector DisplayHeader => (DisplayConnector)Connectors[7];
+        /// <inheritdoc/>
+        public DisplayConnector DisplayHeader => (DisplayConnector)Connectors[7]!;
 
 
         /// <summary>
