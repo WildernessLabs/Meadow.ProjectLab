@@ -30,7 +30,7 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// </summary>
         public const string CLK = "CLK";
         /// <summary>
-        /// SPI controller ouy, peripheral in pin
+        /// SPI controller out, peripheral in pin
         /// </summary>
         public const string COPI = "COPI";
     }
