@@ -20,6 +20,7 @@ namespace Meadow.Devices;
 public class ProjectLabHardwareV2 : ProjectLabHardwareBase
 {
     private readonly IF7FeatherMeadowDevice _device;
+    private PiezoSpeaker? _speaker;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -64,7 +65,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     /// <summary>
     /// Gets the Piezo noise maker on the Project Lab board
     /// </summary>
-    public override PiezoSpeaker? Speaker { get; }
+    public override PiezoSpeaker? Speaker => GetSpeaker();
 
     /// <summary>
     /// Gets the Piezo noise maker on the Project Lab board
@@ -76,8 +77,6 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     {
         _device = device;
         I2cBus = i2cBus;
-
-        base.Initialize(device);
 
         SpiBus = Resolver.Device.CreateSpiBus(
             device.Pins.SCK,
@@ -157,19 +156,25 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
         var downPort = mcp1.CreateDigitalInterruptPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
         DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
+    }
 
-        try
+    private PiezoSpeaker? GetSpeaker()
+    {
+        if (_speaker == null)
         {
-            Logger?.Trace("Instantiating speaker");
-            Speaker = new PiezoSpeaker(device.Pins.D11);
-            Logger?.Trace("Speaker up");
-        }
-        catch (Exception ex)
-        {
-            Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                _speaker = new PiezoSpeaker(_device.Pins.D11);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
         }
 
-        //            SetMikroBusPins();
+        return _speaker;
     }
 
     internal override MikroBusConnector CreateMikroBus1()

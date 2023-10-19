@@ -23,6 +23,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     private byte? revisionNumber;
     private readonly IF7CoreComputeMeadowDevice _device;
     private readonly IConnectorProvider _connectors;
+    private PiezoSpeaker? _speaker;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -67,7 +68,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// <summary>
     /// Gets the Piezo noise maker on the Project Lab board
     /// </summary>
-    public override PiezoSpeaker? Speaker { get; }
+    public override PiezoSpeaker? Speaker => GetSpeaker();
 
     /// <summary>
     /// Gets the Piezo noise maker on the Project Lab board
@@ -85,8 +86,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         _device = device;
 
         I2cBus = i2cBus;
-
-        base.Initialize(device);
 
         SpiBus = Resolver.Device.CreateSpiBus(
             device.Pins.SCK,
@@ -192,17 +191,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
 
-        try
-        {
-            Logger?.Trace("Instantiating speaker");
-            Speaker = new PiezoSpeaker(device.Pins.D20);
-            Logger?.Trace("Speaker up");
-        }
-        catch (Exception ex)
-        {
-            Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
-        }
-
         if (RevisionNumber < 15) // before 3.e
         {
             Logger?.Trace("Hardware is 3.d or earlier");
@@ -213,6 +201,25 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             Logger?.Trace("Hardware is 3.e or later");
             _connectors = new ConnectorProviderV3e(this);
         }
+    }
+
+    private PiezoSpeaker? GetSpeaker()
+    {
+        if (_speaker == null)
+        {
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                _speaker = new PiezoSpeaker(_device.Pins.D20);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
+        }
+
+        return _speaker;
     }
 
     internal override MikroBusConnector CreateMikroBus1()

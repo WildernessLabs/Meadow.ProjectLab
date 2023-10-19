@@ -62,8 +62,6 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         _device = device;
         I2cBus = i2cBus;
 
-        base.Initialize(device);
-
         SpiBus = Resolver.Device.CreateSpiBus(
             device.Pins.SCK,
             device.Pins.COPI,
