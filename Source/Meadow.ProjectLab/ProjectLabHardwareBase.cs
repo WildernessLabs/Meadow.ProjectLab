@@ -18,6 +18,10 @@ namespace Meadow.Devices
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
         private IConnector?[]? _connectors;
+        private IGraphicsDisplay? _display;
+        private Bh1750? _lightSensor;
+        private Bme688? _environmentalSensor;
+        private Bmi270? _motionSensor;
 
         /// <summary>
         /// Get a reference to Meadow Logger
@@ -60,9 +64,25 @@ namespace Meadow.Devices
         public Bmi270? MotionSensor => GetMotionSensor();
 
         /// <summary>
-        /// Gets the display on the Project Lab board
+        /// Gets the Ili9341 Display on the Project Lab board
         /// </summary>
-        public abstract IGraphicsDisplay? Display { get; set; }
+        public IGraphicsDisplay? Display
+        {
+            get
+            {
+                if (_display == null)
+                {
+                    _display = GetDefaultDisplay();
+                }
+                return _display;
+            }
+            set => _display = value;
+        }
+
+        /// <summary>
+        /// Creates the default ILI9341 display
+        /// </summary>
+        protected abstract IGraphicsDisplay? GetDefaultDisplay();
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -177,10 +197,6 @@ namespace Meadow.Devices
                 return _connectors;
             }
         }
-
-        private Bh1750? _lightSensor;
-        private Bme688? _environmentalSensor;
-        private Bmi270? _motionSensor;
 
         private Bmi270? GetMotionSensor()
         {
