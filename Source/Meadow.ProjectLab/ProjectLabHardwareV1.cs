@@ -1,6 +1,4 @@
 ﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
@@ -20,11 +18,6 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     private readonly IF7FeatherMeadowDevice _device;
 
     private readonly string revision = "v1.x";
-
-    /// <summary>
-    /// Gets the ST7789 Display on the Project Lab board
-    /// </summary>
-    public override IGraphicsDisplay? Display { get; set; }
 
     /// <summary>
     /// Gets the Up PushButton on the Project Lab board
@@ -69,22 +62,6 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             new Frequency(48000, Frequency.UnitType.Kilohertz));
 
         Logger?.Debug("SPI Bus instantiated");
-
-        Logger?.Trace("Instantiating display");
-        Display = new St7789(
-                    spiBus: SpiBus,
-                    chipSelectPin: device.Pins.A03,
-                    dcPin: device.Pins.A04,
-                    resetPin: device.Pins.A05,
-                    width: 240, height: 240,
-                    colorMode: ColorMode.Format16bppRgb565)
-        {
-            SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-            SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
-        };
-        ((St7789)Display).SetRotation(RotationType._270Degrees);
-
-        Logger?.Trace("Display up");
 
         //---- led
         RgbLed = new RgbPwmLed(

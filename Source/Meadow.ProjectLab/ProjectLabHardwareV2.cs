@@ -1,6 +1,4 @@
 ﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
@@ -10,7 +8,6 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Units;
 using System;
-using System.Threading;
 
 namespace Meadow.Devices;
 
@@ -36,11 +33,6 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     /// The MCP23008 IO expander that contains the ProjectLab hardware version 
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
-
-    /// <summary>
-    /// Gets the ST7789 Display on the Project Lab board
-    /// </summary>
-    public override IGraphicsDisplay? Display { get; set; }
 
     /// <summary>
     /// Gets the Up PushButton on the Project Lab board
@@ -115,28 +107,6 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
         {
             Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
         }
-
-        //---- instantiate display
-        Logger?.Trace("Instantiating display");
-        var chipSelectPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP5);
-        var dcPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP6);
-        var resetPort = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP7);
-        Thread.Sleep(50);
-
-        Display = new St7789(
-            spiBus: SpiBus,
-            chipSelectPort: chipSelectPort,
-            dataCommandPort: dcPort,
-            resetPort: resetPort,
-            width: 240, height: 240,
-            colorMode: ColorMode.Format16bppRgb565)
-        {
-            SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-            SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
-        };
-        ((St7789)Display).SetRotation(RotationType._270Degrees);
-
-        Logger?.Trace("Display up");
 
         //---- led
         RgbLed = new RgbPwmLed(
