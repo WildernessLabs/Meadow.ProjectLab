@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
@@ -9,6 +10,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Units;
 using System;
+using System.Threading;
 
 namespace Meadow.Devices;
 
@@ -22,6 +24,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     private readonly IF7CoreComputeMeadowDevice _device;
     private readonly IConnectorProvider _connectors;
     private PiezoSpeaker? _speaker;
+    private IGraphicsDisplay? _display;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -171,14 +174,41 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     }
 
     /// <inheritdoc/>
-    protected override IGraphicsDisplay? GetIli9341Display()
+    protected override IGraphicsDisplay? GetDefaultDisplay()
     {
         if (DisplayEnablePort == null)
         {
             DisplayEnablePort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
         }
 
-        return base.GetIli9341Display();
+        if (_display == null)
+        {
+            Logger?.Trace("Instantiating display");
+
+            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+
+            Thread.Sleep(50);
+
+            _display = new Ili9341(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 320,
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+
+            ((Ili9341)Display).SetRotation(RotationType._270Degrees);
+
+            Logger?.Trace("Display up");
+        }
+
+        return _display;
     }
 
     private PiezoSpeaker? GetSpeaker()

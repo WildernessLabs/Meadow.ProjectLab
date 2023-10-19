@@ -1,5 +1,4 @@
 ﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
@@ -9,9 +8,7 @@ using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
 using Meadow.Peripherals.Sensors.Buttons;
-using Meadow.Units;
 using System;
-using System.Threading;
 
 namespace Meadow.Devices
 {
@@ -71,9 +68,21 @@ namespace Meadow.Devices
         /// </summary>
         public IGraphicsDisplay? Display
         {
-            get => GetIli9341Display();
+            get
+            {
+                if (_display == null)
+                {
+                    _display = GetDefaultDisplay();
+                }
+                return _display;
+            }
             set => _display = value;
         }
+
+        /// <summary>
+        /// Creates the default ILI9341 display
+        /// </summary>
+        protected abstract IGraphicsDisplay? GetDefaultDisplay();
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -187,41 +196,6 @@ namespace Meadow.Devices
 
                 return _connectors;
             }
-        }
-
-        /// <summary>
-        /// Creates the default ILI9341 display
-        /// </summary>
-        protected virtual IGraphicsDisplay? GetIli9341Display()
-        {
-            if (_display == null)
-            {
-                Logger?.Trace("Instantiating display");
-
-                var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
-                var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
-                var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
-
-                Thread.Sleep(50);
-
-                Display = new Ili9341(
-                    spiBus: SpiBus,
-                    chipSelectPort: chipSelectPort,
-                    dataCommandPort: dcPort,
-                    resetPort: resetPort,
-                    width: 240, height: 320,
-                    colorMode: ColorMode.Format16bppRgb565)
-                {
-                    SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-                    SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
-                };
-
-                ((Ili9341)Display).SetRotation(RotationType._270Degrees);
-
-                Logger?.Trace("Display up");
-            }
-
-            return _display;
         }
 
         private Bmi270? GetMotionSensor()

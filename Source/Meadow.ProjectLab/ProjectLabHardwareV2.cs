@@ -1,4 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
@@ -8,6 +10,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Units;
 using System;
+using System.Threading;
 
 namespace Meadow.Devices;
 
@@ -18,6 +21,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
 {
     private readonly IF7FeatherMeadowDevice _device;
     private PiezoSpeaker? _speaker;
+    private IGraphicsDisplay? _display;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -126,6 +130,37 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
         var downPort = mcp1.CreateDigitalInterruptPort(mcp1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
         DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
+    }
+
+    /// <inheritdoc/>
+    protected override IGraphicsDisplay? GetDefaultDisplay()
+    {
+        if (_display == null)
+        {
+            Logger?.Trace("Instantiating display");
+
+            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+            Thread.Sleep(50);
+
+            _display = new St7789(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 240,
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+            ((St7789)Display).SetRotation(RotationType._270Degrees);
+
+            Logger?.Trace("Display up");
+        }
+
+        return _display;
     }
 
     private PiezoSpeaker? GetSpeaker()

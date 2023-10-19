@@ -1,4 +1,6 @@
 ﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
@@ -7,6 +9,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Units;
 using System;
+using System.Threading;
 
 namespace Meadow.Devices;
 
@@ -16,6 +19,8 @@ namespace Meadow.Devices;
 public class ProjectLabHardwareV1 : ProjectLabHardwareBase
 {
     private readonly IF7FeatherMeadowDevice _device;
+    private IGraphicsDisplay? _display;
+    private PiezoSpeaker? _speaker;
 
     private readonly string revision = "v1.x";
 
@@ -77,17 +82,56 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         UpButton = GetPushButton(device.Pins.D15);
         DownButton = GetPushButton(device.Pins.D02);
         Logger?.Trace("Buttons up");
+    }
 
-        try
+    /// <inheritdoc/>
+    protected override IGraphicsDisplay? GetDefaultDisplay()
+    {
+        if (_display == null)
         {
-            Logger?.Trace("Instantiating speaker");
-            Speaker = new PiezoSpeaker(device.Pins.D11);
-            Logger?.Trace("Speaker up");
+            Logger?.Trace("Instantiating display");
+
+            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+            Thread.Sleep(50);
+
+            _display = new St7789(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 240,
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+            ((St7789)Display).SetRotation(RotationType._270Degrees);
+
+            Logger?.Trace("Display up");
         }
-        catch (Exception ex)
+
+        return _display;
+    }
+
+    private PiezoSpeaker? GetSpeaker()
+    {
+        if (_speaker == null)
         {
-            Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                _speaker = new PiezoSpeaker(_device.Pins.D11);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
         }
+
+        return _speaker;
     }
 
     internal override MikroBusConnector CreateMikroBus1()
