@@ -18,6 +18,10 @@ namespace Meadow.Devices
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
         private IConnector?[]? _connectors;
+        private IGraphicsDisplay? _display;
+        private Bh1750? _lightSensor;
+        private Bme688? _environmentalSensor;
+        private Bmi270? _motionSensor;
 
         /// <summary>
         /// Get a reference to Meadow Logger
@@ -37,12 +41,12 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the BH1750 Light Sensor on the Project Lab board
         /// </summary>
-        public Bh1750? LightSensor { get; private set; }
+        public Bh1750? LightSensor => GetLightSensor();
 
         /// <summary>
         /// Gets the BME688 environmental sensor  on the Project Lab board
         /// </summary>
-        public Bme688? EnvironmentalSensor { get; private set; }
+        public Bme688? EnvironmentalSensor => GetEnvironmentalSensor();
 
         /// <summary>
         /// Gets the Piezo noise maker on the Project Lab board
@@ -57,12 +61,28 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
         /// </summary>
-        public Bmi270? MotionSensor { get; private set; }
+        public Bmi270? MotionSensor => GetMotionSensor();
 
         /// <summary>
-        /// Gets the display on the Project Lab board
+        /// Gets the Ili9341 Display on the Project Lab board
         /// </summary>
-        public abstract IGraphicsDisplay? Display { get; set; }
+        public IGraphicsDisplay? Display
+        {
+            get
+            {
+                if (_display == null)
+                {
+                    _display = GetDefaultDisplay();
+                }
+                return _display;
+            }
+            set => _display = value;
+        }
+
+        /// <summary>
+        /// Creates the default ILI9341 display
+        /// </summary>
+        protected abstract IGraphicsDisplay? GetDefaultDisplay();
 
         /// <summary>
         /// Gets the Up PushButton on the Project Lab board
@@ -178,44 +198,66 @@ namespace Meadow.Devices
             }
         }
 
-        internal virtual void Initialize(IF7MeadowDevice device)
+        private Bmi270? GetMotionSensor()
         {
-            try
+            if (_motionSensor == null)
             {
-                Logger?.Trace("Instantiating light sensor");
-                LightSensor = new Bh1750(
-                    i2cBus: I2cBus,
-                    measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
-                    lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
-                    address: (byte)Bh1750.Addresses.Address_0x23);
-                Logger?.Trace("Light sensor up");
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
-            }
-
-            try
-            {
-                Logger?.Trace("Instantiating environmental sensor");
-                EnvironmentalSensor = new Bme688(I2cBus, (byte)Bme688.Addresses.Address_0x76);
-                Logger?.Trace("Environmental sensor up");
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
+                try
+                {
+                    Logger?.Trace("Instantiating motion sensor");
+                    _motionSensor = new Bmi270(I2cBus);
+                    Logger?.Trace("Motion sensor up");
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error($"Unable to create the BMI270 IMU: {ex.Message}");
+                }
             }
 
-            try
+            return _motionSensor;
+        }
+
+        private Bh1750? GetLightSensor()
+        {
+            if (_lightSensor == null)
             {
-                Logger?.Trace("Instantiating motion sensor");
-                MotionSensor = new Bmi270(I2cBus);
-                Logger?.Trace("Motion sensor up");
+
+                try
+                {
+                    Logger?.Trace("Instantiating light sensor");
+                    _lightSensor = new Bh1750(
+                        i2cBus: I2cBus,
+                        measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
+                        lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
+                        address: (byte)Bh1750.Addresses.Address_0x23);
+                    Logger?.Trace("Light sensor up");
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+
+            return _lightSensor;
+        }
+
+        private Bme688? GetEnvironmentalSensor()
+        {
+            if (_environmentalSensor == null)
             {
-                Resolver.Log.Error($"Unable to create the BMI270 IMU: {ex.Message}");
+                try
+                {
+                    Logger?.Trace("Instantiating environmental sensor");
+                    _environmentalSensor = new Bme688(I2cBus, (byte)Bme688.Addresses.Address_0x76);
+                    Logger?.Trace("Environmental sensor up");
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
+                }
             }
+
+            return _environmentalSensor;
         }
 
         /// <summary>

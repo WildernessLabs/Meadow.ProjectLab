@@ -23,6 +23,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     private byte? revisionNumber;
     private readonly IF7CoreComputeMeadowDevice _device;
     private readonly IConnectorProvider _connectors;
+    private PiezoSpeaker? _speaker;
+    private IGraphicsDisplay? _display;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -38,11 +40,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// The MCP23008 IO expander that contains the ProjectLab hardware version 
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
-
-    /// <summary>
-    /// Gets the Ili9341 Display on the Project Lab board
-    /// </summary>
-    public override IGraphicsDisplay? Display { get; set; }
 
     /// <summary>
     /// Gets the Up PushButton on the Project Lab board
@@ -67,7 +64,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// <summary>
     /// Gets the Piezo noise maker on the Project Lab board
     /// </summary>
-    public override PiezoSpeaker? Speaker { get; }
+    public override PiezoSpeaker? Speaker => GetSpeaker();
 
     /// <summary>
     /// Gets the Piezo noise maker on the Project Lab board
@@ -77,7 +74,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// <summary>
     /// Display enable port for backlight control
     /// </summary>
-    public IDigitalOutputPort DisplayEnablePort { get; protected set; }
+    public IDigitalOutputPort? DisplayEnablePort { get; protected set; }
 
     internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
         : base(device)
@@ -85,8 +82,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         _device = device;
 
         I2cBus = i2cBus;
-
-        base.Initialize(device);
 
         SpiBus = Resolver.Device.CreateSpiBus(
             device.Pins.SCK,
@@ -147,32 +142,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
         }
 
-        //---- instantiate display
-        Logger?.Trace("Instantiating display");
-
-        DisplayEnablePort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
-
-        var chipSelectPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
-        var dcPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
-        var resetPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP7);
-        Thread.Sleep(50);
-
-        Display = new Ili9341(
-            spiBus: SpiBus,
-            chipSelectPort: chipSelectPort,
-            dataCommandPort: dcPort,
-            resetPort: resetPort,
-            width: 240, height: 320,
-            colorMode: ColorMode.Format16bppRgb565)
-        {
-            SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-            SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
-        };
-
-        ((Ili9341)Display).SetRotation(RotationType._270Degrees);
-
-        Logger?.Trace("Display up");
-
         //---- led
         RgbLed = new RgbPwmLed(
             redPwmPin: device.Pins.D09,
@@ -192,17 +161,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
 
-        try
-        {
-            Logger?.Trace("Instantiating speaker");
-            Speaker = new PiezoSpeaker(device.Pins.D20);
-            Logger?.Trace("Speaker up");
-        }
-        catch (Exception ex)
-        {
-            Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
-        }
-
         if (RevisionNumber < 15) // before 3.e
         {
             Logger?.Trace("Hardware is 3.d or earlier");
@@ -213,6 +171,63 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             Logger?.Trace("Hardware is 3.e or later");
             _connectors = new ConnectorProviderV3e(this);
         }
+    }
+
+    /// <inheritdoc/>
+    protected override IGraphicsDisplay? GetDefaultDisplay()
+    {
+        if (DisplayEnablePort == null)
+        {
+            DisplayEnablePort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
+        }
+
+        if (_display == null)
+        {
+            Logger?.Trace("Instantiating display");
+
+            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+
+            Thread.Sleep(50);
+
+            _display = new Ili9341(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 320,
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+
+            ((Ili9341)Display).SetRotation(RotationType._270Degrees);
+
+            Logger?.Trace("Display up");
+        }
+
+        return _display;
+    }
+
+    private PiezoSpeaker? GetSpeaker()
+    {
+        if (_speaker == null)
+        {
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                _speaker = new PiezoSpeaker(_device.Pins.D20);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
+        }
+
+        return _speaker;
     }
 
     internal override MikroBusConnector CreateMikroBus1()
