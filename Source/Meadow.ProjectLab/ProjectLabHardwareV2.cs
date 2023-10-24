@@ -38,34 +38,22 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
 
-    /// <summary>
-    /// Gets the Up PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? UpButton { get; }
 
-    /// <summary>
-    /// Gets the Down PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? DownButton { get; }
 
-    /// <summary>
-    /// Gets the Left PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? LeftButton { get; }
 
-    /// <summary>
-    /// Gets the Right PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? RightButton { get; }
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override PiezoSpeaker? Speaker => GetSpeaker();
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override RgbPwmLed? RgbLed { get; }
 
     internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1)
@@ -305,9 +293,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
             });
     }
 
-    /// <summary>
-    /// The hardware revision of the board
-    /// </summary>
+    /// <inheritdoc/>
     public override string RevisionString
     {
         get

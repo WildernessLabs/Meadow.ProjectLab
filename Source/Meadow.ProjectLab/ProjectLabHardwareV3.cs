@@ -41,34 +41,22 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
 
-    /// <summary>
-    /// Gets the Up PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? UpButton { get; }
 
-    /// <summary>
-    /// Gets the Down PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? DownButton { get; }
 
-    /// <summary>
-    /// Gets the Left PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? LeftButton { get; }
 
-    /// <summary>
-    /// Gets the Right PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? RightButton { get; }
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override PiezoSpeaker? Speaker => GetSpeaker();
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override RgbPwmLed? RgbLed { get; }
 
     /// <summary>
@@ -176,10 +164,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// <inheritdoc/>
     protected override IGraphicsDisplay? GetDefaultDisplay()
     {
-        if (DisplayEnablePort == null)
-        {
-            DisplayEnablePort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
-        }
+        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
 
         if (_display == null)
         {

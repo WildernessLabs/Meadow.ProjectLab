@@ -49,12 +49,12 @@ namespace Meadow.Devices
         public Bme688? EnvironmentalSensor => GetEnvironmentalSensor();
 
         /// <summary>
-        /// Gets the Piezo noise maker on the Project Lab board
+        /// Gets the Piezo tone generator on the Project Lab board
         /// </summary>
         public abstract PiezoSpeaker? Speaker { get; }
 
         /// <summary>
-        /// Gets the Piezo noise maker on the Project Lab board
+        /// Gets the Piezo tone generator on the Project Lab board
         /// </summary>
         public abstract RgbPwmLed? RgbLed { get; }
 
@@ -70,10 +70,7 @@ namespace Meadow.Devices
         {
             get
             {
-                if (_display == null)
-                {
-                    _display = GetDefaultDisplay();
-                }
+                _display ??= GetDefaultDisplay();
                 return _display;
             }
             set => _display = value;

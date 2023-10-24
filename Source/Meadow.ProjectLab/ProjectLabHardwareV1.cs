@@ -24,34 +24,22 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
 
     private readonly string revision = "v1.x";
 
-    /// <summary>
-    /// Gets the Up PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? UpButton { get; }
 
-    /// <summary>
-    /// Gets the Down PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? DownButton { get; }
 
-    /// <summary>
-    /// Gets the Left PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? LeftButton { get; }
 
-    /// <summary>
-    /// Gets the Right PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? RightButton { get; }
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
-    public override PiezoSpeaker? Speaker { get; }
+    /// <inheritdoc/>
+    public override PiezoSpeaker? Speaker => GetSpeaker();
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override RgbPwmLed? RgbLed { get; }
 
     internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
@@ -257,9 +245,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             });
     }
 
-    /// <summary>
-    /// The hardware revision string
-    /// </summary>
+    /// <inheritdoc/>
     public override string RevisionString => revision;
 
     private IButton GetPushButton(IPin pin)
