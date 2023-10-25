@@ -29,10 +29,22 @@ namespace Meadow.Devices
         protected Logger? Logger { get; } = Resolver.Log;
 
         /// <inheritdoc/>
-        public ISpiBus SpiBus { get; protected set; }
+        public abstract ISpiBus SpiBus { get; }
 
         /// <inheritdoc/>
-        public II2cBus I2cBus { get; protected set; }
+        public abstract II2cBus I2cBus { get; }
+
+        /// <inheritdoc/>
+        public abstract IButton? UpButton { get; }
+
+        /// <inheritdoc/>
+        public abstract IButton? DownButton { get; }
+
+        /// <inheritdoc/>
+        public abstract IButton? LeftButton { get; }
+        
+        /// <inheritdoc/>
+        public abstract IButton? RightButton { get; }
 
         /// <summary>
         /// Gets the BH1750 Light Sensor on the Project Lab board
@@ -74,18 +86,6 @@ namespace Meadow.Devices
         protected abstract IGraphicsDisplay? GetDefaultDisplay();
 
         /// <inheritdoc/>
-        public abstract IButton? UpButton { get; }
-
-        /// <inheritdoc/>
-        public abstract IButton? DownButton { get; }
-
-        /// <inheritdoc/>
-        public abstract IButton? LeftButton { get; }
-        
-        /// <inheritdoc/>
-        public abstract IButton? RightButton { get; }
-
-        /// <inheritdoc/>
         public virtual string RevisionString { get; set; } = "unknown";
 
         /// <inheritdoc/>
@@ -111,15 +111,6 @@ namespace Meadow.Devices
 
         /// <inheritdoc/>
         public DisplayConnector DisplayHeader => (DisplayConnector)Connectors[7]!;
-
-
-        /// <summary>
-        /// Constructor the Project Lab Hardware base class
-        /// </summary>
-        /// <param name="device">The meadow device</param>
-        internal ProjectLabHardwareBase(IF7MeadowDevice device)
-        {
-        }
 
         internal abstract MikroBusConnector CreateMikroBus1();
         internal abstract MikroBusConnector CreateMikroBus2();
@@ -174,7 +165,7 @@ namespace Meadow.Devices
                 }
                 catch (Exception ex)
                 {
-                    Resolver.Log.Error($"Unable to create the BMI270 IMU: {ex.Message}");
+                    Logger?.Error($"Unable to create the BMI270 IMU: {ex.Message}");
                 }
             }
 
@@ -198,7 +189,7 @@ namespace Meadow.Devices
                 }
                 catch (Exception ex)
                 {
-                    Resolver.Log.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
+                    Logger?.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
                 }
             }
 
@@ -212,12 +203,12 @@ namespace Meadow.Devices
                 try
                 {
                     Logger?.Trace("Instantiating environmental sensor");
-                    _environmentalSensor = new Bme688(I2cBus, (byte)Bme688.Addresses.Address_0x76);
+                    _environmentalSensor = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
                     Logger?.Trace("Environmental sensor up");
                 }
                 catch (Exception ex)
                 {
-                    Resolver.Log.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
+                    Logger?.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
                 }
             }
 
@@ -231,7 +222,6 @@ namespace Meadow.Devices
         /// <param name="dataBits"></param>
         /// <param name="parity"></param>
         /// <param name="stopBits"></param>
-        /// <returns></returns>
         public abstract ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
 
         /// <summary>

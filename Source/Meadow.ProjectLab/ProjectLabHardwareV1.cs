@@ -25,16 +25,22 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     private readonly string revision = "v1.x";
 
     /// <inheritdoc/>
-    public override IButton? UpButton { get; }
+    public sealed override II2cBus I2cBus { get; }
 
     /// <inheritdoc/>
-    public override IButton? DownButton { get; }
+    public sealed override ISpiBus SpiBus { get; }
 
     /// <inheritdoc/>
-    public override IButton? LeftButton { get; }
+    public override IButton UpButton { get; }
 
     /// <inheritdoc/>
-    public override IButton? RightButton { get; }
+    public override IButton DownButton { get; }
+
+    /// <inheritdoc/>
+    public override IButton LeftButton { get; }
+
+    /// <inheritdoc/>
+    public override IButton RightButton { get; }
 
     /// <inheritdoc/>
     public override PiezoSpeaker? Speaker => GetSpeaker();
@@ -43,7 +49,6 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     public override RgbPwmLed? RgbLed { get; }
 
     internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
-        : base(device)
     {
         _device = device;
         I2cBus = i2cBus;
@@ -54,7 +59,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             device.Pins.CIPO,
             new Frequency(48000, Frequency.UnitType.Kilohertz));
 
-        Logger?.Debug("SPI Bus instantiated");
+        Logger?.Trace("SPI Bus instantiated");
 
         //---- led
         RgbLed = new RgbPwmLed(
@@ -95,7 +100,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
                 SpiBusMode = SpiClockConfiguration.Mode.Mode3,
                 SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
             };
-            ((St7789)Display).SetRotation(RotationType._270Degrees);
+            ((St7789)_display).SetRotation(RotationType._270Degrees);
 
             Logger?.Trace("Display up");
         }
@@ -115,7 +120,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             }
             catch (Exception ex)
             {
-                Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+                Logger?.Error($"Unable to create the Piezo Speaker: {ex.Message}");
             }
         }
 
@@ -142,7 +147,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C_SDA),
             },
-            _device.PlatformOS.GetSerialPortName("com1"),
+            _device.PlatformOS.GetSerialPortName("com1")!,
             new I2cBusMapping(_device, 1),
             new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO)
             );
@@ -168,7 +173,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C_SDA),
             },
-            _device.PlatformOS.GetSerialPortName("com1"),
+            _device.PlatformOS.GetSerialPortName("com1")!,
             new I2cBusMapping(_device, 1),
             new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO)
             );
@@ -179,7 +184,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         Logger?.Trace("Creating Grove analog connector");
 
         return new GroveDigitalConnector(
-           "GroveAnalog",
+           nameof(GroveAnalog),
             new PinMapping
             {
                 new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.A01),
@@ -192,13 +197,13 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         Logger?.Trace("Creating Grove UART connector");
 
         return new UartConnector(
-           "GroveUart",
+           nameof(GroveUart),
             new PinMapping
             {
                 new PinMapping.PinAlias(UartConnector.PinNames.RX, _device.Pins.D13),
                 new PinMapping.PinAlias(UartConnector.PinNames.TX, _device.Pins.D12),
             },
-            _device.PlatformOS.GetSerialPortName("com1"));
+            _device.PlatformOS.GetSerialPortName("com1")!);
     }
 
     internal override I2cConnector CreateQwiicConnector()
@@ -206,7 +211,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         Logger?.Trace("Creating Qwiic I2C connector");
 
         return new I2cConnector(
-           "Qwiic",
+           nameof(Qwiic),
             new PinMapping
             {
                 new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.D08),
@@ -220,7 +225,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         Logger?.Trace("Creating IO terminal connector");
 
         return new IOTerminalConnector(
-           "IOTerminal",
+           nameof(IOTerminal),
             new PinMapping
             {
                 new PinMapping.PinAlias(IOTerminalConnector.PinNames.A1, _device.Pins.A00),
@@ -234,7 +239,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         Logger?.Trace("Creating display connector");
 
         return new DisplayConnector(
-           "Display",
+           nameof(Display),
             new PinMapping
             {
                 new PinMapping.PinAlias(DisplayConnector.PinNames.CS, _device.Pins.A03),
@@ -263,15 +268,11 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     /// <inheritdoc/>
     public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
-        if (Resolver.Device is F7FeatherBase device)
-        {
-            var portName = device.PlatformOS.GetSerialPortName("com4");
-            var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
-            port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
-            var serialEnable = device.CreateDigitalOutputPort(device.Pins.D09, false);
-            return new ProjectLabModbusRtuClient(port, serialEnable);
-        }
-
-        throw new NotSupportedException();
+        if (Resolver.Device is not F7FeatherBase device) throw new NotSupportedException();
+        var portName = device.PlatformOS.GetSerialPortName("com4")!;
+        var port = device.CreateSerialPort(portName, baudRate, dataBits, parity, stopBits);
+        port.WriteTimeout = port.ReadTimeout = TimeSpan.FromSeconds(5);
+        var serialEnable = device.CreateDigitalOutputPort(device.Pins.D09, false);
+        return new ProjectLabModbusRtuClient(port, serialEnable);
     }
 }
