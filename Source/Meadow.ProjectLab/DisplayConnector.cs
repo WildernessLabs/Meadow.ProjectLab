@@ -30,7 +30,7 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// </summary>
         public const string CLK = "CLK";
         /// <summary>
-        /// SPI controller ouy, peripheral in pin
+        /// SPI controller out, peripheral in pin
         /// </summary>
         public const string COPI = "COPI";
     }
@@ -63,7 +63,7 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// </summary>
         public IPin CLK => _clk ?? throw new PlatformNotSupportedException("Pin not connected");
         /// <summary>
-        /// SPI controller in, peripheral out pin
+        /// SPI controller out, peripheral in pin
         /// </summary>
         public IPin COPI => _copi ?? throw new PlatformNotSupportedException("Pin not connected");
 
