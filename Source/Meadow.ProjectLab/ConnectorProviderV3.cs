@@ -9,7 +9,7 @@ internal class ConnectorProviderV3 : IConnectorProvider
 {
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
-        if (Resolver.Device is F7CoreComputeV2 device)
+        if (Resolver.Device is F7CoreComputeV2)
         {
             throw new PlatformNotSupportedException("RS485 is not supported on hardware revisions before 3.e");
         }
@@ -36,7 +36,7 @@ internal class ConnectorProviderV3 : IConnectorProvider
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, device.Pins.I2C3_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, device.Pins.I2C3_SDA),
             },
-            device.PlatformOS.GetSerialPortName("com1"),
+            device.PlatformOS.GetSerialPortName("com1")!,
             new I2cBusMapping(device, 3),
             new SpiBusMapping(device, device.Pins.SPI5_SCK, device.Pins.SPI5_COPI, device.Pins.SPI5_CIPO)
             );
@@ -61,7 +61,7 @@ internal class ConnectorProviderV3 : IConnectorProvider
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, device.Pins.I2C1_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, device.Pins.I2C1_SDA),
             },
-            device.PlatformOS.GetSerialPortName("com1"),
+            device.PlatformOS.GetSerialPortName("com1")!,
             new I2cBusMapping(device, 1),
             new SpiBusMapping(device, device.Pins.SPI5_SCK, device.Pins.SPI5_COPI, device.Pins.SPI5_CIPO)
             );
