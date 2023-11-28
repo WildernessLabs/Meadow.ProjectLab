@@ -43,7 +43,7 @@ namespace ProjectLab_Demo
             //---- BH1750 Light Sensor
             if (projLab.LightSensor is { } bh1750)
             {
-                bh1750.Updated += Bh1750Updated;
+                bh1750.Updated += OnLightSensorUpdated;
             }
 
             //---- BME688 Atmospheric sensor
@@ -131,9 +131,9 @@ namespace ProjectLab_Demo
             displayController.AtmosphericConditions = e.New;
         }
 
-        private void Bh1750Updated(object sender, IChangeResult<Illuminance> e)
+        private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
         {
-            Resolver.Log.Info($"BH1750: {e.New.Lux}");
+            Resolver.Log.Info($"Light sensor: {e.New.Lux}");
             displayController.LightConditions = e.New;
         }
     }
