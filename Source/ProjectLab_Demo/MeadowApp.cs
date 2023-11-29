@@ -10,7 +10,7 @@ namespace ProjectLab_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
     // Change to F7CoreComputeV2 for Project Lab V3.x
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2>
     {
         private DisplayController displayController;
         private MicroAudio audio;
@@ -29,8 +29,8 @@ namespace ProjectLab_Demo
 
             projLab.RgbLed?.SetColor(Color.Blue);
 
-            projLab.Speaker.SetVolume(0.5f);
-            audio = new MicroAudio(projLab.Speaker);
+            projLab.Speaker?.SetVolume(0.5f);
+            if (projLab.Speaker != null) audio = new MicroAudio(projLab.Speaker);
 
             //---- display controller (handles display updates)
             if (projLab.Display is { } display)
@@ -81,7 +81,6 @@ namespace ProjectLab_Demo
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
-            //---- heartbeat
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
@@ -114,7 +113,7 @@ namespace ProjectLab_Demo
             displayController?.Update();
 
             Resolver.Log.Info("starting blink");
-            _ = projLab.RgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
+            _ = projLab.RgbLed?.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
 
             return base.Run();
         }
@@ -122,29 +121,20 @@ namespace ProjectLab_Demo
 
         private void Bmi270Updated(object sender, IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Temperature? Temperature)> e)
         {
-            Resolver.Log.Info($"BMI270: {e.New.Acceleration3D.Value.X.Gravity:0.0},{e.New.Acceleration3D.Value.Y.Gravity:0.0},{e.New.Acceleration3D.Value.Z.Gravity:0.0}g");
-            if (displayController != null)
-            {
-                displayController.AccelerationConditions = e.New;
-            }
+            Resolver.Log.Info($"BMI270: {e.New.Acceleration3D!.Value.X.Gravity:0.0},{e.New.Acceleration3D.Value.Y.Gravity:0.0},{e.New.Acceleration3D.Value.Z.Gravity:0.0}g");
+            displayController.AccelerationConditions = e.New;
         }
 
         private void Bme688Updated(object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> e)
         {
-            Resolver.Log.Info($"BME688: {(int)e.New.Temperature?.Celsius}C - {(int)e.New.Humidity?.Percent}% - {(int)e.New.Pressure?.Millibar}mbar");
-            if (displayController != null)
-            {
-                displayController.AtmosphericConditions = e.New;
-            }
+            Resolver.Log.Info($"BME688: {(e.New.Temperature?.Celsius ?? double.NaN)}C - {(e.New.Humidity?.Percent ?? double.NaN)}% - {(e.New.Pressure?.Millibar ?? double.NaN)}mbar");
+            displayController.AtmosphericConditions = e.New;
         }
 
         private void Bh1750Updated(object sender, IChangeResult<Illuminance> e)
         {
             Resolver.Log.Info($"BH1750: {e.New.Lux}");
-            if (displayController != null)
-            {
-                displayController.LightConditions = e.New;
-            }
+            displayController.LightConditions = e.New;
         }
     }
 }

@@ -19,15 +19,15 @@ namespace Meadow.Devices;
 /// </summary>
 public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 {
-    private string? revisionString;
-    private byte? revisionNumber;
     private readonly IF7CoreComputeMeadowDevice _device;
     private readonly IConnectorProvider _connectors;
+    private PiezoSpeaker? _speaker;
+    private IGraphicsDisplay? _display;
 
     /// <summary>
-    /// The MCP23008 IO expander connected to internal peripherals
+    /// The MCP23008 IO expander connected to internal peripherals on Project Lab
     /// </summary>
-    public Mcp23008 Mcp_1 { get; protected set; }
+    public Mcp23008? Mcp_1 { get; protected set; }
 
     /// <summary>
     /// The MCP23008 IO expander connected to IO headers and terminals on Project Lab
@@ -39,56 +39,42 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
 
-    /// <summary>
-    /// Gets the Ili9341 Display on the Project Lab board
-    /// </summary>
-    public override IGraphicsDisplay? Display { get; set; }
+    /// <inheritdoc/>
+    public sealed override II2cBus I2cBus { get; }
 
-    /// <summary>
-    /// Gets the Up PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
+    public sealed override ISpiBus SpiBus { get; }
+
+    /// <inheritdoc/>
     public override IButton? UpButton { get; }
 
-    /// <summary>
-    /// Gets the Down PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? DownButton { get; }
 
-    /// <summary>
-    /// Gets the Left PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? LeftButton { get; }
 
-    /// <summary>
-    /// Gets the Right PushButton on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override IButton? RightButton { get; }
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
-    public override PiezoSpeaker? Speaker { get; }
+    /// <inheritdoc/>
+    public override PiezoSpeaker? Speaker => GetSpeaker();
 
-    /// <summary>
-    /// Gets the Piezo noise maker on the Project Lab board
-    /// </summary>
+    /// <inheritdoc/>
     public override RgbPwmLed? RgbLed { get; }
 
     /// <summary>
     /// Display enable port for backlight control
     /// </summary>
-    public IDigitalOutputPort DisplayEnablePort { get; protected set; }
+    public IDigitalOutputPort? DisplayEnablePort { get; protected set; }
 
     internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
-        : base(device)
     {
         _device = device;
 
         I2cBus = i2cBus;
 
-        base.Initialize(device);
-
-        SpiBus = Resolver.Device.CreateSpiBus(
+        SpiBus = device.CreateSpiBus(
             device.Pins.SCK,
             device.Pins.COPI,
             device.Pins.CIPO,
@@ -129,7 +115,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
             Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2Interrupt);
 
-            Logger?.Info("Mcp_2 up");
+            Logger?.Trace("Mcp_2 up");
         }
         catch (Exception e)
         {
@@ -140,38 +126,12 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         try
         {
             Mcp_Version = new Mcp23008(I2cBus, address: 0x27);
-            Logger?.Info("Mcp_Version up");
+            Logger?.Trace("Mcp_Version up");
         }
         catch (Exception e)
         {
             Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
         }
-
-        //---- instantiate display
-        Logger?.Trace("Instantiating display");
-
-        DisplayEnablePort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
-
-        var chipSelectPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP5);
-        var dcPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP6);
-        var resetPort = Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP7);
-        Thread.Sleep(50);
-
-        Display = new Ili9341(
-            spiBus: SpiBus,
-            chipSelectPort: chipSelectPort,
-            dataCommandPort: dcPort,
-            resetPort: resetPort,
-            width: 240, height: 320,
-            colorMode: ColorMode.Format16bppRgb565)
-        {
-            SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-            SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
-        };
-
-        ((Ili9341)Display).SetRotation(RotationType._270Degrees);
-
-        Logger?.Trace("Display up");
 
         //---- led
         RgbLed = new RgbPwmLed(
@@ -183,25 +143,14 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         //---- buttons
         Logger?.Trace("Instantiating buttons");
         var leftPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-        LeftButton = new PushButton(leftPort);
+        if (leftPort != null) LeftButton = new PushButton(leftPort);
         var rightPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-        RightButton = new PushButton(rightPort);
+        if (rightPort != null) RightButton = new PushButton(rightPort);
         var upPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-        UpButton = new PushButton(upPort);
+        if (upPort != null) UpButton = new PushButton(upPort);
         var downPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-        DownButton = new PushButton(downPort);
+        if (downPort != null) DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
-
-        try
-        {
-            Logger?.Trace("Instantiating speaker");
-            Speaker = new PiezoSpeaker(device.Pins.D20);
-            Logger?.Trace("Speaker up");
-        }
-        catch (Exception ex)
-        {
-            Resolver.Log.Error($"Unable to create the Piezo Speaker: {ex.Message}");
-        }
 
         if (RevisionNumber < 15) // before 3.e
         {
@@ -215,16 +164,70 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         }
     }
 
+    /// <inheritdoc/>
+    protected override IGraphicsDisplay? GetDefaultDisplay()
+    {
+        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
+
+        if (_display == null)
+        {
+            Logger?.Trace("Instantiating display");
+
+            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+
+            Thread.Sleep(50);
+
+            _display = new Ili9341(
+                spiBus: SpiBus,
+                chipSelectPort: chipSelectPort,
+                dataCommandPort: dcPort,
+                resetPort: resetPort,
+                width: 240, height: 320,
+                colorMode: ColorMode.Format16bppRgb565)
+            {
+                SpiBusMode = SpiClockConfiguration.Mode.Mode3,
+                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+            };
+
+            ((Ili9341)_display).SetRotation(RotationType._270Degrees);
+
+            Logger?.Trace("Display up");
+        }
+
+        return _display;
+    }
+
+    private PiezoSpeaker? GetSpeaker()
+    {
+        if (_speaker == null)
+        {
+            try
+            {
+                Logger?.Trace("Instantiating speaker");
+                _speaker = new PiezoSpeaker(_device.Pins.D20);
+                Logger?.Trace("Speaker up");
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error($"Unable to create the Piezo Speaker: {ex.Message}");
+            }
+        }
+
+        return _speaker;
+    }
+
     internal override MikroBusConnector CreateMikroBus1()
     {
         Logger?.Trace("Creating MikroBus1 connector");
-        return _connectors.CreateMikroBus1(_device, Mcp_2);
+        return _connectors.CreateMikroBus1(_device, Mcp_2!);
     }
 
     internal override MikroBusConnector CreateMikroBus2()
     {
         Logger?.Trace("Creating MikroBus2 connector");
-        return _connectors.CreateMikroBus2(_device, Mcp_2);
+        return _connectors.CreateMikroBus2(_device, Mcp_2!);
     }
 
     internal override GroveDigitalConnector? CreateGroveDigitalConnector()
@@ -232,7 +235,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         Logger?.Trace("Creating Grove digital connector");
 
         return new GroveDigitalConnector(
-           "GroveDigital",
+           nameof(GroveDigital),
             new PinMapping
             {
                 new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.D16),
@@ -245,7 +248,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         Logger?.Trace("Creating Grove analog connector");
 
         return new GroveDigitalConnector(
-           "GroveAnalog",
+           nameof(GroveAnalog),
             new PinMapping
             {
                 new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.A00),
@@ -258,13 +261,13 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         Logger?.Trace("Creating Grove UART connector");
 
         return new UartConnector(
-           "GroveUart",
+           nameof(GroveUart),
             new PinMapping
             {
                 new PinMapping.PinAlias(UartConnector.PinNames.RX, _device.Pins.D00),
                 new PinMapping.PinAlias(UartConnector.PinNames.TX, _device.Pins.D01),
             },
-            _device.PlatformOS.GetSerialPortName("com4"));
+            _device.PlatformOS.GetSerialPortName("com4")!);
     }
 
     internal override I2cConnector CreateQwiicConnector()
@@ -272,7 +275,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         Logger?.Trace("Creating Qwiic I2C connector");
 
         return new I2cConnector(
-           "Qwiic",
+           nameof(Qwiic),
             new PinMapping
             {
                 new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.D08),
@@ -286,15 +289,32 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         Logger?.Trace("Creating IO terminal connector");
 
         return new IOTerminalConnector(
-           "IOTerminal",
+           nameof(IOTerminal),
             new PinMapping
             {
                 new PinMapping.PinAlias(IOTerminalConnector.PinNames.A1, _device.Pins.PB1),
-                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D2, Mcp_2.Pins.GP6),
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D2, Mcp_2!.Pins.GP6),
                 new PinMapping.PinAlias(IOTerminalConnector.PinNames.D3, Mcp_2.Pins.GP5),
             });
     }
 
+    internal override DisplayConnector CreateDisplayConnector()
+    {
+        Logger?.Trace("Creating display connector");
+
+        return new DisplayConnector(
+           nameof(Display),
+            new PinMapping
+            {
+                new PinMapping.PinAlias(DisplayConnector.PinNames.CS, Mcp_1!.Pins.GP5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.RST, Mcp_1.Pins.GP7),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DC, Mcp_1.Pins.GP6),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
+            });
+    }
+
+    private byte? _revisionNumber;
     /// <summary>
     /// The hardware revision number, read from the on-board MCP
     /// </summary>
@@ -302,29 +322,18 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     {
         get
         {
-            revisionNumber ??= Mcp_Version?.ReadFromPorts(Mcp23xxx.PortBank.A) ?? 0;
-
-            return revisionNumber.Value;
+            _revisionNumber ??= Mcp_Version?.ReadFromPorts(Mcp23xxx.PortBank.A) ?? 0;
+            return _revisionNumber.Value;
         }
     }
 
+    private string? _revisionString;
     /// <inheritdoc/>
     public override string RevisionString
     {
         get
         {
-            if (revisionString == null)
-            {
-                if (Mcp_Version == null)
-                {
-                    revisionString = $"v3.x";
-                }
-                else
-                {
-                    revisionString = $"v3.{RevisionNumber}";
-                }
-            }
-            return revisionString;
+            return _revisionString ??= $"v3.{(Mcp_Version == null ? "x" : RevisionNumber)}";
         }
     }
 
