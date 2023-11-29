@@ -8,7 +8,7 @@ namespace Meadow.Devices;
 
 internal class ConnectorProviderV3e : IConnectorProvider
 {
-    private Sc16is752 _uartExpander;
+    private readonly Sc16is752 _uartExpander;
 
     public ConnectorProviderV3e(ProjectLabHardwareBase projLab)
     {
@@ -17,25 +17,20 @@ internal class ConnectorProviderV3e : IConnectorProvider
 
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
-        if (Resolver.Device is F7CoreComputeV2 device)
+        if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
+    
+        try
         {
-            ISerialPort port;
-
-            // v3e+ uses an SC16is I2C UART expander for the RS485
-            try
-            {
-                port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
-                Resolver.Log.Trace($"485 port created");
-                return new ModbusRtuClient(port);
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Info($"Error creating I2C UART: {ex.Message}");
-                throw new Exception("Unable to connect to UART expander");
-            }
+            // v3.e+ uses an SC16is I2C UART expander for the RS485
+            var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
+            Resolver.Log.Trace($"485 port created");
+            return new ModbusRtuClient(port);
         }
-
-        throw new NotSupportedException();
+        catch (Exception ex)
+        {
+            Resolver.Log.Warn($"Error creating 485 port: {ex.Message}");
+            throw new Exception("Unable to connect to UART expander");
+        }
     }
 
     public MikroBusConnector CreateMikroBus1(IF7CoreComputeMeadowDevice device, Mcp23008 mcp2)
@@ -58,7 +53,7 @@ internal class ConnectorProviderV3e : IConnectorProvider
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, device.Pins.I2C3_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, device.Pins.I2C3_SDA),
             },
-            device.PlatformOS.GetSerialPortName("com1"),
+            device.PlatformOS.GetSerialPortName("com1")!,
             new I2cBusMapping(device, 3),
             new SpiBusMapping(device, device.Pins.SPI5_SCK, device.Pins.SPI5_COPI, device.Pins.SPI5_CIPO)
             );
