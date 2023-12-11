@@ -3,10 +3,10 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Light;
 
 namespace Meadow.Devices
 {
@@ -43,7 +43,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the light sensor on the Project Lab board.
         /// </summary>
-        public Bh1750? LightSensor { get; }
+        public ILightSensor? LightSensor { get; }
 
         /// <summary>
         /// Gets the environmental sensor on the Project Lab board.
