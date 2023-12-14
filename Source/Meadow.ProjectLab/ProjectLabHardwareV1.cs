@@ -7,6 +7,7 @@ using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Speakers;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -19,8 +20,9 @@ namespace Meadow.Devices;
 public class ProjectLabHardwareV1 : ProjectLabHardwareBase
 {
     private readonly IF7FeatherMeadowDevice _device;
+    private IToneGenerator? _speaker;
+    private IRgbPwmLed? _rgbled;
     private IGraphicsDisplay? _display;
-    private PiezoSpeaker? _speaker;
 
     private readonly string revision = "v1.x";
 
@@ -43,32 +45,24 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     public override IButton RightButton { get; }
 
     /// <inheritdoc/>
-    public override PiezoSpeaker? Speaker => GetSpeaker();
+    public override IToneGenerator? Speaker => GetSpeaker();
 
     /// <inheritdoc/>
-    public override RgbPwmLed? RgbLed { get; }
+    public override IRgbPwmLed? RgbLed => GetRgbLed();
 
     internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
     {
         _device = device;
         I2cBus = i2cBus;
 
+        Logger?.Trace("Instantiating SPI Bus");
         SpiBus = Resolver.Device.CreateSpiBus(
             device.Pins.SCK,
             device.Pins.COPI,
             device.Pins.CIPO,
             new Frequency(48000, Frequency.UnitType.Kilohertz));
+        Logger?.Trace("SPI Bus up");
 
-        Logger?.Trace("SPI Bus instantiated");
-
-        //---- led
-        RgbLed = new RgbPwmLed(
-            redPwmPin: device.Pins.OnboardLedRed,
-            greenPwmPin: device.Pins.OnboardLedGreen,
-            bluePwmPin: device.Pins.OnboardLedBlue,
-            CommonType.CommonAnode);
-
-        //---- buttons
         Logger?.Trace("Instantiating buttons");
         LeftButton = GetPushButton(device.Pins.D10);
         RightButton = GetPushButton(device.Pins.D05);
@@ -108,7 +102,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         return _display;
     }
 
-    private PiezoSpeaker? GetSpeaker()
+    private IToneGenerator? GetSpeaker()
     {
         if (_speaker == null)
         {
@@ -125,6 +119,29 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         }
 
         return _speaker;
+    }
+
+    private IRgbPwmLed? GetRgbLed()
+    {
+        if (_rgbled == null)
+        {
+            try
+            {
+                Logger?.Trace("Instantiating RGB LED");
+                _rgbled = new RgbPwmLed(
+                    redPwmPin: _device.Pins.OnboardLedRed,
+                    greenPwmPin: _device.Pins.OnboardLedGreen,
+                    bluePwmPin: _device.Pins.OnboardLedBlue,
+                    CommonType.CommonAnode);
+                Logger?.Trace("RGB LED up");
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error($"Unable to create the RGB LED: {ex.Message}");
+            }
+        }
+
+        return _rgbled;
     }
 
     internal override MikroBusConnector CreateMikroBus1()

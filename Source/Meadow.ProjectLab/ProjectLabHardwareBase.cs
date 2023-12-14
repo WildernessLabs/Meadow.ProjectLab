@@ -1,14 +1,14 @@
-﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
+using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Light;
+using Meadow.Peripherals.Speakers;
 using System;
 
 namespace Meadow.Devices
@@ -48,27 +48,21 @@ namespace Meadow.Devices
         public abstract IButton? RightButton { get; }
 
         /// <inheritdoc/>
+        public abstract IToneGenerator? Speaker { get; }
+
+        /// <inheritdoc/>
+        public abstract IRgbPwmLed? RgbLed { get; }
+
+        /// <inheritdoc/>
         public ILightSensor? LightSensor => GetLightSensor();
 
-        /// <summary>
-        /// Gets the BME688 environmental sensor  on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public Bme688? EnvironmentalSensor => GetEnvironmentalSensor();
 
         /// <inheritdoc/>
-        public abstract PiezoSpeaker? Speaker { get; }
-
-        /// <inheritdoc/>
-        public abstract RgbPwmLed? RgbLed { get; }
-
-        /// <summary>
-        /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
-        /// </summary>
         public Bmi270? MotionSensor => GetMotionSensor();
 
-        /// <summary>
-        /// Gets the default display on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public IGraphicsDisplay? Display
         {
             get
@@ -176,7 +170,6 @@ namespace Meadow.Devices
         {
             if (_lightSensor == null)
             {
-
                 try
                 {
                     Logger?.Trace("Instantiating light sensor");

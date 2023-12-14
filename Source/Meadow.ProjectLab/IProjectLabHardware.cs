@@ -1,12 +1,12 @@
-﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Light;
+using Meadow.Peripherals.Speakers;
 
 namespace Meadow.Devices
 {
@@ -26,44 +26,14 @@ namespace Meadow.Devices
         public II2cBus I2cBus { get; }
 
         /// <summary>
-        /// Get a Modbus RTU client with optional parameters.
+        /// Gets the up button on the Project Lab board.
         /// </summary>
-        /// <param name="baudRate">The baud rate.</param>
-        /// <param name="dataBits">The number of data bits.</param>
-        /// <param name="parity">The parity setting.</param>
-        /// <param name="stopBits">The stop bits setting.</param>
-        /// <returns>A Modbus RTU client.</returns>
-        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
+        public IButton? UpButton { get; }
 
         /// <summary>
-        /// Gets the graphics display on the Project Lab board.
+        /// Gets the down button on the Project Lab board.
         /// </summary>
-        public IGraphicsDisplay? Display { get; }
-
-        /// <summary>
-        /// Gets the light sensor on the Project Lab board.
-        /// </summary>
-        public ILightSensor? LightSensor { get; }
-
-        /// <summary>
-        /// Gets the environmental sensor on the Project Lab board.
-        /// </summary>
-        public Bme688? EnvironmentalSensor { get; }
-
-        /// <summary>
-        /// Gets the motion sensor on the Project Lab board.
-        /// </summary>
-        public Bmi270? MotionSensor { get; }
-
-        /// <summary>
-        /// Gets the piezo speaker on the Project Lab board.
-        /// </summary>
-        public PiezoSpeaker? Speaker { get; }
-
-        /// <summary>
-        /// Gets the RGB PWM LED on the Project Lab board.
-        /// </summary>
-        public RgbPwmLed? RgbLed { get; }
+        public IButton? DownButton { get; }
 
         /// <summary>
         /// Gets the left button on the Project Lab board.
@@ -76,14 +46,34 @@ namespace Meadow.Devices
         public IButton? RightButton { get; }
 
         /// <summary>
-        /// Gets the up button on the Project Lab board.
+        /// Gets the piezo speaker on the Project Lab board.
         /// </summary>
-        public IButton? UpButton { get; }
+        public IToneGenerator? Speaker { get; }
 
         /// <summary>
-        /// Gets the down button on the Project Lab board.
+        /// Gets the RGB PWM LED on the Project Lab board.
         /// </summary>
-        public IButton? DownButton { get; }
+        public IRgbPwmLed? RgbLed { get; }
+
+        /// <summary>
+        /// Gets the light sensor on the Project Lab board.
+        /// </summary>
+        public ILightSensor? LightSensor { get; }
+
+        /// <summary>
+        /// Gets the environmental sensor on the Project Lab board.
+        /// </summary>
+        public Bme688? EnvironmentalSensor { get; }
+
+        /// <summary>
+        /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
+        /// </summary>
+        public Bmi270? MotionSensor { get; }
+
+        /// <summary>
+        /// Gets the graphics display on the Project Lab board.
+        /// </summary>
+        public IGraphicsDisplay? Display { get; }
 
         /// <summary>
         /// Gets the revision string of the Project Lab board.
@@ -129,5 +119,15 @@ namespace Meadow.Devices
         /// Gets the display header connector on the Project Lab board.
         /// </summary>
         public DisplayConnector DisplayHeader { get; }
+
+        /// <summary>
+        /// Get a Modbus RTU client with optional parameters.
+        /// </summary>
+        /// <param name="baudRate">The baud rate.</param>
+        /// <param name="dataBits">The number of data bits.</param>
+        /// <param name="parity">The parity setting.</param>
+        /// <param name="stopBits">The stop bits setting.</param>
+        /// <returns>A Modbus RTU client.</returns>
+        public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
     }
 }

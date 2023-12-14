@@ -8,6 +8,7 @@ using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Speakers;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -21,7 +22,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 {
     private readonly IF7CoreComputeMeadowDevice _device;
     private readonly IConnectorProvider _connectors;
-    private PiezoSpeaker? _speaker;
+    private IToneGenerator? _speaker;
+    private IRgbPwmLed? _rgbled;
     private IGraphicsDisplay? _display;
 
     /// <summary>
@@ -58,10 +60,10 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     public override IButton? RightButton { get; }
 
     /// <inheritdoc/>
-    public override PiezoSpeaker? Speaker => GetSpeaker();
+    public override IToneGenerator? Speaker => GetSpeaker();
 
     /// <inheritdoc/>
-    public override RgbPwmLed? RgbLed { get; }
+    public override IRgbPwmLed? RgbLed => GetRgbLed();
 
     /// <summary>
     /// Display enable port for backlight control
@@ -133,14 +135,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
         }
 
-        //---- led
-        RgbLed = new RgbPwmLed(
-            redPwmPin: device.Pins.D09,
-            greenPwmPin: device.Pins.D10,
-            bluePwmPin: device.Pins.D11,
-            CommonType.CommonAnode);
-
-        //---- buttons
         Logger?.Trace("Instantiating buttons");
         var leftPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
         if (leftPort != null) LeftButton = new PushButton(leftPort);
@@ -199,7 +193,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         return _display;
     }
 
-    private PiezoSpeaker? GetSpeaker()
+    private IToneGenerator? GetSpeaker()
     {
         if (_speaker == null)
         {
@@ -216,6 +210,29 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         }
 
         return _speaker;
+    }
+
+    private IRgbPwmLed? GetRgbLed()
+    {
+        if (_rgbled == null)
+        {
+            try
+            {
+                Logger?.Trace("Instantiating RGB LED");
+                _rgbled = new RgbPwmLed(
+                    redPwmPin: _device.Pins.D09,
+                    greenPwmPin: _device.Pins.D10,
+                    bluePwmPin: _device.Pins.D11,
+                    CommonType.CommonAnode);
+                Logger?.Trace("RGB LED up");
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error($"Unable to create the RGB LED: {ex.Message}");
+            }
+        }
+
+        return _rgbled;
     }
 
     internal override MikroBusConnector CreateMikroBus1()
