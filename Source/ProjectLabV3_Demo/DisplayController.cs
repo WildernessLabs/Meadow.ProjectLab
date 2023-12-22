@@ -1,6 +1,8 @@
-﻿using Meadow.Foundation.Graphics;
+﻿using Meadow;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 using System;
+using System.Collections.Generic;
 
 namespace ProjectLabV3_Demo
 {
@@ -44,8 +46,6 @@ namespace ProjectLabV3_Demo
 
         protected Picture WifiStatus { get; set; }
 
-        protected Picture SyncStatus { get; set; }
-
         protected Label Status { get; set; }
 
         protected Box TemperatureBox { get; set; }
@@ -82,10 +82,10 @@ namespace ProjectLabV3_Demo
 
         protected Label ConnectionErrorLabel { get; set; }
 
-        private Meadow.Foundation.Color backgroundColor = Meadow.Foundation.Color.FromHex("10485E");
-        private Meadow.Foundation.Color selectedColor = Meadow.Foundation.Color.FromHex("C9DB31");
-        private Meadow.Foundation.Color accentColor = Meadow.Foundation.Color.FromHex("EF7D3B");
-        private Meadow.Foundation.Color ForegroundColor = Meadow.Foundation.Color.FromHex("EEEEEE");
+        private Color backgroundColor = Color.FromHex("10485E");
+        private Color selectedColor = Color.FromHex("C9DB31");
+        private Color accentColor = Color.FromHex("EF7D3B");
+        private Color ForegroundColor = Color.FromHex("EEEEEE");
         private Font12x20 font12X20 = new Font12x20();
         private Font8x12 font8x12 = new Font8x12();
         private Font8x16 font8x16 = new Font8x16();
@@ -109,14 +109,14 @@ namespace ProjectLabV3_Demo
         {
             SplashLayout = new AbsoluteLayout(DisplayScreen, 0, 0, DisplayScreen.Width, DisplayScreen.Height)
             {
-                BackgroundColor = Meadow.Foundation.Color.FromHex("#14607F"),
+                BackgroundColor = Color.FromHex("#14607F"),
                 Visible = false
             };
 
             var image = Image.LoadFromResource("ProjectLabV3_Demo.Resources.img_meadow.bmp");
             var displayImage = new Picture(0, 0, DisplayScreen.Width, DisplayScreen.Height, image)
             {
-                BackColor = Meadow.Foundation.Color.FromHex("#14607F"),
+                BackColor = Color.FromHex("#14607F"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -139,7 +139,7 @@ namespace ProjectLabV3_Demo
                 font8x16.Height)
             {
                 Text = $"Project Lab v3",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font8x16
             });
 
@@ -156,26 +156,13 @@ namespace ProjectLabV3_Demo
             };
             DataLayout.Controls.Add(WifiStatus);
 
-            var syncImage = Image.LoadFromResource("ProjectLabV3_Demo.Resources.img_refreshed.bmp");
-            SyncStatus = new Picture(
-                DisplayScreen.Width - syncImage.Width - wifiImage.Width - margin * 2,
-                margin,
-                syncImage.Width,
-                font8x16.Height,
-                syncImage)
-            {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            DataLayout.Controls.Add(SyncStatus);
-
             LineChart = new LineChart(
                 margin,
                 margin + font8x16.Height + smallMargin,
                 DisplayScreen.Width - margin * 2,
                 graphHeight)
             {
-                BackgroundColor = Meadow.Foundation.Color.FromHex("082936"),
+                BackgroundColor = Color.FromHex("082936"),
                 AxisColor = ForegroundColor,
                 ShowYAxisLabels = true,
                 Visible = false,
@@ -337,7 +324,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height)
             {
                 Text = $"ACCELEROMETER (g)",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8
             });
 
@@ -348,7 +335,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height * 2)
             {
                 Text = $"X",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8,
                 ScaleFactor = ScaleFactor.X2
             });
@@ -358,7 +345,7 @@ namespace ProjectLabV3_Demo
                 sensorBarInitialWidth,
                 sensorBarHeight)
             {
-                ForeColor = Meadow.Foundation.Color.FromHex("98A645")
+                ForeColor = Color.FromHex("98A645")
             };
             DataLayout.Controls.Add(AccelerometerX);
 
@@ -369,7 +356,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height * 2)
             {
                 Text = $"Y",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8,
                 ScaleFactor = ScaleFactor.X2
             });
@@ -379,7 +366,7 @@ namespace ProjectLabV3_Demo
                 sensorBarInitialWidth,
                 sensorBarHeight)
             {
-                ForeColor = Meadow.Foundation.Color.FromHex("C9DB31")
+                ForeColor = Color.FromHex("C9DB31")
             };
             DataLayout.Controls.Add(AccelerometerY);
 
@@ -390,7 +377,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height * 2)
             {
                 Text = $"Z",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8,
                 ScaleFactor = ScaleFactor.X2
             });
@@ -400,7 +387,7 @@ namespace ProjectLabV3_Demo
                 sensorBarInitialWidth,
                 sensorBarHeight)
             {
-                ForeColor = Meadow.Foundation.Color.FromHex("E1EB8B")
+                ForeColor = Color.FromHex("E1EB8B")
             };
             DataLayout.Controls.Add(AccelerometerZ);
             #endregion
@@ -413,7 +400,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height)
             {
                 Text = $"GYROSCOPE (rpm)",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8
             });
 
@@ -424,7 +411,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height * 2)
             {
                 Text = $"X",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8,
                 ScaleFactor = ScaleFactor.X2
             });
@@ -434,7 +421,7 @@ namespace ProjectLabV3_Demo
                 sensorBarInitialWidth,
                 sensorBarHeight)
             {
-                ForeColor = Meadow.Foundation.Color.FromHex("98A645")
+                ForeColor = Color.FromHex("98A645")
             };
             DataLayout.Controls.Add(GyroscopeX);
 
@@ -445,7 +432,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height * 2)
             {
                 Text = $"Y",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8,
                 ScaleFactor = ScaleFactor.X2
             });
@@ -455,7 +442,7 @@ namespace ProjectLabV3_Demo
                 sensorBarInitialWidth,
                 sensorBarHeight)
             {
-                ForeColor = Meadow.Foundation.Color.FromHex("C9DB31")
+                ForeColor = Color.FromHex("C9DB31")
             };
             DataLayout.Controls.Add(GyroscopeY);
 
@@ -466,7 +453,7 @@ namespace ProjectLabV3_Demo
                 font6x8.Height * 2)
             {
                 Text = $"Z",
-                TextColor = Meadow.Foundation.Color.White,
+                TextColor = Color.White,
                 Font = font6x8,
                 ScaleFactor = ScaleFactor.X2
             });
@@ -476,7 +463,7 @@ namespace ProjectLabV3_Demo
                 sensorBarInitialWidth,
                 sensorBarHeight)
             {
-                ForeColor = Meadow.Foundation.Color.FromHex("E1EB8B")
+                ForeColor = Color.FromHex("E1EB8B")
             };
             DataLayout.Controls.Add(GyroscopeZ);
             #endregion
@@ -583,15 +570,7 @@ namespace ProjectLabV3_Demo
             WifiStatus.Image = imageWiFi;
         }
 
-        public void UpdateSyncStatus(bool isSyncing)
-        {
-            var imageSync = isSyncing
-                ? Image.LoadFromResource("ProjectLabV3_Demo.Resources.img_refreshing.bmp")
-                : Image.LoadFromResource("ProjectLabV3_Demo.Resources.img_refreshed.bmp");
-            SyncStatus.Image = imageSync;
-        }
-
-        public void UpdateReadings(double temperature, double pressure, double humidity, double luminance)
+        public void UpdateReadings(double temperature, double pressure, double humidity, double luminance, List<double> readings)
         {
             DisplayScreen.BeginUpdate();
 
@@ -603,11 +582,28 @@ namespace ProjectLabV3_Demo
             DisplayScreen.EndUpdate();
         }
 
+        public void UpdateGraph(int graphType, List<double> readings)
+        {
+            DisplayScreen.BeginUpdate();
+
+            UpdateSelectReading(graphType);
+
+            LineChartSeries.Points.Clear();
+
+            for (var p = 0; p < readings.Count; p++)
+            {
+                LineChartSeries.Points.Add(p * 2, readings[p]);
+            }
+
+            DisplayScreen.EndUpdate();
+        }
+
         public void UpdateDateTime()
         {
             DisplayScreen.BeginUpdate();
 
-            var today = DateTime.Now;
+            int TIMEZONE_OFFSET = -8;
+            var today = DateTime.Now.AddHours(TIMEZONE_OFFSET);
             Date.Text = today.ToString("yyyy/MM/dd");
             Time.Text = today.ToString("HH:mm");
 

@@ -8,7 +8,7 @@ Lifecycle:
   # # When app set to restart automatically on app failure, 
   #AppFailureRestartDelaySeconds: 15
 
-# # Adjust the level of logging detail.
-#Logging:
-#  LogLevel:
-#    Default: Trace
+# Adjust the level of logging detail.
+Logging:
+  LogLevel:
+    Default: Trace
