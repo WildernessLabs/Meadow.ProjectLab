@@ -110,7 +110,7 @@ namespace ProjectLabV3_Demo
             SplashLayout = new AbsoluteLayout(DisplayScreen, 0, 0, DisplayScreen.Width, DisplayScreen.Height)
             {
                 BackgroundColor = Color.FromHex("#14607F"),
-                Visible = false
+                IsVisible = false
             };
 
             var image = Image.LoadFromResource("ProjectLabV3_Demo.Resources.img_meadow.bmp");
@@ -129,7 +129,7 @@ namespace ProjectLabV3_Demo
             DataLayout = new AbsoluteLayout(DisplayScreen, 0, 0, DisplayScreen.Width, DisplayScreen.Height)
             {
                 BackgroundColor = backgroundColor,
-                Visible = false
+                IsVisible = false
             };
 
             DataLayout.Controls.Add(new Label(
@@ -165,7 +165,7 @@ namespace ProjectLabV3_Demo
                 BackgroundColor = Color.FromHex("082936"),
                 AxisColor = ForegroundColor,
                 ShowYAxisLabels = true,
-                Visible = false,
+                IsVisible = false,
                 AlwaysShowYOrigin = false,
             };
             LineChartSeries = new LineChartSeries()
@@ -180,7 +180,7 @@ namespace ProjectLabV3_Demo
             LineChart.Series.Add(LineChartSeries);
             DataLayout.Controls.Add(LineChart);
 
-            #region TEMPERATURE
+            // TEMPERATURE
             TemperatureBox = new Box(margin, row1, measureBoxWidth, rowHeight)
             {
                 ForeColor = selectedColor
@@ -209,9 +209,8 @@ namespace ProjectLabV3_Demo
                 ScaleFactor = ScaleFactor.X2
             };
             DataLayout.Controls.Add(TemperatureValue);
-            #endregion
 
-            #region PRESSURE
+            // PRESSURE
             PressureBox = new Box(
                 margin,
                 row2,
@@ -244,9 +243,8 @@ namespace ProjectLabV3_Demo
                 ScaleFactor = ScaleFactor.X2
             };
             DataLayout.Controls.Add(PressureValue);
-            #endregion
 
-            #region HUMIDITY
+            // HUMIDITY
             HumidityBox = new Box(
                 margin,
                 row3,
@@ -279,9 +277,8 @@ namespace ProjectLabV3_Demo
                 ScaleFactor = ScaleFactor.X2
             };
             DataLayout.Controls.Add(HumidityValue);
-            #endregion
 
-            #region LUMINANCE
+            // LUMINANCE
             LuminanceBox = new Box(
                 column1,
                 row1,
@@ -314,9 +311,8 @@ namespace ProjectLabV3_Demo
                 ScaleFactor = ScaleFactor.X2
             };
             DataLayout.Controls.Add(LuminanceValue);
-            #endregion
 
-            #region ACCELEROMETER
+            // ACCELEROMETER
             DataLayout.Controls.Add(new Label(
                 column1 + smallMargin,
                 row2 + smallMargin,
@@ -390,9 +386,8 @@ namespace ProjectLabV3_Demo
                 ForeColor = Color.FromHex("E1EB8B")
             };
             DataLayout.Controls.Add(AccelerometerZ);
-            #endregion
 
-            #region GYROSCOPE
+            // GYROSCOPE
             DataLayout.Controls.Add(new Label(
                 column2 + smallMargin,
                 row2 + smallMargin,
@@ -466,9 +461,8 @@ namespace ProjectLabV3_Demo
                 ForeColor = Color.FromHex("E1EB8B")
             };
             DataLayout.Controls.Add(GyroscopeZ);
-            #endregion
 
-            #region CLOCK
+            // CLOCK
             DataLayout.Controls.Add(new Box(
                 clockX,
                 row1,
@@ -502,9 +496,8 @@ namespace ProjectLabV3_Demo
                 ScaleFactor = ScaleFactor.X2
             };
             DataLayout.Controls.Add(Time);
-            #endregion
 
-            #region D-PAD
+            // D-Pad
             Up = new Box(
                 218,
                 136,
@@ -541,20 +534,18 @@ namespace ProjectLabV3_Demo
                 ForeColor = ForegroundColor
             };
             DataLayout.Controls.Add(Right);
-
-            #endregion
         }
 
         public void ShowSplashScreen()
         {
-            DataLayout.Visible = false;
-            SplashLayout.Visible = true;
+            DataLayout.IsVisible = false;
+            SplashLayout.IsVisible = true;
         }
 
         public void ShowDataScreen()
         {
-            SplashLayout.Visible = false;
-            DataLayout.Visible = true;
+            SplashLayout.IsVisible = false;
+            DataLayout.IsVisible = true;
         }
 
         public void UpdateStatus(string status)
@@ -656,7 +647,7 @@ namespace ProjectLabV3_Demo
             }
         }
 
-        protected void UpdateAccelerometerReading(double x, double y, double z)
+        public void UpdateAccelerometerReading(double x, double y, double z)
         {
             DisplayScreen.BeginUpdate();
             AccelerometerX.Width = (int)x * 10 + 5;
@@ -665,7 +656,7 @@ namespace ProjectLabV3_Demo
             DisplayScreen.EndUpdate();
         }
 
-        protected void UpdateGyroscopeReading(double x, double y, double z)
+        public void UpdateGyroscopeReading(double x, double y, double z)
         {
             DisplayScreen.BeginUpdate();
             GyroscopeX.Width = (int)x * 10 + 5;
