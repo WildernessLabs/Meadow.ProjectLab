@@ -1,5 +1,6 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.7.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,7 +12,6 @@
     <PackageId>Meadow.ProjectLab</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.ProjectLab</RepositoryUrl>
     <PackageTags>Meadow.ProjectLab,Meadow,ProjectLab,accelerator</PackageTags>
-    <Version>0.92.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for the Meadow ProjectLab IoT accelerator</Description>
     <Nullable>enable</Nullable>
