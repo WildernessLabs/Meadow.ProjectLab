@@ -1,13 +1,14 @@
-﻿using Meadow.Foundation.Audio;
-using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Leds;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
+using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Light;
+using Meadow.Peripherals.Speakers;
 using System;
 
 namespace Meadow.Devices
@@ -19,7 +20,7 @@ namespace Meadow.Devices
     {
         private IConnector?[]? _connectors;
         private IGraphicsDisplay? _display;
-        private Bh1750? _lightSensor;
+        private ILightSensor? _lightSensor;
         private Bme688? _environmentalSensor;
         private Bmi270? _motionSensor;
 
@@ -42,34 +43,26 @@ namespace Meadow.Devices
 
         /// <inheritdoc/>
         public abstract IButton? LeftButton { get; }
-        
+
         /// <inheritdoc/>
         public abstract IButton? RightButton { get; }
 
-        /// <summary>
-        /// Gets the BH1750 Light Sensor on the Project Lab board
-        /// </summary>
-        public Bh1750? LightSensor => GetLightSensor();
+        /// <inheritdoc/>
+        public abstract IToneGenerator? Speaker { get; }
 
-        /// <summary>
-        /// Gets the BME688 environmental sensor  on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
+        public abstract IRgbPwmLed? RgbLed { get; }
+
+        /// <inheritdoc/>
+        public ILightSensor? LightSensor => GetLightSensor();
+
+        /// <inheritdoc/>
         public Bme688? EnvironmentalSensor => GetEnvironmentalSensor();
 
         /// <inheritdoc/>
-        public abstract PiezoSpeaker? Speaker { get; }
-
-        /// <inheritdoc/>
-        public abstract RgbPwmLed? RgbLed { get; }
-
-        /// <summary>
-        /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
-        /// </summary>
         public Bmi270? MotionSensor => GetMotionSensor();
 
-        /// <summary>
-        /// Gets the default display on the Project Lab board
-        /// </summary>
+        /// <inheritdoc/>
         public IGraphicsDisplay? Display
         {
             get
@@ -161,6 +154,7 @@ namespace Meadow.Devices
                 {
                     Logger?.Trace("Instantiating motion sensor");
                     _motionSensor = new Bmi270(I2cBus);
+                    Resolver.SensorService.RegisterSensor(_motionSensor);
                     Logger?.Trace("Motion sensor up");
                 }
                 catch (Exception ex)
@@ -172,11 +166,10 @@ namespace Meadow.Devices
             return _motionSensor;
         }
 
-        private Bh1750? GetLightSensor()
+        private ILightSensor? GetLightSensor()
         {
             if (_lightSensor == null)
             {
-
                 try
                 {
                     Logger?.Trace("Instantiating light sensor");
@@ -185,6 +178,7 @@ namespace Meadow.Devices
                         measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
                         lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
                         address: (byte)Bh1750.Addresses.Address_0x23);
+                    Resolver.SensorService.RegisterSensor(_lightSensor);
                     Logger?.Trace("Light sensor up");
                 }
                 catch (Exception ex)
@@ -204,6 +198,7 @@ namespace Meadow.Devices
                 {
                     Logger?.Trace("Instantiating environmental sensor");
                     _environmentalSensor = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
+                    Resolver.SensorService.RegisterSensor(_environmentalSensor);
                     Logger?.Trace("Environmental sensor up");
                 }
                 catch (Exception ex)

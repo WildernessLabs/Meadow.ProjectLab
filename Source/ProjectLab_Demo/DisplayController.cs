@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation;
+﻿using Meadow;
+using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
 using Meadow.Units;
 
