@@ -43,7 +43,7 @@ namespace ProjectLab_Demo
             //---- BH1750 Light Sensor
             if (projLab.LightSensor is { } bh1750)
             {
-                bh1750.Updated += Bh1750Updated;
+                bh1750.Updated += OnLightSensorUpdated;
             }
 
             //---- BME688 Atmospheric sensor
@@ -127,13 +127,13 @@ namespace ProjectLab_Demo
 
         private void Bme688Updated(object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> e)
         {
-            Resolver.Log.Info($"BME688: {(e.New.Temperature?.Celsius ?? double.NaN)}C - {(e.New.Humidity?.Percent ?? double.NaN)}% - {(e.New.Pressure?.Millibar ?? double.NaN)}mbar");
+            Resolver.Log.Info($"BME688: {(e.New.Temperature?.Celsius ?? double.NaN):n1}C - {(e.New.Humidity?.Percent ?? double.NaN):n1}% - {(e.New.Pressure?.Millibar ?? double.NaN):n1}mbar");
             displayController.AtmosphericConditions = e.New;
         }
 
-        private void Bh1750Updated(object sender, IChangeResult<Illuminance> e)
+        private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
         {
-            Resolver.Log.Info($"BH1750: {e.New.Lux}");
+            Resolver.Log.Info($"Light sensor: {e.New.Lux:n1}");
             displayController.LightConditions = e.New;
         }
     }
