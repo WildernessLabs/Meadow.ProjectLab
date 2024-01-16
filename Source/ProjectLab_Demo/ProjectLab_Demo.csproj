@@ -19,7 +19,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.8.0" />
     <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
   </ItemGroup>
 </Project>
