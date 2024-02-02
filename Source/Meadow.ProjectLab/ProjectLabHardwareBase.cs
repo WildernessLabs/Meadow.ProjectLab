@@ -6,8 +6,11 @@ using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
 using Meadow.Peripherals.Leds;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Light;
+using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Peripherals.Speakers;
 using System;
 
@@ -23,6 +26,11 @@ namespace Meadow.Devices
         private ILightSensor? _lightSensor;
         private Bme688? _environmentalSensor;
         private Bmi270? _motionSensor;
+        private IGyroscope? _gyroscope;
+        private IAccelerometer? _accelerometer;
+        private ITemperatureSensor? _temperatureSensor;
+        private IHumiditySensor? _humiditySensor;
+        private IBarometricPressureSensor? _barometricPressureSensor;
 
         /// <summary>
         /// Get a reference to Meadow Logger
@@ -61,6 +69,21 @@ namespace Meadow.Devices
 
         /// <inheritdoc/>
         public Bmi270? MotionSensor => GetMotionSensor();
+
+        /// <inheritdoc/>
+        public IGyroscope? Gyroscope => GetGyroscope();
+
+        /// <inheritdoc/>
+        public IAccelerometer? Accelerometer => GetAccelerometer();
+
+        /// <inheritdoc/>
+        public ITemperatureSensor? TemperatureSensor => GetTemperatureSensor();
+
+        /// <inheritdoc/>
+        public IHumiditySensor? HumiditySensor => GetHumiditySensor();
+
+        /// <inheritdoc/>
+        public IBarometricPressureSensor? BarometricPressureSensor => GetBarometricPressureSensor();
 
         /// <inheritdoc/>
         public IGraphicsDisplay? Display
@@ -146,21 +169,61 @@ namespace Meadow.Devices
             }
         }
 
+        private IAccelerometer? GetAccelerometer()
+        {
+            if (_accelerometer == null)
+            {
+                InitializeBmi270();
+            }
+
+            return _accelerometer;
+        }
+
+        private IGyroscope? GetGyroscope()
+        {
+            if (_gyroscope == null)
+            {
+                InitializeBmi270();
+            }
+
+            return _gyroscope;
+        }
+
+        private ITemperatureSensor? GetTemperatureSensor()
+        {
+            if (_temperatureSensor == null)
+            {
+                InitializeBmi270();
+            }
+
+            return _temperatureSensor;
+        }
+
+        private void InitializeBmi270()
+        {
+            try
+            {
+                Logger?.Trace("Instantiating motion sensor");
+                var bmi = new Bmi270(I2cBus);
+                _motionSensor = bmi;
+                _gyroscope = bmi;
+                _accelerometer = bmi;
+                // we use the BMI270 because, I believe, the 688 is closer to an on-board heat source and reads high
+                _temperatureSensor = bmi;
+                Resolver.SensorService.RegisterSensor(_motionSensor);
+                Logger?.Trace("Motion sensor up");
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error($"Unable to create the BMI270 IMU: {ex.Message}");
+            }
+        }
+
         private Bmi270? GetMotionSensor()
         {
             if (_motionSensor == null)
             {
-                try
-                {
-                    Logger?.Trace("Instantiating motion sensor");
-                    _motionSensor = new Bmi270(I2cBus);
-                    Resolver.SensorService.RegisterSensor(_motionSensor);
-                    Logger?.Trace("Motion sensor up");
-                }
-                catch (Exception ex)
-                {
-                    Logger?.Error($"Unable to create the BMI270 IMU: {ex.Message}");
-                }
+                InitializeBmi270();
             }
 
             return _motionSensor;
@@ -194,20 +257,48 @@ namespace Meadow.Devices
         {
             if (_environmentalSensor == null)
             {
-                try
-                {
-                    Logger?.Trace("Instantiating environmental sensor");
-                    _environmentalSensor = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
-                    Resolver.SensorService.RegisterSensor(_environmentalSensor);
-                    Logger?.Trace("Environmental sensor up");
-                }
-                catch (Exception ex)
-                {
-                    Logger?.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
-                }
+                InitializeBme688();
             }
 
             return _environmentalSensor;
+        }
+
+        private IHumiditySensor? GetHumiditySensor()
+        {
+            if (_humiditySensor == null)
+            {
+                InitializeBme688();
+            }
+
+            return _humiditySensor;
+        }
+
+        private IBarometricPressureSensor? GetBarometricPressureSensor()
+        {
+            if (_barometricPressureSensor == null)
+            {
+                InitializeBme688();
+            }
+
+            return _barometricPressureSensor;
+        }
+
+        private void InitializeBme688()
+        {
+            try
+            {
+                Logger?.Trace("Instantiating environmental sensor");
+                var bme = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
+                _environmentalSensor = bme;
+                _humiditySensor = bme;
+                _barometricPressureSensor = bme;
+                Resolver.SensorService.RegisterSensor(_environmentalSensor);
+                Logger?.Trace("Environmental sensor up");
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
+            }
         }
 
         /// <summary>

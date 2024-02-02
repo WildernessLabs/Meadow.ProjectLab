@@ -328,6 +328,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DC, Mcp_1.Pins.GP6),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.LED, Mcp_1!.Pins.GP4),
             });
     }
 

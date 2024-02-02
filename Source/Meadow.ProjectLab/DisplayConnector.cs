@@ -33,6 +33,10 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// SPI controller out, peripheral in pin
         /// </summary>
         public const string COPI = "COPI";
+        /// <summary>
+        /// LED (backlight) pin
+        /// </summary>
+        public const string LED = "LED";
     }
 
     /// <summary>
@@ -45,6 +49,7 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         private readonly IPin? _dc;
         private readonly IPin? _clk;
         private readonly IPin? _copi;
+        private readonly IPin? _led;
 
         /// <summary>
         /// Chip Select pin
@@ -66,6 +71,10 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// SPI controller out, peripheral in pin
         /// </summary>
         public IPin COPI => _copi ?? throw new PlatformNotSupportedException("Pin not connected");
+        /// <summary>
+        /// LED (backlight) pin
+        /// </summary>
+        public IPin LED => _led ?? throw new PlatformNotSupportedException("Pin not connected");
 
         internal DisplayConnectorPinDefinitions(PinMapping mapping)
         {
@@ -87,6 +96,9 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
                         break;
                     case PinNames.COPI:
                         _copi = m.ConnectsTo;
+                        break;
+                    case PinNames.LED:
+                        _led = m.ConnectsTo;
                         break;
                 }
             }
