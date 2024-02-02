@@ -156,31 +156,31 @@ namespace ProjectLab_Demo
 
         private void OnAccelerometerUpdated(object sender, IChangeResult<Acceleration3D> e)
         {
-            Resolver.Log.Info($"ACCEL: {e.New.X.Gravity:0.0},{e.New.Y.Gravity:0.0},{e.New.Z.Gravity:0.0}g");
+            Resolver.Log.Info($"ACCEL: {e.New.X.Gravity:0.0}, {e.New.Y.Gravity:0.0}, {e.New.Z.Gravity:0.0}g");
             displayController.AccelerationConditions = e.New;
         }
 
         private void OnTempSensorUpdated(object sender, IChangeResult<Temperature> e)
         {
-            Resolver.Log.Info($"TEMP: {e.New.Celsius:n1}C");
+            Resolver.Log.Info($"TEMPERATURE: {e.New.Celsius:N1}C");
             displayController.Temperature = e.New;
         }
 
         private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
         {
-            Resolver.Log.Info($"PRESSURE: {e.New.Millibar:n1}mbar");
+            Resolver.Log.Info($"PRESSURE: {e.New.Millibar:N1}mbar");
             displayController.Pressure = e.New;
         }
 
         private void OnHumiditySensorUpdated(object sender, IChangeResult<RelativeHumidity> e)
         {
-            Resolver.Log.Info($"HUMIDITY: {e.New.Percent}%");
+            Resolver.Log.Info($"HUMIDITY: {e.New.Percent:N1}%");
             displayController.RelativeHumidity = e.New;
         }
 
         private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
         {
-            Resolver.Log.Info($"Light sensor: {e.New.Lux:n1}");
+            Resolver.Log.Info($"LIGHT: {e.New.Lux:N1}lux");
             displayController.LightConditions = e.New;
         }
     }
