@@ -150,13 +150,13 @@ namespace ProjectLab_Demo
 
         private void OnGyroscopeUpdated(object sender, IChangeResult<AngularVelocity3D> e)
         {
-            Resolver.Log.Info($"GYRO: {e.New.X.DegreesPerSecond:0.0},{e.New.Y.DegreesPerSecond:0.0},{e.New.Z.DegreesPerSecond:0.0}deg/s");
+            Resolver.Log.Info($"GYRO:        {e.New.X.DegreesPerSecond:0.0},{e.New.Y.DegreesPerSecond:0.0},{e.New.Z.DegreesPerSecond:0.0}deg/s");
             displayController.GyroConditions = e.New;
         }
 
         private void OnAccelerometerUpdated(object sender, IChangeResult<Acceleration3D> e)
         {
-            Resolver.Log.Info($"ACCEL: {e.New.X.Gravity:0.0}, {e.New.Y.Gravity:0.0}, {e.New.Z.Gravity:0.0}g");
+            Resolver.Log.Info($"ACCEL:       {e.New.X.Gravity:0.0}, {e.New.Y.Gravity:0.0}, {e.New.Z.Gravity:0.0}g");
             displayController.AccelerationConditions = e.New;
         }
 
@@ -168,19 +168,19 @@ namespace ProjectLab_Demo
 
         private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
         {
-            Resolver.Log.Info($"PRESSURE: {e.New.Millibar:N1}mbar");
+            Resolver.Log.Info($"PRESSURE:    {e.New.Millibar:N1}mbar");
             displayController.Pressure = e.New;
         }
 
         private void OnHumiditySensorUpdated(object sender, IChangeResult<RelativeHumidity> e)
         {
-            Resolver.Log.Info($"HUMIDITY: {e.New.Percent:N1}%");
+            Resolver.Log.Info($"HUMIDITY:    {e.New.Percent:N1}%");
             displayController.RelativeHumidity = e.New;
         }
 
         private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
         {
-            Resolver.Log.Info($"LIGHT: {e.New.Lux:N1}lux");
+            Resolver.Log.Info($"LIGHT:       {e.New.Lux:N1}lux");
             displayController.LightConditions = e.New;
         }
     }
