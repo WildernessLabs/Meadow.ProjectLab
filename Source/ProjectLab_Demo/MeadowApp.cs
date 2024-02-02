@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Audio;
+using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace ProjectLab_Demo
         private DisplayController displayController;
         private MicroAudio audio;
         private IProjectLabHardware projLab;
+        private IDigitalInterruptPort _powerPort;
+        private IDigitalOutputPort _backlighPort;
 
         public override Task Initialize()
         {
@@ -36,26 +39,41 @@ namespace ProjectLab_Demo
             if (projLab.Display is { } display)
             {
                 Resolver.Log.Trace("Creating DisplayController");
-                displayController = new DisplayController(display);
+                displayController = new DisplayController(display, projLab.RevisionString);
                 Resolver.Log.Trace("DisplayController up");
             }
 
-            //---- BH1750 Light Sensor
-            if (projLab.LightSensor is { } bh1750)
+            //---- Light Sensor
+            if (projLab.LightSensor is { } lightSensor)
             {
-                bh1750.Updated += OnLightSensorUpdated;
+                lightSensor.Updated += OnLightSensorUpdated;
             }
 
-            //---- BME688 Atmospheric sensor
-            if (projLab.EnvironmentalSensor is { } bme688)
+            //---- Atmospheric sensor
+            if (projLab.HumiditySensor is { } humiditySensor)
             {
-                bme688.Updated += Bme688Updated;
+                humiditySensor.Updated += OnHumiditySensorUpdated;
             }
 
-            //---- BMI270 Accel/IMU
-            if (projLab.MotionSensor is { } bmi270)
+            if (projLab.BarometricPressureSensor is { } pressureSensor)
             {
-                bmi270.Updated += Bmi270Updated;
+                pressureSensor.Updated += OnPressureSensorUpdated;
+            }
+
+            //---- Accel/IMU
+            if (projLab.Gyroscope is { } gyroscope)
+            {
+                gyroscope.Updated += OnGyroscopeUpdated;
+            }
+
+            if (projLab.Accelerometer is { } accelerometer)
+            {
+                accelerometer.Updated += OnAccelerometerUpdated;
+            }
+
+            if (projLab.TemperatureSensor is { } tempSensor)
+            {
+                tempSensor.Updated += OnTempSensorUpdated;
             }
 
             //---- buttons
@@ -81,9 +99,56 @@ namespace ProjectLab_Demo
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
+            _powerPort = projLab.IOTerminal.Pins.A1.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled);
+            _powerPort.Changed += OnPowerPortChanged;
+
+            _backlighPort = projLab.MikroBus1.Pins.INT.CreateDigitalOutputPort(true);
+
+            Device.PlatformOS.AfterWake += AfterWake;
+
+            PowerOnPeripherals(false);
+
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
+        }
+
+        private void AfterWake(object sender, WakeSource e)
+        {
+            if (e == WakeSource.Interrupt)
+            {
+                Resolver.Log.Info("Wake on interrupt");
+                PowerOnPeripherals(true);
+            }
+            else
+            {
+                PowerOffPeripherals();
+            }
+        }
+
+        private void PowerOffPeripherals()
+        {
+            Resolver.Log.Info("Powering off");
+            //            _backlighPort.State = false;
+            Device.PlatformOS.Sleep(projLab.IOTerminal.Pins.A1, InterruptMode.EdgeRising);
+        }
+
+        private void PowerOnPeripherals(bool fromWake)
+        {
+            Resolver.Log.Info("Powering on");
+            _backlighPort.State = true;
+        }
+
+        private void OnPowerPortChanged(object sender, DigitalPortResult e)
+        {
+            var powerState = _powerPort.State;
+
+            Resolver.Log.Info($"Power port state changed to {powerState}");
+
+            if (!powerState)
+            {
+                PowerOffPeripherals();
+            }
         }
 
         public override Task Run()
@@ -92,22 +157,34 @@ namespace ProjectLab_Demo
 
             _ = audio.PlaySystemSound(SystemSoundEffect.Success);
 
-            //---- BH1750 Light Sensor
+            //---- Light Sensor
             if (projLab.LightSensor is { } bh1750)
             {
                 bh1750.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
-            //---- BME688 Atmospheric sensor
-            if (projLab.EnvironmentalSensor is { } bme688)
+            //---- Atmospheric sensor
+            if (projLab.TemperatureSensor is { } temp)
             {
-                bme688.StartUpdating(TimeSpan.FromSeconds(5));
+                temp.StartUpdating(TimeSpan.FromSeconds(5));
+            }
+            if (projLab.BarometricPressureSensor is { } barometer)
+            {
+                barometer.StartUpdating(TimeSpan.FromSeconds(5));
+            }
+            if (projLab.HumiditySensor is { } humidity)
+            {
+                humidity.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
-            //---- BMI270 Accel/IMU
-            if (projLab.MotionSensor is { } bmi270)
+            //---- IMU
+            if (projLab.Accelerometer is { } accelerometer)
             {
-                bmi270.StartUpdating(TimeSpan.FromSeconds(5));
+                accelerometer.StartUpdating(TimeSpan.FromSeconds(5));
+            }
+            if (projLab.Gyroscope is { } gyroscope)
+            {
+                gyroscope.StartUpdating(TimeSpan.FromSeconds(5));
             }
 
             displayController?.Update();
@@ -118,17 +195,33 @@ namespace ProjectLab_Demo
             return base.Run();
         }
 
-
-        private void Bmi270Updated(object sender, IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Temperature? Temperature)> e)
+        private void OnGyroscopeUpdated(object sender, IChangeResult<AngularVelocity3D> e)
         {
-            Resolver.Log.Info($"BMI270: {e.New.Acceleration3D!.Value.X.Gravity:0.0},{e.New.Acceleration3D.Value.Y.Gravity:0.0},{e.New.Acceleration3D.Value.Z.Gravity:0.0}g");
+            Resolver.Log.Info($"GYRO: {e.New.X.DegreesPerSecond:0.0},{e.New.Y.DegreesPerSecond:0.0},{e.New.Z.DegreesPerSecond:0.0}deg/s");
+        }
+
+        private void OnAccelerometerUpdated(object sender, IChangeResult<Acceleration3D> e)
+        {
+            Resolver.Log.Info($"ACCEL: {e.New.X.Gravity:0.0},{e.New.Y.Gravity:0.0},{e.New.Z.Gravity:0.0}g");
             displayController.AccelerationConditions = e.New;
         }
 
-        private void Bme688Updated(object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> e)
+        private void OnTempSensorUpdated(object sender, IChangeResult<Temperature> e)
         {
-            Resolver.Log.Info($"BME688: {(e.New.Temperature?.Celsius ?? double.NaN):n1}C - {(e.New.Humidity?.Percent ?? double.NaN):n1}% - {(e.New.Pressure?.Millibar ?? double.NaN):n1}mbar");
-            displayController.AtmosphericConditions = e.New;
+            Resolver.Log.Info($"TEMP: {e.New.Celsius:n1}C");
+            displayController.Temperature = e.New;
+        }
+
+        private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
+        {
+            Resolver.Log.Info($"PRESSURE: {e.New.Millibar:n1}mbar");
+            displayController.Pressure = e.New;
+        }
+
+        private void OnHumiditySensorUpdated(object sender, IChangeResult<RelativeHumidity> e)
+        {
+            Resolver.Log.Info($"HUMIDITY: {e.New.Percent}%");
+            displayController.RelativeHumidity = e.New;
         }
 
         private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
