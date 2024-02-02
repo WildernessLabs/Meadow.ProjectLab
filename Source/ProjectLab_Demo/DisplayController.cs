@@ -124,14 +124,14 @@ namespace ProjectLab_Demo
         private bool rightButtonState = false;
         private bool isUpdating = false;
         private bool needsUpdate = false;
-        private string hardwareRev;
+        private readonly string hardwareRev;
 
         public DisplayController(IGraphicsDisplay display, string hardwareRevision)
         {
             hardwareRev = hardwareRevision;
             graphics = new MicroGraphics(display)
             {
-                CurrentFont = new Font12x16()
+                CurrentFont = new Font12x20()
             };
 
             graphics.Clear(true);
@@ -172,7 +172,7 @@ namespace ProjectLab_Demo
 
             if (Temperature is { } temp)
             {
-                DrawStatus("Temperature:", $"{temp.Celsius:N1}C", WildernessLabsColors.GalleryWhite, 35);
+                DrawStatus("Temperature:", $"{temp.Celsius:N1}°C", WildernessLabsColors.GalleryWhite, 35);
             }
 
             if (Pressure is { } pressure)
