@@ -99,56 +99,9 @@ namespace ProjectLab_Demo
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
-            _powerPort = projLab.IOTerminal.Pins.A1.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled);
-            _powerPort.Changed += OnPowerPortChanged;
-
-            _backlighPort = projLab.MikroBus1.Pins.INT.CreateDigitalOutputPort(true);
-
-            Device.PlatformOS.AfterWake += AfterWake;
-
-            PowerOnPeripherals(false);
-
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
-        }
-
-        private void AfterWake(object sender, WakeSource e)
-        {
-            if (e == WakeSource.Interrupt)
-            {
-                Resolver.Log.Info("Wake on interrupt");
-                PowerOnPeripherals(true);
-            }
-            else
-            {
-                PowerOffPeripherals();
-            }
-        }
-
-        private void PowerOffPeripherals()
-        {
-            Resolver.Log.Info("Powering off");
-            //            _backlighPort.State = false;
-            Device.PlatformOS.Sleep(projLab.IOTerminal.Pins.A1, InterruptMode.EdgeRising);
-        }
-
-        private void PowerOnPeripherals(bool fromWake)
-        {
-            Resolver.Log.Info("Powering on");
-            _backlighPort.State = true;
-        }
-
-        private void OnPowerPortChanged(object sender, DigitalPortResult e)
-        {
-            var powerState = _powerPort.State;
-
-            Resolver.Log.Info($"Power port state changed to {powerState}");
-
-            if (!powerState)
-            {
-                PowerOffPeripherals();
-            }
         }
 
         public override Task Run()
