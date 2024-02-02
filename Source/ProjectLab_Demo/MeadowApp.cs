@@ -16,8 +16,8 @@ namespace ProjectLab_Demo
         private DisplayController displayController;
         private MicroAudio audio;
         private IProjectLabHardware projLab;
-        private IDigitalInterruptPort _powerPort;
-        private IDigitalOutputPort _backlighPort;
+        private readonly IDigitalInterruptPort _powerPort;
+        private readonly IDigitalOutputPort _backlighPort;
 
         public override Task Initialize()
         {
@@ -151,6 +151,7 @@ namespace ProjectLab_Demo
         private void OnGyroscopeUpdated(object sender, IChangeResult<AngularVelocity3D> e)
         {
             Resolver.Log.Info($"GYRO: {e.New.X.DegreesPerSecond:0.0},{e.New.Y.DegreesPerSecond:0.0},{e.New.Z.DegreesPerSecond:0.0}deg/s");
+            displayController.GyroConditions = e.New;
         }
 
         private void OnAccelerometerUpdated(object sender, IChangeResult<Acceleration3D> e)
