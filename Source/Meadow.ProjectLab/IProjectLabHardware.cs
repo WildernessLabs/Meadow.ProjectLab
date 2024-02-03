@@ -5,6 +5,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Peripherals.Speakers;
@@ -75,6 +76,11 @@ namespace Meadow.Devices
         /// Gets the IBarometricPressureSensor on the Project Lab board.
         /// </summary>
         public IBarometricPressureSensor? BarometricPressureSensor { get; }
+
+        /// <summary>
+        /// Gets the IGasResistanceSensor on the Project Lab board.
+        /// </summary>
+        public IGasResistanceSensor? GasResistanceSensor { get; }
 
         /// <summary>
         /// Gets the IGyroscope on the Project Lab board

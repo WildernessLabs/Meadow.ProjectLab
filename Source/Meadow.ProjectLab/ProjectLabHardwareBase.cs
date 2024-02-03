@@ -9,6 +9,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Peripherals.Speakers;
@@ -17,20 +18,21 @@ using System;
 namespace Meadow.Devices
 {
     /// <summary>
-    /// Contains common elements of Project Lab Hardware
+    /// Contains common elements of Project Lab hardware
     /// </summary>
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
         private IConnector?[]? _connectors;
         private IGraphicsDisplay? _display;
         private ILightSensor? _lightSensor;
-        private Bme688? _environmentalSensor;
+        private Bme688? _atmosphericSensor;
         private Bmi270? _motionSensor;
         private IGyroscope? _gyroscope;
         private IAccelerometer? _accelerometer;
         private ITemperatureSensor? _temperatureSensor;
         private IHumiditySensor? _humiditySensor;
         private IBarometricPressureSensor? _barometricPressureSensor;
+        private IGasResistanceSensor? _gasResistanceSensor;
 
         /// <summary>
         /// Get a reference to Meadow Logger
@@ -65,7 +67,7 @@ namespace Meadow.Devices
         public ILightSensor? LightSensor => GetLightSensor();
 
         /// <inheritdoc/>
-        public Bme688? EnvironmentalSensor => GetEnvironmentalSensor();
+        public Bme688? AtmosphericSensor => GetAtmosphericSensor();
 
         /// <inheritdoc/>
         public Bmi270? MotionSensor => GetMotionSensor();
@@ -84,6 +86,9 @@ namespace Meadow.Devices
 
         /// <inheritdoc/>
         public IBarometricPressureSensor? BarometricPressureSensor => GetBarometricPressureSensor();
+
+        /// <inheritdoc/>
+        public IGasResistanceSensor? GasResistanceSensor => GetGasResistanceSensor();
 
         /// <inheritdoc/>
         public IGraphicsDisplay? Display
@@ -253,14 +258,14 @@ namespace Meadow.Devices
             return _lightSensor;
         }
 
-        private Bme688? GetEnvironmentalSensor()
+        private Bme688? GetAtmosphericSensor()
         {
-            if (_environmentalSensor == null)
+            if (_atmosphericSensor == null)
             {
                 InitializeBme688();
             }
 
-            return _environmentalSensor;
+            return _atmosphericSensor;
         }
 
         private IHumiditySensor? GetHumiditySensor()
@@ -283,16 +288,27 @@ namespace Meadow.Devices
             return _barometricPressureSensor;
         }
 
+        private IGasResistanceSensor? GetGasResistanceSensor()
+        {
+            if (_gasResistanceSensor == null)
+            {
+                InitializeBme688();
+            }
+
+            return _gasResistanceSensor;
+        }
+
         private void InitializeBme688()
         {
             try
             {
                 Logger?.Trace("Instantiating environmental sensor");
                 var bme = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
-                _environmentalSensor = bme;
+                _atmosphericSensor = bme;
                 _humiditySensor = bme;
                 _barometricPressureSensor = bme;
-                Resolver.SensorService.RegisterSensor(_environmentalSensor);
+                _gasResistanceSensor = bme;
+                Resolver.SensorService.RegisterSensor(_atmosphericSensor);
                 Logger?.Trace("Environmental sensor up");
             }
             catch (Exception ex)
