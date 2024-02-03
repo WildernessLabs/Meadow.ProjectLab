@@ -25,7 +25,7 @@ namespace Meadow.Devices
         private IConnector?[]? _connectors;
         private IGraphicsDisplay? _display;
         private ILightSensor? _lightSensor;
-        private Bme688? _environmentalSensor;
+        private Bme688? _atmosphericSensor;
         private Bmi270? _motionSensor;
         private IGyroscope? _gyroscope;
         private IAccelerometer? _accelerometer;
@@ -260,12 +260,12 @@ namespace Meadow.Devices
 
         private Bme688? GetAtmosphericSensor()
         {
-            if (_environmentalSensor == null)
+            if (_atmosphericSensor == null)
             {
                 InitializeBme688();
             }
 
-            return _environmentalSensor;
+            return _atmosphericSensor;
         }
 
         private IHumiditySensor? GetHumiditySensor()
@@ -304,11 +304,11 @@ namespace Meadow.Devices
             {
                 Logger?.Trace("Instantiating environmental sensor");
                 var bme = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
-                _environmentalSensor = bme;
+                _atmosphericSensor = bme;
                 _humiditySensor = bme;
                 _barometricPressureSensor = bme;
                 _gasResistanceSensor = bme;
-                Resolver.SensorService.RegisterSensor(_environmentalSensor);
+                Resolver.SensorService.RegisterSensor(_atmosphericSensor);
                 Logger?.Trace("Environmental sensor up");
             }
             catch (Exception ex)
