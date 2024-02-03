@@ -251,7 +251,7 @@ namespace Meadow.Devices
                 }
                 catch (Exception ex)
                 {
-                    Logger?.Error($"Unable to create the BH1750 Light Sensor: {ex.Message}");
+                    Logger?.Error($"Unable to create the BH1750 light sensor: {ex.Message}");
                 }
             }
 
@@ -302,18 +302,18 @@ namespace Meadow.Devices
         {
             try
             {
-                Logger?.Trace("Instantiating environmental sensor");
+                Logger?.Trace("Instantiating atmospheric sensor");
                 var bme = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
                 _atmosphericSensor = bme;
                 _humiditySensor = bme;
                 _barometricPressureSensor = bme;
                 _gasResistanceSensor = bme;
-                Resolver.SensorService.RegisterSensor(_atmosphericSensor);
-                Logger?.Trace("Environmental sensor up");
+                Resolver.SensorService.RegisterSensor(bme);
+                Logger?.Trace("Atmospheric sensor up");
             }
             catch (Exception ex)
             {
-                Logger?.Error($"Unable to create the BME688 Environmental Sensor: {ex.Message}");
+                Logger?.Error($"Unable to create the BME688 atmospheric sensor: {ex.Message}");
             }
         }
 
