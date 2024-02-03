@@ -9,6 +9,7 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Peripherals.Speakers;
@@ -31,6 +32,7 @@ namespace Meadow.Devices
         private ITemperatureSensor? _temperatureSensor;
         private IHumiditySensor? _humiditySensor;
         private IBarometricPressureSensor? _barometricPressureSensor;
+        private IGasResistanceSensor? _gasResistanceSensor;
 
         /// <summary>
         /// Get a reference to Meadow Logger
@@ -84,6 +86,9 @@ namespace Meadow.Devices
 
         /// <inheritdoc/>
         public IBarometricPressureSensor? BarometricPressureSensor => GetBarometricPressureSensor();
+
+        /// <inheritdoc/>
+        public IGasResistanceSensor? GasResistanceSensor => GetGasResistanceSensor();
 
         /// <inheritdoc/>
         public IGraphicsDisplay? Display
@@ -283,6 +288,16 @@ namespace Meadow.Devices
             return _barometricPressureSensor;
         }
 
+        private IGasResistanceSensor? GetGasResistanceSensor()
+        {
+            if (_gasResistanceSensor == null)
+            {
+                InitializeBme688();
+            }
+
+            return _gasResistanceSensor;
+        }
+
         private void InitializeBme688()
         {
             try
@@ -292,6 +307,7 @@ namespace Meadow.Devices
                 _environmentalSensor = bme;
                 _humiditySensor = bme;
                 _barometricPressureSensor = bme;
+                _gasResistanceSensor = bme;
                 Resolver.SensorService.RegisterSensor(_environmentalSensor);
                 Logger?.Trace("Environmental sensor up");
             }
