@@ -18,7 +18,7 @@ using System;
 namespace Meadow.Devices
 {
     /// <summary>
-    /// Contains common elements of Project Lab Hardware
+    /// Contains common elements of Project Lab hardware
     /// </summary>
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
@@ -67,7 +67,7 @@ namespace Meadow.Devices
         public ILightSensor? LightSensor => GetLightSensor();
 
         /// <inheritdoc/>
-        public Bme688? EnvironmentalSensor => GetAtmosphericSensor();
+        public Bme688? AtmosphericSensor => GetAtmosphericSensor();
 
         /// <inheritdoc/>
         public Bmi270? MotionSensor => GetMotionSensor();
