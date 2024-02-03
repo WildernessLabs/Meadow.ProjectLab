@@ -308,7 +308,7 @@ namespace Meadow.Devices
                 _humiditySensor = bme;
                 _barometricPressureSensor = bme;
                 _gasResistanceSensor = bme;
-                Resolver.SensorService.RegisterSensor(_atmosphericSensor);
+                Resolver.SensorService.RegisterSensor(bme);
                 Logger?.Trace("Atmospheric sensor up");
             }
             catch (Exception ex)
