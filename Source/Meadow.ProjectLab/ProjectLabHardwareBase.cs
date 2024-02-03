@@ -67,7 +67,7 @@ namespace Meadow.Devices
         public ILightSensor? LightSensor => GetLightSensor();
 
         /// <inheritdoc/>
-        public Bme688? EnvironmentalSensor => GetEnvironmentalSensor();
+        public Bme688? EnvironmentalSensor => GetAtmosphericSensor();
 
         /// <inheritdoc/>
         public Bmi270? MotionSensor => GetMotionSensor();
@@ -258,7 +258,7 @@ namespace Meadow.Devices
             return _lightSensor;
         }
 
-        private Bme688? GetEnvironmentalSensor()
+        private Bme688? GetAtmosphericSensor()
         {
             if (_environmentalSensor == null)
             {
