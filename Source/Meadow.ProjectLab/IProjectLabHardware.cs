@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
@@ -95,7 +95,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the graphics display on the Project Lab board.
         /// </summary>
-        public IGraphicsDisplay? Display { get; }
+        public IPixelDisplay? Display { get; }
 
         /// <summary>
         /// Gets the revision string of the Project Lab board.

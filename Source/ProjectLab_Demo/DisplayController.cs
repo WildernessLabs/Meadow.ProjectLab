@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 
 namespace ProjectLab_Demo
@@ -126,7 +127,7 @@ namespace ProjectLab_Demo
         private bool needsUpdate = false;
         private readonly string hardwareRev;
 
-        public DisplayController(IGraphicsDisplay display, string hardwareRevision)
+        public DisplayController(IPixelDisplay display, string hardwareRevision)
         {
             hardwareRev = hardwareRevision;
             graphics = new MicroGraphics(display)

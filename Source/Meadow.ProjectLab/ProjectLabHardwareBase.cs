@@ -1,10 +1,10 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Sensors.Accelerometers;
+﻿using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
@@ -23,7 +23,7 @@ namespace Meadow.Devices
     public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
         private IConnector?[]? _connectors;
-        private IGraphicsDisplay? _display;
+        private IPixelDisplay? _display;
         private ILightSensor? _lightSensor;
         private Bme688? _atmosphericSensor;
         private Bmi270? _motionSensor;
@@ -91,7 +91,7 @@ namespace Meadow.Devices
         public IGasResistanceSensor? GasResistanceSensor => GetGasResistanceSensor();
 
         /// <inheritdoc/>
-        public IGraphicsDisplay? Display
+        public IPixelDisplay? Display
         {
             get
             {
@@ -104,7 +104,7 @@ namespace Meadow.Devices
         /// <summary>
         /// Gets the default display for the Project Lab board.
         /// </summary>
-        protected abstract IGraphicsDisplay? GetDefaultDisplay();
+        protected abstract IPixelDisplay? GetDefaultDisplay();
 
         /// <inheritdoc/>
         public virtual string RevisionString { get; set; } = "unknown";

@@ -1,11 +1,11 @@
 ﻿using Meadow.Foundation.Audio;
 using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Speakers;
@@ -24,7 +24,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     private readonly IConnectorProvider _connectors;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
-    private IGraphicsDisplay? _display;
+    private IPixelDisplay? _display;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals on Project Lab
@@ -159,7 +159,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     }
 
     /// <inheritdoc/>
-    protected override IGraphicsDisplay? GetDefaultDisplay()
+    protected override IPixelDisplay? GetDefaultDisplay()
     {
         DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
 
