@@ -1,11 +1,11 @@
 ﻿using Meadow.Foundation.Audio;
 using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Speakers;
@@ -24,7 +24,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     private readonly IF7FeatherMeadowDevice _device;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
-    private IGraphicsDisplay? _display;
+    private IPixelDisplay? _display;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals
@@ -121,7 +121,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     }
 
     /// <inheritdoc/>
-    protected override IGraphicsDisplay? GetDefaultDisplay()
+    protected override IPixelDisplay? GetDefaultDisplay()
     {
         if (_display == null)
         {

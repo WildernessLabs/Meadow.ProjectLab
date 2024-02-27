@@ -1,6 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Version>1.8.0</Version>
+    <Version>1.9.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -24,12 +24,12 @@
     <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.8.0.1" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.8.0.1" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23xxx" Version="1.8.0.1" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="1.8.0.1" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bme68x" Version="1.8.0.1" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Light.Bh1750" Version="1.8.0.1" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Bmi270" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.F7" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23xxx" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bme68x" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Light.Bh1750" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Bmi270" Version="1.9.0" />
   </ItemGroup>
 </Project>

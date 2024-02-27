@@ -1,11 +1,13 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Sensors.Accelerometers;
-using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Modbus;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Peripherals.Sensors.Light;
+using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Peripherals.Speakers;
 
 namespace Meadow.Devices
@@ -61,19 +63,39 @@ namespace Meadow.Devices
         public ILightSensor? LightSensor { get; }
 
         /// <summary>
-        /// Gets the environmental sensor on the Project Lab board.
+        /// Gets the ITemperatureSensor on the Project Lab board.
         /// </summary>
-        public Bme688? EnvironmentalSensor { get; }
+        public ITemperatureSensor? TemperatureSensor { get; }
 
         /// <summary>
-        /// Gets the BMI inertial movement unit (IMU) on the Project Lab board
+        /// Gets the IHumiditySensor on the Project Lab board.
         /// </summary>
-        public Bmi270? MotionSensor { get; }
+        public IHumiditySensor? HumiditySensor { get; }
+
+        /// <summary>
+        /// Gets the IBarometricPressureSensor on the Project Lab board.
+        /// </summary>
+        public IBarometricPressureSensor? BarometricPressureSensor { get; }
+
+        /// <summary>
+        /// Gets the IGasResistanceSensor on the Project Lab board.
+        /// </summary>
+        public IGasResistanceSensor? GasResistanceSensor { get; }
+
+        /// <summary>
+        /// Gets the IGyroscope on the Project Lab board
+        /// </summary>
+        public IGyroscope? Gyroscope { get; }
+
+        /// <summary>
+        /// Gets the IAccelerometer on the Project Lab board
+        /// </summary>
+        public IAccelerometer? Accelerometer { get; }
 
         /// <summary>
         /// Gets the graphics display on the Project Lab board.
         /// </summary>
-        public IGraphicsDisplay? Display { get; }
+        public IPixelDisplay? Display { get; }
 
         /// <summary>
         /// Gets the revision string of the Project Lab board.

@@ -1,24 +1,47 @@
 ﻿using Meadow;
 using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 
 namespace ProjectLab_Demo
 {
     public class DisplayController
     {
-        readonly MicroGraphics graphics;
+        private readonly MicroGraphics graphics;
 
-        public (Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)? AtmosphericConditions
+        public Temperature? Temperature
         {
-            get => atmosphericConditions;
+            get => temperature;
             set
             {
-                atmosphericConditions = value;
+                temperature = value;
                 Update();
             }
         }
-        (Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)? atmosphericConditions;
+        private Temperature? temperature;
+
+        public RelativeHumidity? RelativeHumidity
+        {
+            get => relativeHumidity;
+            set
+            {
+                relativeHumidity = value;
+                Update();
+            }
+        }
+        private RelativeHumidity? relativeHumidity;
+
+        public Pressure? Pressure
+        {
+            get => pressure;
+            set
+            {
+                pressure = value;
+                Update();
+            }
+        }
+        private Pressure? pressure;
 
         public Illuminance? LightConditions
         {
@@ -29,9 +52,9 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-        Illuminance? lightConditions;
+        private Illuminance? lightConditions;
 
-        public (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Temperature? Temperature) AccelerationConditions
+        public Acceleration3D? AccelerationConditions
         {
             get => accelerationConditions;
             set
@@ -40,7 +63,18 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-        (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Temperature? Temperature) accelerationConditions;
+        private Acceleration3D? accelerationConditions;
+
+        public AngularVelocity3D? GyroConditions
+        {
+            get => gyroConditions;
+            set
+            {
+                gyroConditions = value;
+                Update();
+            }
+        }
+        private AngularVelocity3D? gyroConditions;
 
 
         public bool UpButtonState
@@ -52,7 +86,7 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-        bool upButtonState = false;
+        private bool upButtonState = false;
 
         public bool DownButtonState
         {
@@ -63,7 +97,8 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-        bool downButtonState = false;
+
+        private bool downButtonState = false;
 
         public bool LeftButtonState
         {
@@ -74,7 +109,8 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-        bool leftButtonState = false;
+
+        private bool leftButtonState = false;
 
         public bool RightButtonState
         {
@@ -85,16 +121,18 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-        bool rightButtonState = false;
 
-        bool isUpdating = false;
-        bool needsUpdate = false;
+        private bool rightButtonState = false;
+        private bool isUpdating = false;
+        private bool needsUpdate = false;
+        private readonly string hardwareRev;
 
-        public DisplayController(IGraphicsDisplay display)
+        public DisplayController(IPixelDisplay display, string hardwareRevision)
         {
+            hardwareRev = hardwareRevision;
             graphics = new MicroGraphics(display)
             {
-                CurrentFont = new Font12x16()
+                CurrentFont = new Font12x20()
             };
 
             graphics.Clear(true);
@@ -123,32 +161,29 @@ namespace ProjectLab_Demo
             }
         }
 
-        void DrawStatus(string label, string value, Color color, int yPosition)
+        private void DrawStatus(string label, string value, Color color, int yPosition)
         {
             graphics.DrawText(x: 2, y: yPosition, label, color: color);
             graphics.DrawText(x: graphics.Width - 2, y: yPosition, value, alignmentH: HorizontalAlignment.Right, color: color);
         }
 
-        void Draw()
+        private void Draw()
         {
-            graphics.DrawText(x: 2, y: 0, "Hello PROJ LAB!", WildernessLabsColors.AzureBlue);
+            graphics.DrawText(x: 2, y: 0, $"Hello PROJ LAB {hardwareRev}!", WildernessLabsColors.AzureBlue);
 
-            if (AtmosphericConditions is { } conditions)
+            if (Temperature is { } temp)
             {
-                if (conditions.Temperature is { } temp)
-                {
-                    DrawStatus("Temperature:", $"{temp.Celsius:N1}C", WildernessLabsColors.GalleryWhite, 35);
-                }
+                DrawStatus("Temperature:", $"{temp.Celsius:N1}°C", WildernessLabsColors.GalleryWhite, 35);
+            }
 
-                if (conditions.Pressure is { } pressure)
-                {
-                    DrawStatus("Pressure:", $"{pressure.StandardAtmosphere:N1}atm", WildernessLabsColors.GalleryWhite, 55);
-                }
+            if (Pressure is { } pressure)
+            {
+                DrawStatus("Pressure:", $"{pressure.StandardAtmosphere:N1}atm", WildernessLabsColors.GalleryWhite, 55);
+            }
 
-                if (conditions.Humidity is { } humidity)
-                {
-                    DrawStatus("Humidity:", $"{humidity.Percent:N1}%", WildernessLabsColors.GalleryWhite, 75);
-                }
+            if (RelativeHumidity is { } humidity)
+            {
+                DrawStatus("Humidity:", $"{humidity.Percent:N1}%", WildernessLabsColors.GalleryWhite, 75);
             }
 
             if (LightConditions is { } light)
@@ -158,16 +193,14 @@ namespace ProjectLab_Demo
 
             if (AccelerationConditions is { } acceleration)
             {
-                if (acceleration.Acceleration3D is { } accel3D)
-                {
-                    DrawStatus("Accel:", $"{accel3D.X.Gravity:0.#},{accel3D.Y.Gravity:0.#},{accel3D.Z.Gravity:0.#}g", WildernessLabsColors.AzureBlue, 115);
-                }
-
-                if (acceleration.AngularVelocity3D is { } angular3D)
-                {
-                    DrawStatus("Gyro:", $"{angular3D.X:0},{angular3D.Y:0},{angular3D.Z:0}rpm", WildernessLabsColors.AzureBlue, 135);
-                }
+                DrawStatus("Accel:", $"{acceleration.X.Gravity:0.#},{acceleration.Y.Gravity:0.#},{acceleration.Z.Gravity:0.#}g", WildernessLabsColors.AzureBlue, 115);
             }
+
+            if (GyroConditions is { } angular3D)
+            {
+                DrawStatus("Gyro:", $"{angular3D.X:0},{angular3D.Y:0},{angular3D.Z:0}rpm", WildernessLabsColors.AzureBlue, 135);
+            }
+
 
             DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
             DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
