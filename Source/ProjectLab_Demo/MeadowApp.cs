@@ -99,9 +99,23 @@ namespace ProjectLab_Demo
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
+            Resolver.Log.Info("Initialize touch...");
+            projLab.Touchscreen.TouchDown += Touchscreen_TouchDown;
+            projLab.Touchscreen.TouchUp += Touchscreen_TouchUp;
+
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
+        }
+
+        private void Touchscreen_TouchUp(int x, int y)
+        {
+            Resolver.Log.Info("touch up");
+        }
+
+        private void Touchscreen_TouchDown(int x, int y)
+        {
+            Resolver.Log.Info("touch down");
         }
 
         public override Task Run()

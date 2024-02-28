@@ -3,6 +3,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Displays;
@@ -359,5 +360,17 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
         return _connectors.GetModbusRtuClient(this, baudRate, dataBits, parity, stopBits);
+    }
+
+    public override ITouchScreen? Touchscreen
+    {
+        get
+        {
+            return new Xpt2046(
+                SpiBus,
+                Mcp_2.Pins.GP0.CreateDigitalInterruptPort(InterruptMode.EdgeBoth),
+                _device.Pins.PD5.CreateDigitalOutputPort(true)
+                );
+        }
     }
 }
