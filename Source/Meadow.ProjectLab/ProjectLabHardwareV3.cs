@@ -362,15 +362,25 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         return _connectors.GetModbusRtuClient(this, baudRate, dataBits, parity, stopBits);
     }
 
+    private ITouchScreen? touchscreen;
+
     public override ITouchScreen? Touchscreen
     {
         get
         {
+            return touchscreen ??= new Xpt2046(
+                MikroBus1.SpiBus,
+                MikroBus1.Pins.INT.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled),
+                MikroBus1.Pins.CS.CreateDigitalOutputPort(true),
+                RotationType.Normal
+                );
+            /*
             return new Xpt2046(
                 SpiBus,
                 Mcp_2.Pins.GP0.CreateDigitalInterruptPort(InterruptMode.EdgeBoth),
                 _device.Pins.PD5.CreateDigitalOutputPort(true)
                 );
+            */
         }
     }
 }
