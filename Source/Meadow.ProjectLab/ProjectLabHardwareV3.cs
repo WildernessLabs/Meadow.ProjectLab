@@ -3,7 +3,6 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Displays;
@@ -196,6 +195,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
     private IToneGenerator? GetSpeaker()
     {
+        return null;
+
         if (_speaker == null)
         {
             try
@@ -362,12 +363,13 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         return _connectors.GetModbusRtuClient(this, baudRate, dataBits, parity, stopBits);
     }
 
-    private ITouchScreen? touchscreen;
-
+    /// <inheritdoc/>
     public override ITouchScreen? Touchscreen
     {
         get
         {
+            return null;
+            /*
             return touchscreen ??= new Xpt2046(
                 MikroBus1.SpiBus,
                 MikroBus1.Pins.INT.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled),
