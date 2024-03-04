@@ -195,8 +195,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
     private IToneGenerator? GetSpeaker()
     {
-        return null;
-
         if (_speaker == null)
         {
             try
