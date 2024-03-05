@@ -64,6 +64,9 @@ namespace Meadow.Devices
         public abstract IRgbPwmLed? RgbLed { get; }
 
         /// <inheritdoc/>
+        public virtual ITouchScreen? Touchscreen => null;
+
+        /// <inheritdoc/>
         public ILightSensor? LightSensor => GetLightSensor();
 
         /// <inheritdoc/>

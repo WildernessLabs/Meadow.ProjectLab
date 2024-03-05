@@ -41,6 +41,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTnet", "..\..\MQTTnet\So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Sc16is7x2", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Sc16is7x2\Driver\ICs.IOExpanders.Sc16is7x2.csproj", "{20AFC6E4-46E9-4CBB-A8E2-69BF4CD2039C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Xpt2046", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.Xpt2046\Driver\Sensors.Hid.Xpt2046.csproj", "{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +151,12 @@ Global
 		{20AFC6E4-46E9-4CBB-A8E2-69BF4CD2039C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20AFC6E4-46E9-4CBB-A8E2-69BF4CD2039C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20AFC6E4-46E9-4CBB-A8E2-69BF4CD2039C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +178,7 @@ Global
 		{12C58A2F-9D0E-417F-B138-BA25B166C56B} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{B51B10FB-6577-4C06-B7B2-82D2ACCB31B2} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 		{20AFC6E4-46E9-4CBB-A8E2-69BF4CD2039C} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
+		{6089ABC8-BCBB-4B81-BC6A-D6B4963E5BD2} = {580CAC8F-38C5-4DEA-AAEA-415F5D08982B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A24E3C-F7F9-4EB3-8A7F-5C6AB7C2A43D}
