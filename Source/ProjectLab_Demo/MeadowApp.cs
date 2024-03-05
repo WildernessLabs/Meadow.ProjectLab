@@ -99,21 +99,24 @@ namespace ProjectLab_Demo
                 upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
             }
 
-            Resolver.Log.Info("Initialize touch...");
-            projLab.Touchscreen.TouchDown += Touchscreen_TouchDown;
-            projLab.Touchscreen.TouchUp += Touchscreen_TouchUp;
+            if (projLab.Touchscreen != null)
+            {
+                Resolver.Log.Info("Initialize touch...");
+                projLab.Touchscreen.TouchDown += Touchscreen_TouchDown;
+                projLab.Touchscreen.TouchUp += Touchscreen_TouchUp;
+            }
 
             Resolver.Log.Info("Initialization complete");
 
             return base.Initialize();
         }
 
-        private void Touchscreen_TouchUp(int x, int y)
+        private void Touchscreen_TouchUp(ITouchScreen sender, TouchPoint point)
         {
             Resolver.Log.Info("touch up");
         }
 
-        private void Touchscreen_TouchDown(int x, int y)
+        private void Touchscreen_TouchDown(ITouchScreen sender, TouchPoint point)
         {
             Resolver.Log.Info("touch down");
         }
