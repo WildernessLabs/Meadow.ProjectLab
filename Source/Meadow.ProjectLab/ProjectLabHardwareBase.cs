@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Sensors.Accelerometers;
-using Meadow.Foundation.Sensors.Atmospheric;
+﻿using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Light;
+using Meadow.Foundation.Sensors.Motion;
 using Meadow.Hardware;
 using Meadow.Logging;
 using Meadow.Modbus;
