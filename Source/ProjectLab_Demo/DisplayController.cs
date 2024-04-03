@@ -1,207 +1,220 @@
 ﻿using Meadow;
-using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Peripherals.Displays;
-using Meadow.Units;
 
-namespace ProjectLab_Demo
+namespace ProjectLab_Demo;
+
+public class DisplayController
 {
-    public class DisplayController
+    private int rowOffset = 29;
+    private int rowHeight = 21;
+    private int rowMargin = 2;
+
+    private Color foregroundColor = Color.White;
+    private Color atmosphericColor = Color.White;
+    private Color motionColor = Color.FromHex("23ABE3");
+    private Color buttonColor = Color.FromHex("EF7D3B");
+
+    private Font12x20 font12X20 = new Font12x20();
+
+    private DisplayScreen displayScreen;
+
+    public Label Temperature { get; set; }
+
+    public Label Humidity { get; set; }
+
+    public Label Pressure { get; set; }
+
+    public Label Luminance { get; set; }
+
+    public Label Acceleration3D { get; set; }
+
+    public Label AngularVelocity3D { get; set; }
+
+    public Label ButtonUp { get; set; }
+
+    public Label ButtonDown { get; set; }
+
+    public Label ButtonLeft { get; set; }
+
+    public Label ButtonRight { get; set; }
+
+    public DisplayController(IPixelDisplay display, string revisionVersion)
     {
-        private bool isUpdating = false;
-        private bool needsUpdate = false;
-
-        private readonly string hardwareRev;
-        private readonly MicroGraphics graphics;
-
-        public Temperature? Temperature
+        displayScreen = new DisplayScreen(display, RotationType._270Degrees)
         {
-            get => temperature;
-            set
-            {
-                temperature = value;
-                Update();
-            }
-        }
-        private Temperature? temperature;
+            BackgroundColor = Color.FromHex("0B3749")
+        };
 
-        public RelativeHumidity? RelativeHumidity
+        displayScreen.Controls.Add(new Label(rowMargin, 4, displayScreen.Width, rowHeight)
         {
-            get => relativeHumidity;
-            set
-            {
-                relativeHumidity = value;
-                Update();
-            }
-        }
-        private RelativeHumidity? relativeHumidity;
+            Text = $"Hello PROJ LAB {revisionVersion}!",
+            TextColor = foregroundColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
 
-        public Pressure? Pressure
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset, displayScreen.Width, rowHeight)
         {
-            get => pressure;
-            set
-            {
-                pressure = value;
-                Update();
-            }
-        }
-        private Pressure? pressure;
-
-        public Illuminance? LightConditions
+            Text = $"Temperature:",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight, displayScreen.Width, rowHeight)
         {
-            get => lightConditions;
-            set
-            {
-                lightConditions = value;
-                Update();
-            }
-        }
-        private Illuminance? lightConditions;
-
-        public Acceleration3D? AccelerationConditions
+            Text = $"Pressure:",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 2, displayScreen.Width, rowHeight)
         {
-            get => accelerationConditions;
-            set
-            {
-                accelerationConditions = value;
-                Update();
-            }
-        }
-        private Acceleration3D? accelerationConditions;
-
-        public AngularVelocity3D? GyroConditions
+            Text = $"Humidity",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 3, displayScreen.Width, rowHeight)
         {
-            get => gyroConditions;
-            set
-            {
-                gyroConditions = value;
-                Update();
-            }
-        }
-        private AngularVelocity3D? gyroConditions;
-
-        public bool UpButtonState
+            Text = $"Lux:",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 4, displayScreen.Width, rowHeight)
         {
-            get => upButtonState;
-            set
-            {
-                upButtonState = value;
-                Update();
-            }
-        }
-        private bool upButtonState = false;
-
-        public bool DownButtonState
+            Text = $"Accel:",
+            TextColor = motionColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 5, displayScreen.Width, rowHeight)
         {
-            get => downButtonState;
-            set
-            {
-                downButtonState = value;
-                Update();
-            }
-        }
-        private bool downButtonState = false;
-
-        public bool LeftButtonState
+            Text = $"Gyro:",
+            TextColor = motionColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 6, displayScreen.Width, rowHeight)
         {
-            get => leftButtonState;
-            set
-            {
-                leftButtonState = value;
-                Update();
-            }
-        }
-        private bool leftButtonState = false;
-
-        public bool RightButtonState
+            Text = $"Up:",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 7, displayScreen.Width, rowHeight)
         {
-            get => rightButtonState;
-            set
-            {
-                rightButtonState = value;
-                Update();
-            }
-        }
-        private bool rightButtonState = false;
-
-        public DisplayController(IPixelDisplay display, string hardwareRevision)
+            Text = $"Down:",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 8, displayScreen.Width, rowHeight)
         {
-            hardwareRev = hardwareRevision;
-            graphics = new MicroGraphics(display)
-            {
-                CurrentFont = new Font12x20()
-            };
-
-            graphics.Clear(true);
-        }
-
-        public void Update()
+            Text = $"Left:",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
+        displayScreen.Controls.Add(new Label(rowMargin, rowOffset + rowHeight * 9, displayScreen.Width, rowHeight)
         {
-            if (isUpdating)
-            {   //queue up the next update
-                needsUpdate = true;
-                return;
-            }
+            Text = $"Right:",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Left
+        });
 
-            isUpdating = true;
 
-            graphics.Clear();
-            Draw();
-            graphics.Show();
-
-            isUpdating = false;
-
-            if (needsUpdate)
-            {
-                needsUpdate = false;
-                Update();
-            }
-        }
-
-        private void DrawStatus(string label, string value, Color color, int yPosition)
+        Temperature = new Label(rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight)
         {
-            graphics.DrawText(x: 2, y: yPosition, label, color: color);
-            graphics.DrawText(x: graphics.Width - 2, y: yPosition, value, alignmentH: HorizontalAlignment.Right, color: color);
-        }
+            Text = $"0°C",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(Temperature);
 
-        private void Draw()
+        Pressure = new Label(rowMargin, rowOffset + rowHeight, displayScreen.Width - rowMargin * 2, rowHeight)
         {
-            graphics.DrawText(x: 2, y: 0, $"Hello PROJ LAB {hardwareRev}!", WildernessLabsColors.AzureBlue);
+            Text = $"0atm",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(Pressure);
 
-            if (Temperature is { } temp)
-            {
-                DrawStatus("Temperature:", $"{temp.Celsius:N1}°C", WildernessLabsColors.GalleryWhite, 35);
-            }
+        Humidity = new Label(rowMargin, rowOffset + rowHeight * 2, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"0%",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(Humidity);
 
-            if (Pressure is { } pressure)
-            {
-                DrawStatus("Pressure:", $"{pressure.StandardAtmosphere:N1}atm", WildernessLabsColors.GalleryWhite, 55);
-            }
+        Luminance = new Label(rowMargin, rowOffset + rowHeight * 3, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"0Lux",
+            TextColor = atmosphericColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(Luminance);
 
-            if (RelativeHumidity is { } humidity)
-            {
-                DrawStatus("Humidity:", $"{humidity.Percent:N1}%", WildernessLabsColors.GalleryWhite, 75);
-            }
+        Acceleration3D = new Label(rowMargin, rowOffset + rowHeight * 4, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"0,0,0g",
+            TextColor = motionColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(Acceleration3D);
 
-            if (LightConditions is { } light)
-            {
-                DrawStatus("Lux:", $"{light:N0}Lux", WildernessLabsColors.GalleryWhite, 95);
-            }
+        AngularVelocity3D = new Label(rowMargin, rowOffset + rowHeight * 5, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"0,0,0rpm",
+            TextColor = motionColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(AngularVelocity3D);
 
-            if (AccelerationConditions is { } acceleration)
-            {
-                DrawStatus("Accel:", $"{acceleration.X.Gravity:0.#},{acceleration.Y.Gravity:0.#},{acceleration.Z.Gravity:0.#}g", WildernessLabsColors.AzureBlue, 115);
-            }
+        ButtonUp = new Label(rowMargin, rowOffset + rowHeight * 6, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"Released",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(ButtonUp);
 
-            if (GyroConditions is { } angular3D)
-            {
-                DrawStatus("Gyro:", $"{angular3D.X:0},{angular3D.Y:0},{angular3D.Z:0}rpm", WildernessLabsColors.AzureBlue, 135);
-            }
+        ButtonDown = new Label(rowMargin, rowOffset + rowHeight * 7, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"Released",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(ButtonDown);
 
-            DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
-            DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
-            DrawStatus("Up:", $"{(UpButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 160);
-            DrawStatus("Right:", $"{(RightButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 220);
-        }
+        ButtonLeft = new Label(rowMargin, rowOffset + rowHeight * 8, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"Released",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(ButtonLeft);
+
+        ButtonRight = new Label(rowMargin, rowOffset + rowHeight * 9, displayScreen.Width - rowMargin * 2, rowHeight)
+        {
+            Text = $"Released",
+            TextColor = buttonColor,
+            Font = font12X20,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        displayScreen.Controls.Add(ButtonRight);
     }
 }

@@ -6,184 +6,185 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace ProjectLab_Demo
+namespace ProjectLab_Demo;
+
+// Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
+// Change to F7CoreComputeV2 for Project Lab V3.x
+public class MeadowApp : App<F7CoreComputeV2>
 {
-    // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
-    // Change to F7CoreComputeV2 for Project Lab V3.x
-    public class MeadowApp : App<F7CoreComputeV2>
+    private IProjectLabHardware? projectLab;
+
+    private DisplayController? displayController;
+
+    private MicroAudio? audio;
+
+    public override Task Initialize()
     {
-        private IProjectLabHardware? projectLab;
+        Resolver.Log.LogLevel = Meadow.Logging.LogLevel.Trace;
 
-        private DisplayController? displayController;
+        Resolver.Log.Info("Initialize hardware...");
 
-        private MicroAudio? audio;
+        projectLab = ProjectLab.Create();
 
-        public override Task Initialize()
+        Resolver.Log.Info($"Running on ProjectLab Hardware {projectLab.RevisionString}");
+
+        if (projectLab.RgbLed is { } rgbLed)
         {
-            Resolver.Log.LogLevel = Meadow.Logging.LogLevel.Trace;
-
-            Resolver.Log.Info("Initialize hardware...");
-
-            projectLab = ProjectLab.Create();
-
-            Resolver.Log.Info($"Running on ProjectLab Hardware {projectLab.RevisionString}");
-
-            if (projectLab.RgbLed is { } rgbLed)
-            {
-                rgbLed.SetColor(Color.Blue);
-            }
-
-            if (projectLab.Display is { } display)
-            {
-                Resolver.Log.Trace("Creating DisplayController");
-                displayController = new DisplayController(display, projectLab.RevisionString);
-                Resolver.Log.Trace("DisplayController up");
-            }
-
-            if (projectLab.Speaker is { } speaker)
-            {
-                speaker.SetVolume(0.5f);
-                audio = new MicroAudio(speaker);
-            }
-
-            if (projectLab.TemperatureSensor is { } temperatureSensor)
-            {
-                temperatureSensor.Updated += OnTemperatureSensorUpdated;
-            }
-            if (projectLab.BarometricPressureSensor is { } pressureSensor)
-            {
-                pressureSensor.Updated += OnPressureSensorUpdated;
-            }
-            if (projectLab.HumiditySensor is { } humiditySensor)
-            {
-                humiditySensor.Updated += OnHumiditySensorUpdated;
-            }
-            if (projectLab.LightSensor is { } lightSensor)
-            {
-                lightSensor.Updated += OnLightSensorUpdated;
-            }
-
-            if (projectLab.Accelerometer is { } accelerometer)
-            {
-                accelerometer.Updated += OnAccelerometerUpdated;
-            }
-            if (projectLab.Gyroscope is { } gyroscope)
-            {
-                gyroscope.Updated += OnGyroscopeUpdated;
-            }
-
-            if (projectLab.UpButton is { } upButton)
-            {
-                upButton.PressStarted += (s, e) => displayController.UpButtonState = true;
-                upButton.PressEnded += (s, e) => displayController.UpButtonState = false;
-            }
-            if (projectLab.DownButton is { } downButton)
-            {
-                downButton.PressStarted += (s, e) => displayController.DownButtonState = true;
-                downButton.PressEnded += (s, e) => displayController.DownButtonState = false;
-            }
-            if (projectLab.LeftButton is { } leftButton)
-            {
-                leftButton.PressStarted += (s, e) => displayController.LeftButtonState = true;
-                leftButton.PressEnded += (s, e) => displayController.LeftButtonState = false;
-            }
-            if (projectLab.RightButton is { } rightButton)
-            {
-                rightButton.PressStarted += (s, e) => displayController.RightButtonState = true;
-                rightButton.PressEnded += (s, e) => displayController.RightButtonState = false;
-            }
-
-            if (projectLab.Touchscreen is { } touchScreen)
-            {
-                touchScreen.TouchDown += (s, e) =>
-                {
-                    Resolver.Log.Info("touch down");
-                };
-                touchScreen.TouchUp += (s, e) =>
-                {
-                    Resolver.Log.Info("touch up");
-                };
-            }
-
-            Resolver.Log.Info("Initialization complete");
-
-            return base.Initialize();
+            rgbLed.SetColor(Color.Blue);
         }
 
-        private void OnTemperatureSensorUpdated(object sender, IChangeResult<Temperature> e)
+        if (projectLab.Display is { } display)
         {
-            Resolver.Log.Info($"TEMPERATURE: {e.New.Celsius:N1}C");
-            displayController.Temperature = e.New;
+            Resolver.Log.Trace("Creating DisplayController");
+            displayController = new DisplayController(display, projectLab.RevisionString);
+            Resolver.Log.Trace("DisplayController up");
         }
 
-        private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
+        if (projectLab.Speaker is { } speaker)
         {
-            Resolver.Log.Info($"PRESSURE:    {e.New.Millibar:N1}mbar");
-            displayController.Pressure = e.New;
+            speaker.SetVolume(0.2f);
+            audio = new MicroAudio(speaker);
         }
 
-        private void OnHumiditySensorUpdated(object sender, IChangeResult<RelativeHumidity> e)
+        if (projectLab.TemperatureSensor is { } temperatureSensor)
         {
-            Resolver.Log.Info($"HUMIDITY:    {e.New.Percent:N1}%");
-            displayController.RelativeHumidity = e.New;
+            temperatureSensor.Updated += OnTemperatureSensorUpdated;
+        }
+        if (projectLab.BarometricPressureSensor is { } pressureSensor)
+        {
+            pressureSensor.Updated += OnPressureSensorUpdated;
+        }
+        if (projectLab.HumiditySensor is { } humiditySensor)
+        {
+            humiditySensor.Updated += OnHumiditySensorUpdated;
+        }
+        if (projectLab.LightSensor is { } lightSensor)
+        {
+            lightSensor.Updated += OnLightSensorUpdated;
         }
 
-        private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
+        if (projectLab.Accelerometer is { } accelerometer)
         {
-            Resolver.Log.Info($"LIGHT:       {e.New.Lux:N1}lux");
-            displayController.LightConditions = e.New;
+            accelerometer.Updated += OnAccelerometerUpdated;
+        }
+        if (projectLab.Gyroscope is { } gyroscope)
+        {
+            gyroscope.Updated += OnGyroscopeUpdated;
         }
 
-        private void OnAccelerometerUpdated(object sender, IChangeResult<Acceleration3D> e)
+        if (projectLab.UpButton is { } upButton)
         {
-            Resolver.Log.Info($"ACCEL:       {e.New.X.Gravity:0.0}, {e.New.Y.Gravity:0.0}, {e.New.Z.Gravity:0.0}g");
-            displayController.AccelerationConditions = e.New;
+            upButton.PressStarted += (s, e) => displayController.ButtonUp.Text = "Pressed";
+            upButton.PressEnded += (s, e) => displayController.ButtonUp.Text = "Released";
+        }
+        if (projectLab.DownButton is { } downButton)
+        {
+            downButton.PressStarted += (s, e) => displayController.ButtonDown.Text = "Pressed";
+            downButton.PressEnded += (s, e) => displayController.ButtonDown.Text = "Released";
+        }
+        if (projectLab.LeftButton is { } leftButton)
+        {
+            leftButton.PressStarted += (s, e) => displayController.ButtonLeft.Text = "Pressed";
+            leftButton.PressEnded += (s, e) => displayController.ButtonLeft.Text = "Released";
+        }
+        if (projectLab.RightButton is { } rightButton)
+        {
+            rightButton.PressStarted += (s, e) => displayController.ButtonRight.Text = "Pressed";
+            rightButton.PressEnded += (s, e) => displayController.ButtonRight.Text = "Released";
         }
 
-        private void OnGyroscopeUpdated(object sender, IChangeResult<AngularVelocity3D> e)
+        if (projectLab.Touchscreen is { } touchScreen)
         {
-            Resolver.Log.Info($"GYRO:        {e.New.X.DegreesPerSecond:0.0}, {e.New.Y.DegreesPerSecond:0.0}, {e.New.Z.DegreesPerSecond:0.0}deg/s");
-            displayController.GyroConditions = e.New;
+            touchScreen.TouchDown += (s, e) =>
+            {
+                Resolver.Log.Info("touch down");
+            };
+            touchScreen.TouchUp += (s, e) =>
+            {
+                Resolver.Log.Info("touch up");
+            };
         }
 
-        public override Task Run()
+        Resolver.Log.Info("Initialization complete");
+
+        return base.Initialize();
+    }
+
+    private void OnTemperatureSensorUpdated(object sender, IChangeResult<Temperature> e)
+    {
+        Resolver.Log.Info($"TEMPERATURE: {e.New.Celsius:N1}C");
+        displayController.Temperature.Text = $"{e.New.Celsius:N1}°C";
+    }
+
+    private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
+    {
+        Resolver.Log.Info($"PRESSURE:    {e.New.Millibar:N1}mbar");
+        displayController.Pressure.Text = $"{e.New.Millibar:N1}mbar";
+    }
+
+    private void OnHumiditySensorUpdated(object sender, IChangeResult<RelativeHumidity> e)
+    {
+        Resolver.Log.Info($"HUMIDITY:    {e.New.Percent:N1}%");
+        displayController.Humidity.Text = $"{e.New.Percent:N1}°%";
+    }
+
+    private void OnLightSensorUpdated(object sender, IChangeResult<Illuminance> e)
+    {
+        Resolver.Log.Info($"LIGHT:       {e.New.Lux:N1}lux");
+        displayController.Luminance.Text = $"{e.New.Lux:N1}lux";
+    }
+
+    private void OnAccelerometerUpdated(object sender, IChangeResult<Acceleration3D> e)
+    {
+        Resolver.Log.Info($"ACCEL:       {e.New.X.Gravity:N1}, {e.New.Y.Gravity:N1}, {e.New.Z.Gravity:N1}g");
+        displayController.Acceleration3D.Text = $"{e.New.X.Gravity:N1}, {e.New.Y.Gravity:N1}, {e.New.Z.Gravity:N1}g";
+    }
+
+    private void OnGyroscopeUpdated(object sender, IChangeResult<AngularVelocity3D> e)
+    {
+        Resolver.Log.Info($"GYRO:        {e.New.X.DegreesPerSecond:N0}, {e.New.Y.DegreesPerSecond:N0}, {e.New.Z.DegreesPerSecond:N0}deg/s");
+        displayController.AngularVelocity3D.Text = $"{e.New.X.DegreesPerSecond:N0}, {e.New.Y.DegreesPerSecond:N0}, {e.New.Z.DegreesPerSecond:N0}deg/s";
+    }
+
+    public override async Task Run()
+    {
+        Resolver.Log.Info("Run...");
+
+        if (audio != null)
         {
-            Resolver.Log.Info("Run...");
+            await audio.PlaySystemSound(SystemSoundEffect.Success);
+        }
 
-            _ = audio?.PlaySystemSound(SystemSoundEffect.Success);
+        if (projectLab?.TemperatureSensor is { } temperature)
+        {
+            temperature.StartUpdating(TimeSpan.FromSeconds(5));
+        }
+        if (projectLab?.BarometricPressureSensor is { } barometer)
+        {
+            barometer.StartUpdating(TimeSpan.FromSeconds(5));
+        }
+        if (projectLab?.HumiditySensor is { } humidity)
+        {
+            humidity.StartUpdating(TimeSpan.FromSeconds(5));
+        }
+        if (projectLab?.LightSensor is { } luminance)
+        {
+            luminance.StartUpdating(TimeSpan.FromSeconds(5));
+        }
 
-            if (projectLab.TemperatureSensor is { } temperature)
-            {
-                temperature.StartUpdating(TimeSpan.FromSeconds(5));
-            }
-            if (projectLab.BarometricPressureSensor is { } barometer)
-            {
-                barometer.StartUpdating(TimeSpan.FromSeconds(5));
-            }
-            if (projectLab.HumiditySensor is { } humidity)
-            {
-                humidity.StartUpdating(TimeSpan.FromSeconds(5));
-            }
-            if (projectLab.LightSensor is { } luminance)
-            {
-                luminance.StartUpdating(TimeSpan.FromSeconds(5));
-            }
+        if (projectLab?.Accelerometer is { } accelerometer)
+        {
+            accelerometer.StartUpdating(TimeSpan.FromSeconds(5));
+        }
+        if (projectLab?.Gyroscope is { } gyroscope)
+        {
+            gyroscope.StartUpdating(TimeSpan.FromSeconds(5));
+        }
 
-            if (projectLab.Accelerometer is { } accelerometer)
-            {
-                accelerometer.StartUpdating(TimeSpan.FromSeconds(5));
-            }
-            if (projectLab.Gyroscope is { } gyroscope)
-            {
-                gyroscope.StartUpdating(TimeSpan.FromSeconds(5));
-            }
-
-            displayController?.Update();
-
+        if (projectLab.RgbLed is { } rgbLed)
+        {
             Resolver.Log.Info("starting blink");
-            _ = projectLab.RgbLed?.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
-
-            return base.Run();
+            _ = rgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
         }
     }
 }
