@@ -96,32 +96,32 @@ public class DisplayController
 
     public void UpdateTemperatureValue(Temperature temperature)
     {
-        this.temperature.Text = $"{temperature.Celsius}°C";
+        this.temperature.Text = $"{temperature.Celsius:N1}°C";
     }
 
     public void UpdatePressureValue(Pressure pressure)
     {
-        this.pressure.Text = $"{pressure.StandardAtmosphere}atm";
+        this.pressure.Text = $"{pressure.StandardAtmosphere:N1}atm";
     }
 
     public void UpdateHumidityValue(RelativeHumidity humidity)
     {
-        this.humidity.Text = $"{humidity.Percent}%";
-    }
-
-    public void UpdateAcceleration3DValue(Acceleration3D acceleration3D)
-    {
-        this.acceleration3D.Text = $"{acceleration3D.X.Gravity:N1}, {acceleration3D.Y.Gravity:N1}, {acceleration3D.Z.Gravity:N1}g";
-    }
-
-    public void UpdateAngularVelocity3DValue(AngularVelocity3D angularVelocity3D)
-    {
-        this.angularVelocity3D.Text = $"{angularVelocity3D.X.DegreesPerSecond:N0}, {angularVelocity3D.Y.DegreesPerSecond:N0}, {angularVelocity3D.Z.DegreesPerSecond:N0}deg/s";
+        this.humidity.Text = $"{humidity.Percent:N1}%";
     }
 
     public void UpdateIluminanceValue(Illuminance iluminance)
     {
-        this.iluminance.Text = $"{iluminance.Lux}Lux";
+        this.iluminance.Text = $"{iluminance.Lux:N1}Lux";
+    }
+
+    public void UpdateAcceleration3DValue(Acceleration3D acceleration3D)
+    {
+        this.acceleration3D.Text = $"{acceleration3D.X.Gravity:N1},{acceleration3D.Y.Gravity:N1},{acceleration3D.Z.Gravity:N1}g";
+    }
+
+    public void UpdateAngularVelocity3DValue(AngularVelocity3D angularVelocity3D)
+    {
+        this.angularVelocity3D.Text = $"{angularVelocity3D.X.DegreesPerSecond:N0},{angularVelocity3D.Y.DegreesPerSecond:N0},{angularVelocity3D.Z.DegreesPerSecond:N0}deg/s";
     }
 
     public void UpdateButtonUp(bool isPressed)

@@ -75,22 +75,22 @@ public class MeadowApp : App<F7CoreComputeV2>
         if (projectLab.UpButton is { } upButton)
         {
             upButton.PressStarted += (s, e) => displayController!.UpdateButtonUp(true);
-            upButton.PressEnded += (s, e) => displayController!.UpdateButtonUp(true);
+            upButton.PressEnded += (s, e) => displayController!.UpdateButtonUp(false);
         }
         if (projectLab.DownButton is { } downButton)
         {
             downButton.PressStarted += (s, e) => displayController!.UpdateButtonDown(true);
-            downButton.PressEnded += (s, e) => displayController!.UpdateButtonDown(true);
+            downButton.PressEnded += (s, e) => displayController!.UpdateButtonDown(false);
         }
         if (projectLab.LeftButton is { } leftButton)
         {
             leftButton.PressStarted += (s, e) => displayController!.UpdateButtonLeft(true);
-            leftButton.PressEnded += (s, e) => displayController!.UpdateButtonLeft(true);
+            leftButton.PressEnded += (s, e) => displayController!.UpdateButtonLeft(false);
         }
         if (projectLab.RightButton is { } rightButton)
         {
             rightButton.PressStarted += (s, e) => displayController!.UpdateButtonRight(true);
-            rightButton.PressEnded += (s, e) => displayController!.UpdateButtonRight(true);
+            rightButton.PressEnded += (s, e) => displayController!.UpdateButtonRight(false);
         }
 
         if (projectLab.Touchscreen is { } touchScreen)
