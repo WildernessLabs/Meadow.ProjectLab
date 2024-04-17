@@ -8,6 +8,10 @@ namespace ProjectLab_Demo
 {
     public class DisplayController
     {
+        private bool isUpdating = false;
+        private bool needsUpdate = false;
+
+        private readonly string hardwareRev;
         private readonly MicroGraphics graphics;
 
         public Temperature? Temperature
@@ -76,7 +80,6 @@ namespace ProjectLab_Demo
         }
         private AngularVelocity3D? gyroConditions;
 
-
         public bool UpButtonState
         {
             get => upButtonState;
@@ -97,7 +100,6 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-
         private bool downButtonState = false;
 
         public bool LeftButtonState
@@ -109,7 +111,6 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-
         private bool leftButtonState = false;
 
         public bool RightButtonState
@@ -121,11 +122,7 @@ namespace ProjectLab_Demo
                 Update();
             }
         }
-
         private bool rightButtonState = false;
-        private bool isUpdating = false;
-        private bool needsUpdate = false;
-        private readonly string hardwareRev;
 
         public DisplayController(IPixelDisplay display, string hardwareRevision)
         {
@@ -200,7 +197,6 @@ namespace ProjectLab_Demo
             {
                 DrawStatus("Gyro:", $"{angular3D.X:0},{angular3D.Y:0},{angular3D.Z:0}rpm", WildernessLabsColors.AzureBlue, 135);
             }
-
 
             DrawStatus("Left:", $"{(LeftButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 200);
             DrawStatus("Down:", $"{(DownButtonState ? "pressed" : "released")}", WildernessLabsColors.ChileanFire, 180);
