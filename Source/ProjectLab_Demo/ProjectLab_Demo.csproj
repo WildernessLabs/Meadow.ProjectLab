@@ -14,12 +14,10 @@
     <None Update="app.config.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="meadow.config.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.11.0" />
     <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
   </ItemGroup>
 </Project>

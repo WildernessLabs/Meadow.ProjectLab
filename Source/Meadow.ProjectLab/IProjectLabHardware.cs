@@ -143,6 +143,11 @@ namespace Meadow.Devices
         public DisplayConnector DisplayHeader { get; }
 
         /// <summary>
+        /// Gets the touchscreen on the Project Lab display
+        /// </summary>
+        public ITouchScreen? Touchscreen { get; }
+
+        /// <summary>
         /// Get a Modbus RTU client with optional parameters.
         /// </summary>
         /// <param name="baudRate">The baud rate.</param>
