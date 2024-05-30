@@ -112,7 +112,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             if (device.Pins.D19.Supports<IDigitalChannelInfo>(c => c.InterruptCapable))
             {
                 mcp2Interrupt = device.CreateDigitalInterruptPort(
-                    device.Pins.D19, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                    device.Pins.D19, InterruptMode.EdgeRising);
             }
 
             Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2Interrupt);
