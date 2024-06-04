@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Units;
+using System;
 using static Meadow.Hardware.DisplayConnector;
 
 namespace Meadow.Hardware;
@@ -105,10 +106,21 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         }
     }
 
+    private readonly SpiBusMapping _spiBusMapping;
+    private ISpiBus? _spi;
+
     /// <param name="name">The connector name</param>
     /// <param name="mapping">The mappings to the host controller</param>
-    public DisplayConnector(string name, PinMapping mapping)
+    /// <param name="spiBusMapping">The mapping for the connector's SPI bus</param>
+    public DisplayConnector(string name, PinMapping mapping, SpiBusMapping spiBusMapping)
         : base(name, new DisplayConnectorPinDefinitions(mapping))
     {
+        _spiBusMapping = spiBusMapping;
     }
+
+    /// <summary>
+    /// Gets the connector's SPI bus
+    /// </summary>
+    public ISpiBus SpiBus
+        => _spi ??= _spiBusMapping.Controller.CreateSpiBus(_spiBusMapping.Clock, _spiBusMapping.Copi, _spiBusMapping.Cipo, new Frequency(1, Frequency.UnitType.Megahertz));
 }

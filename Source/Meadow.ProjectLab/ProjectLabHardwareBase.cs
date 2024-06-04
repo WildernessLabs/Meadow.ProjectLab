@@ -40,12 +40,6 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     protected Logger? Logger { get; } = Resolver.Log;
 
     /// <inheritdoc/>
-    public abstract ISpiBus SpiBus { get; }
-
-    /// <inheritdoc/>
-    public abstract II2cBus I2cBus { get; }
-
-    /// <inheritdoc/>
     public abstract IButton? UpButton { get; }
 
     /// <inheritdoc/>
@@ -177,6 +171,13 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         }
     }
 
+    private readonly II2cBus _peripheralI2cBus;
+
+    internal ProjectLabHardwareBase(II2cBus peripheralI2cBus)
+    {
+        _peripheralI2cBus = peripheralI2cBus;
+    }
+
     private IAccelerometer? GetAccelerometer()
     {
         if (_accelerometer == null)
@@ -212,7 +213,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         try
         {
             Logger?.Trace("Instantiating motion sensor");
-            var bmi = new Bmi270(I2cBus);
+            var bmi = new Bmi270(_peripheralI2cBus);
             _motionSensor = bmi;
             _gyroscope = bmi;
             _accelerometer = bmi;
@@ -245,7 +246,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
             {
                 Logger?.Trace("Instantiating light sensor");
                 _lightSensor = new Bh1750(
-                    i2cBus: I2cBus,
+                    i2cBus: _peripheralI2cBus,
                     measuringMode: Bh1750.MeasuringModes.ContinuouslyHighResolutionMode, // the various modes take differing amounts of time.
                     lightTransmittance: 0.5, // lower this to increase sensitivity, for instance, if it's behind a semi opaque window
                     address: (byte)Bh1750.Addresses.Address_0x23);
@@ -306,7 +307,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         try
         {
             Logger?.Trace("Instantiating atmospheric sensor");
-            var bme = new Bme688(I2cBus, (byte)Bme68x.Addresses.Address_0x76);
+            var bme = new Bme688(_peripheralI2cBus, (byte)Bme68x.Addresses.Address_0x76);
             _atmosphericSensor = bme;
             _humiditySensor = bme;
             _barometricPressureSensor = bme;
@@ -323,30 +324,5 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     /// <summary>
     /// Gets a ModbusRtuClient for the on-board RS485 connector
     /// </summary>
-    /// <param name="baudRate"></param>
-    /// <param name="dataBits"></param>
-    /// <param name="parity"></param>
-    /// <param name="stopBits"></param>
     public abstract ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
-
-    /// <summary>
-    /// Gets the pin definitions for the Project Lab board
-    /// </summary>
-    public static (
-        IPin A0,
-        IPin A1,
-        IPin A2,
-        IPin D03,
-        IPin D04,
-        IPin D12,
-        IPin D13
-        ) Pins = (
-        Resolver.Device.GetPin("A00"),
-        Resolver.Device.GetPin("A01"),
-        Resolver.Device.GetPin("A02"),
-        Resolver.Device.GetPin("D03"),
-        Resolver.Device.GetPin("D04"),
-        Resolver.Device.GetPin("D12"),
-        Resolver.Device.GetPin("D13")
-        );
 }

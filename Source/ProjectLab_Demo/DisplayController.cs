@@ -126,21 +126,25 @@ public class DisplayController
 
     public void UpdateButtonUp(bool isPressed)
     {
+        Resolver.Log.Info($"Button Up: {isPressed}");
         buttonUp.Text = isPressed ? "Pressed" : "Released";
     }
 
     public void UpdateButtonDown(bool isPressed)
     {
+        Resolver.Log.Info($"Button Down: {isPressed}");
         buttonDown.Text = isPressed ? "Pressed" : "Released";
     }
 
     public void UpdateButtonLeft(bool isPressed)
     {
+        Resolver.Log.Info($"Button Left: {isPressed}");
         buttonLeft.Text = isPressed ? "Pressed" : "Released";
     }
 
     public void UpdateButtonRight(bool isPressed)
     {
+        Resolver.Log.Info($"Button Right: {isPressed}");
         buttonRight.Text = isPressed ? "Pressed" : "Released";
     }
 }

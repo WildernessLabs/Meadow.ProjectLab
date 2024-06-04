@@ -42,12 +42,6 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     private Mcp23008? Mcp_Version { get; }
 
     /// <inheritdoc/>
-    public sealed override II2cBus I2cBus { get; }
-
-    /// <inheritdoc/>
-    public sealed override ISpiBus SpiBus { get; }
-
-    /// <inheritdoc/>
     public override IButton UpButton { get; }
 
     /// <inheritdoc/>
@@ -65,16 +59,9 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     /// <inheritdoc/>
     public override IRgbPwmLed? RgbLed => GetRgbLed();
 
-    internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1)
+    internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1) : base(i2cBus)
     {
         _device = device;
-        I2cBus = i2cBus;
-
-        SpiBus = Resolver.Device.CreateSpiBus(
-            device.Pins.SCK,
-            device.Pins.COPI,
-            device.Pins.CIPO,
-            new Frequency(48000, Frequency.UnitType.Kilohertz));
 
         Mcp_1 = mcp1;
         IDigitalInterruptPort? mcp2_int = null;
@@ -88,7 +75,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
                     device.Pins.D10, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
             }
 
-            Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2_int);
+            Mcp_2 = new Mcp23008(i2cBus, address: 0x21, mcp2_int);
 
             Logger?.Info("Mcp_2 up");
         }
@@ -100,7 +87,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
 
         try
         {
-            Mcp_Version = new Mcp23008(I2cBus, address: 0x27);
+            Mcp_Version = new Mcp23008(i2cBus, address: 0x27);
             Logger?.Info("Mcp_Version up");
         }
         catch (Exception e)
@@ -133,7 +120,7 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
             Thread.Sleep(50);
 
             _display = new St7789(
-                spiBus: SpiBus,
+                spiBus: DisplayHeader.SpiBus,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
@@ -315,7 +302,8 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DC, Mcp_1.Pins.GP6),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
-            });
+            },
+            new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO));
     }
 
     private byte? _revisionNumber;

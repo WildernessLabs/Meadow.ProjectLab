@@ -42,12 +42,6 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     private Mcp23008? Mcp_Version { get; set; }
 
     /// <inheritdoc/>
-    public sealed override II2cBus I2cBus { get; }
-
-    /// <inheritdoc/>
-    public sealed override ISpiBus SpiBus { get; }
-
-    /// <inheritdoc/>
     public override IButton? UpButton { get; }
 
     /// <inheritdoc/>
@@ -77,17 +71,9 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     /// </summary>
     public IDigitalOutputPort? DisplayLedPort { get; protected set; }
 
-    internal ProjectLabHardwareV4(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
+    internal ProjectLabHardwareV4(IF7CoreComputeMeadowDevice device, II2cBus i2cBus) : base(i2cBus)
     {
         _device = device;
-
-        I2cBus = i2cBus;
-
-        SpiBus = device.CreateSpiBus(
-            device.Pins.SPI3_SCK,
-            device.Pins.SPI3_COPI,
-            device.Pins.SPI3_CIPO,
-            new Frequency(24000, Frequency.UnitType.Kilohertz));
 
         IDigitalInterruptPort? mcp1Interrupt = null;
         IDigitalOutputPort? mcp1Reset = null;
@@ -114,7 +100,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         {
             mcp2Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC8, InterruptMode.EdgeRising);
 
-            Mcp_2 = new Mcp23008(I2cBus, address: 0x21, mcp2Interrupt);
+            Mcp_2 = new Mcp23008(i2cBus, address: 0x21, mcp2Interrupt);
 
             Logger?.Trace("Mcp_2 up");
         }
@@ -126,7 +112,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
 
         try
         {
-            Mcp_Version = new Mcp23008(I2cBus, address: 0x27);
+            Mcp_Version = new Mcp23008(i2cBus, address: 0x27);
             Logger?.Trace("Mcp_Version up");
         }
         catch (Exception e)
@@ -145,16 +131,16 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         if (downPort != null) DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
 
-        _uartExpander = new Sc16is752(I2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
+        _uartExpander = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
     }
 
     /// <inheritdoc/>
     protected override IPixelDisplay? GetDefaultDisplay()
     {
-        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
-        DisplayEnablePort.State = true;
+        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, false);
+        DisplayEnablePort.State = false;
         DisplayLedPort ??= Mcp_1?.CreateDigitalOutputPort(DisplayHeader.Pins.LED, true);
-        DisplayLedPort.State = true;
+        DisplayLedPort.State = true; //Mcp23008 isn't setting state correctly on create 
 
         if (_display == null)
         {
@@ -184,7 +170,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             };
 
             ((Ili9341)_display).SetRotation(RotationType._270Degrees);
-            ((Ili9341)_display).InvertDisplay(false);
+            ((Ili9341)_display).InvertDisplay(true);
 
             Logger?.Trace("Display up");
         }
@@ -370,7 +356,8 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SPI5_SCK),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.SPI5_COPI),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.LED, Mcp_1!.Pins.GP5),
-            });
+            },
+            new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO));
     }
 
     private byte? _revisionNumber;

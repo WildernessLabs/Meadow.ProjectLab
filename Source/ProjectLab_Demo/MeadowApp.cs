@@ -97,11 +97,11 @@ public class MeadowApp : App<F7CoreComputeV2>
         {
             touchScreen.TouchDown += (s, e) =>
             {
-                Resolver.Log.Info("touch down");
+                Resolver.Log.Info("touch screen down");
             };
             touchScreen.TouchUp += (s, e) =>
             {
-                Resolver.Log.Info("touch up");
+                Resolver.Log.Info("touch screen up");
             };
         }
 
