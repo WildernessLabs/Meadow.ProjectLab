@@ -149,14 +149,14 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
         {
             Logger?.Trace("Instantiating display");
 
-            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
-            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
-            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+            var chipSelectPort = DisplayHeader.Pins.DISPLAY_CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DISPLAY_DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.DISPLAY_RST.CreateDigitalOutputPort();
 
             Thread.Sleep(50);
 
             _display = new Ili9341(
-                spiBus: DisplayHeader.SpiBus,
+                spiBus: DisplayHeader.SpiBusDisplay,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
@@ -305,12 +305,12 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
            nameof(Display),
             new PinMapping
             {
-                new PinMapping.PinAlias(DisplayConnector.PinNames.CS, Mcp_1!.Pins.GP5),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.RST, Mcp_1.Pins.GP7),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DC, Mcp_1.Pins.GP6),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.LED, Mcp_1!.Pins.GP4),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, Mcp_1!.Pins.GP5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, Mcp_1.Pins.GP7),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, Mcp_1.Pins.GP6),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_COPI, _device.Pins.COPI),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_LED, Mcp_1!.Pins.GP4),
             },
             new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO));
     }
@@ -354,7 +354,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             return touchscreen ??= new Xpt2046(
                 MikroBus1.SpiBus,
                 MikroBus1.Pins.INT.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled),
-                MikroBus1.Pins.CS.CreateDigitalOutputPort(true),
+                MikroBus1.Pins.DISPLAY_CS.CreateDigitalOutputPort(true),
                 RotationType.Normal
                 );
             /*

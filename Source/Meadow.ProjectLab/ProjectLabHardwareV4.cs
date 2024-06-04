@@ -3,6 +3,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Displays;
@@ -25,6 +26,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
     private IPixelDisplay? _display;
+    private ITouchScreen? _touchscreen;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals on Project Lab
@@ -139,16 +141,16 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, false);
         DisplayEnablePort.State = false;
-        DisplayLedPort ??= Mcp_1?.CreateDigitalOutputPort(DisplayHeader.Pins.LED, true);
+        DisplayLedPort ??= Mcp_1?.CreateDigitalOutputPort(DisplayHeader.Pins.DISPLAY_LED, true);
         DisplayLedPort.State = true; //Mcp23008 isn't setting state correctly on create 
 
         if (_display == null)
         {
             Logger?.Trace("Instantiating display");
 
-            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
-            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
-            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+            var chipSelectPort = DisplayHeader.Pins.DISPLAY_CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DISPLAY_DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.DISPLAY_RST.CreateDigitalOutputPort();
             Thread.Sleep(50);
 
             var spiBus5 = _device.CreateSpiBus(
@@ -350,12 +352,12 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
            nameof(Display),
             new PinMapping
             {
-                new PinMapping.PinAlias(DisplayConnector.PinNames.CS, _device.Pins.PD5),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.RST, _device.Pins.PB13),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DC, _device.Pins.PI11),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SPI5_SCK),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.SPI5_COPI),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.LED, Mcp_1!.Pins.GP5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PD5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, _device.Pins.PB13),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.PI11),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SPI5_SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_COPI, _device.Pins.SPI5_COPI),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_LED, Mcp_1!.Pins.GP5),
             },
             new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO));
     }
@@ -405,21 +407,12 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         get
         {
-            return null;
-            /*
-            return touchscreen ??= new Xpt2046(
-                MikroBus1.SpiBus,
-                MikroBus1.Pins.INT.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled),
-                MikroBus1.Pins.CS.CreateDigitalOutputPort(true),
+            return _touchscreen ??= new Xpt2046(
+                DisplayHeader.SpiBusDisplay,
+                DisplayHeader.Pins.TOUCH_INT.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled),
+                DisplayHeader.Pins.TOUCH_CS.CreateDigitalOutputPort(true),
                 RotationType.Normal
                 );
-            /*
-            return new Xpt2046(
-                SpiBus,
-                Mcp_2.Pins.GP0.CreateDigitalInterruptPort(InterruptMode.EdgeBoth),
-                _device.Pins.PD5.CreateDigitalOutputPort(true)
-                );
-            */
         }
     }
 }
