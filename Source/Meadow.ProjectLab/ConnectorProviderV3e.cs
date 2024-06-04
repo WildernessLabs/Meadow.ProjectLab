@@ -18,7 +18,7 @@ internal class ConnectorProviderV3e : IConnectorProvider
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
         if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
-    
+
         try
         {
             // v3.e+ uses an SC16is I2C UART expander for the RS485

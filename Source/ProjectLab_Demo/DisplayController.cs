@@ -8,35 +8,35 @@ namespace ProjectLab_Demo;
 
 public class DisplayController
 {
-    private int rowOffset = 29;
-    private int rowHeight = 21;
-    private int rowMargin = 2;
+    private readonly int rowOffset = 29;
+    private readonly int rowHeight = 21;
+    private readonly int rowMargin = 2;
 
     private Color foregroundColor = Color.White;
     private Color atmosphericColor = Color.White;
     private Color motionColor = Color.FromHex("23ABE3");
     private Color buttonColor = Color.FromHex("EF7D3B");
 
-    private Font12x20 font12X20 = new Font12x20();
+    private readonly Font12x20 font12X20 = new();
 
-    private DisplayScreen displayScreen;
+    private readonly DisplayScreen displayScreen;
 
-    private Label temperature;
-    private Label humidity;
-    private Label pressure;
-    private Label iluminance;
-    private Label acceleration3D;
-    private Label angularVelocity3D;
-    private Label buttonUp;
-    private Label buttonDown;
-    private Label buttonLeft;
-    private Label buttonRight;
+    private readonly Label temperature;
+    private readonly Label humidity;
+    private readonly Label pressure;
+    private readonly Label iluminance;
+    private readonly Label acceleration3D;
+    private readonly Label angularVelocity3D;
+    private readonly Label buttonUp;
+    private readonly Label buttonDown;
+    private readonly Label buttonLeft;
+    private readonly Label buttonRight;
 
     public DisplayController(IPixelDisplay display, string revisionVersion)
     {
         displayScreen = new DisplayScreen(display, RotationType._270Degrees)
         {
-            BackgroundColor = Color.FromHex("0B3749")
+            BackgroundColor = Color.Black    //          FromHex("0B3749")
         };
 
         displayScreen.Controls.Add(new Label(rowMargin, 4, displayScreen.Width, rowHeight)

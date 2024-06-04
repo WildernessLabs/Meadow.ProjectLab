@@ -81,8 +81,8 @@ public class ProjectLab
                 hardware = new ProjectLabHardwareV2(feather, i2cBus, mcp1);
                 break;
             case IF7CoreComputeMeadowDevice ccm:
-                logger?.Info("Instantiating Project Lab v3 specific hardware");
-                hardware = new ProjectLabHardwareV3(ccm, i2cBus);
+                logger?.Info("Instantiating Project Lab v4 specific hardware");
+                hardware = new ProjectLabHardwareV4(ccm, i2cBus);
                 break;
             default:
                 throw new NotSupportedException(); //should never get here
