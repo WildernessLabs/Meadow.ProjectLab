@@ -415,7 +415,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         {
             return _touchscreen ??= new Xpt2046(
                 DisplayHeader.SpiBusDisplay,
-                DisplayHeader.Pins.TOUCH_INT.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.Disabled),
+                DisplayHeader.Pins.TOUCH_INT.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, ResistorMode.Disabled),
                 DisplayHeader.Pins.TOUCH_CS.CreateDigitalOutputPort(true),
                 RotationType.Normal
                 );
