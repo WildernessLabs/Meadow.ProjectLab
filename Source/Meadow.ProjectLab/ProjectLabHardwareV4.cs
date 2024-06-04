@@ -358,8 +358,14 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SPI5_SCK),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_COPI, _device.Pins.SPI5_COPI),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_LED, Mcp_1!.Pins.GP5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_INT, Mcp_2!.Pins.GP0),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CS, Mcp_1.Pins.GP6),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CLK, _device.Pins.SPI3_SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_COPI, _device.Pins.SPI3_COPI),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CIPO, _device.Pins.SPI3_CIPO),
             },
-            new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO));
+            new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO),
+            new SpiBusMapping(_device, _device.Pins.SPI3_SCK, _device.Pins.SPI3_COPI, _device.Pins.SPI3_CIPO));
     }
 
     private byte? _revisionNumber;
