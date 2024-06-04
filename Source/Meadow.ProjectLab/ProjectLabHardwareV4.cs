@@ -84,9 +84,9 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         I2cBus = i2cBus;
 
         SpiBus = device.CreateSpiBus(
-            device.Pins.SCK,
-            device.Pins.COPI,
-            device.Pins.CIPO,
+            device.Pins.SPI3_SCK,
+            device.Pins.SPI3_COPI,
+            device.Pins.SPI3_CIPO,
             new Frequency(24000, Frequency.UnitType.Kilohertz));
 
         IDigitalInterruptPort? mcp1Interrupt = null;
@@ -152,9 +152,9 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     protected override IPixelDisplay? GetDefaultDisplay()
     {
         DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
-        DisplayEnablePort!.State = true;
+        DisplayEnablePort.State = true;
         DisplayLedPort ??= Mcp_1?.CreateDigitalOutputPort(DisplayHeader.Pins.LED, true);
-        DisplayLedPort!.State = true;
+        DisplayLedPort.State = true;
 
         if (_display == null)
         {
@@ -163,11 +163,16 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
             var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
             var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
-
             Thread.Sleep(50);
 
+            var spiBus5 = _device.CreateSpiBus(
+                _device.Pins.SPI5_SCK,
+                _device.Pins.SPI5_COPI,
+                _device.Pins.SPI5_CIPO,
+                new Frequency(24000, Frequency.UnitType.Kilohertz));
+
             _display = new Ili9341(
-                spiBus: SpiBus,
+                spiBus: spiBus5,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
@@ -179,6 +184,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             };
 
             ((Ili9341)_display).SetRotation(RotationType._270Degrees);
+            ((Ili9341)_display).InvertDisplay(false);
 
             Logger?.Trace("Display up");
         }

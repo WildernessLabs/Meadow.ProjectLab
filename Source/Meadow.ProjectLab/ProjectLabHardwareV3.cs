@@ -80,7 +80,7 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             device.Pins.SCK,
             device.Pins.COPI,
             device.Pins.CIPO,
-            new Frequency(48000, Frequency.UnitType.Kilohertz));
+            new Frequency(24000, Frequency.UnitType.Kilohertz));
 
         IDigitalInterruptPort? mcp1Interrupt = null;
         IDigitalOutputPort? mcp1Reset = null;

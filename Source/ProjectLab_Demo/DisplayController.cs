@@ -36,7 +36,7 @@ public class DisplayController
     {
         displayScreen = new DisplayScreen(display, RotationType._270Degrees)
         {
-            BackgroundColor = Color.Black    //          FromHex("0B3749")
+            BackgroundColor = Color.FromHex("0B3749")
         };
 
         displayScreen.Controls.Add(new Label(rowMargin, 4, displayScreen.Width, rowHeight)
@@ -126,6 +126,7 @@ public class DisplayController
 
     public void UpdateButtonUp(bool isPressed)
     {
+
         buttonUp.Text = isPressed ? "Pressed" : "Released";
     }
 
