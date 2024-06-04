@@ -58,7 +58,7 @@ public class DisplayController
         displayScreen.Controls.Add(CreateLeftLabel("Left:", buttonColor, rowMargin, rowOffset + rowHeight * 8, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Right:", buttonColor, rowMargin, rowOffset + rowHeight * 9, displayScreen.Width, rowHeight));
 
-        temperature = CreateRightLabel("0°C", atmosphericColor, rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight);
+        temperature = CreateRightLabel("0ºC", atmosphericColor, rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight);
         pressure = CreateRightLabel("0atm", atmosphericColor, rowMargin, rowOffset + rowHeight, displayScreen.Width - rowMargin * 2, rowHeight);
         humidity = CreateRightLabel("0%", atmosphericColor, rowMargin, rowOffset + rowHeight * 2, displayScreen.Width - rowMargin * 2, rowHeight);
         iluminance = CreateRightLabel("0Lux", atmosphericColor, rowMargin, rowOffset + rowHeight * 3, displayScreen.Width - rowMargin * 2, rowHeight);
@@ -96,7 +96,7 @@ public class DisplayController
 
     public void UpdateTemperatureValue(Temperature temperature)
     {
-        this.temperature.Text = $"{temperature.Celsius:N1}°C";
+        this.temperature.Text = $"{temperature.Celsius:N1}ºC";
     }
 
     public void UpdatePressureValue(Pressure pressure)
@@ -121,12 +121,11 @@ public class DisplayController
 
     public void UpdateAngularVelocity3DValue(AngularVelocity3D angularVelocity3D)
     {
-        this.angularVelocity3D.Text = $"{angularVelocity3D.X.DegreesPerSecond:N0},{angularVelocity3D.Y.DegreesPerSecond:N0},{angularVelocity3D.Z.DegreesPerSecond:N0}deg/s";
+        this.angularVelocity3D.Text = $"{angularVelocity3D.X.DegreesPerSecond:N0},{angularVelocity3D.Y.DegreesPerSecond:N0},{angularVelocity3D.Z.DegreesPerSecond:N0}º/s";
     }
 
     public void UpdateButtonUp(bool isPressed)
     {
-
         buttonUp.Text = isPressed ? "Pressed" : "Released";
     }
 
