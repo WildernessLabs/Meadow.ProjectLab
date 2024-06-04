@@ -150,6 +150,8 @@ public class MeadowApp : App<F7CoreComputeV2>
     {
         Resolver.Log.Info("Run...");
 
+        var updateInterveral = TimeSpan.FromSeconds(5);
+
         if (audio != null)
         {
             await audio.PlaySystemSound(SystemSoundEffect.Success);
@@ -157,28 +159,28 @@ public class MeadowApp : App<F7CoreComputeV2>
 
         if (projectLab?.TemperatureSensor is { } temperature)
         {
-            temperature.StartUpdating(TimeSpan.FromSeconds(5));
+            temperature.StartUpdating(updateInterveral);
         }
         if (projectLab?.BarometricPressureSensor is { } barometer)
         {
-            barometer.StartUpdating(TimeSpan.FromSeconds(5));
+            barometer.StartUpdating(updateInterveral);
         }
         if (projectLab?.HumiditySensor is { } humidity)
         {
-            humidity.StartUpdating(TimeSpan.FromSeconds(5));
+            humidity.StartUpdating(updateInterveral);
         }
         if (projectLab?.LightSensor is { } luminance)
         {
-            luminance.StartUpdating(TimeSpan.FromSeconds(5));
+            luminance.StartUpdating(updateInterveral);
         }
 
         if (projectLab?.Accelerometer is { } accelerometer)
         {
-            accelerometer.StartUpdating(TimeSpan.FromSeconds(5));
+            accelerometer.StartUpdating(updateInterveral);
         }
         if (projectLab?.Gyroscope is { } gyroscope)
         {
-            gyroscope.StartUpdating(TimeSpan.FromSeconds(5));
+            gyroscope.StartUpdating(updateInterveral);
         }
 
         if (projectLab?.RgbLed is { } rgbLed)
