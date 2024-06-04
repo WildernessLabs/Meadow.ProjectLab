@@ -163,7 +163,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             new PinMapping
             {
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.A01),
-                // no DISPLAY_RST connected
+                // no RST connected
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, _device.Pins.A02),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SCK),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.CIPO),

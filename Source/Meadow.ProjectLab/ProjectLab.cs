@@ -44,7 +44,6 @@ public class ProjectLab
         IDigitalOutputPort? mcpReset = null;
         bool isV3 = false;
 
-
         if (device is IF7FeatherMeadowDevice f)
         {
             try
