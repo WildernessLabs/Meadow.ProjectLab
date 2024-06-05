@@ -27,12 +27,6 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     private readonly string revision = "v1.x";
 
     /// <inheritdoc/>
-    public sealed override II2cBus I2cBus { get; }
-
-    /// <inheritdoc/>
-    public sealed override ISpiBus SpiBus { get; }
-
-    /// <inheritdoc/>
     public override IButton UpButton { get; }
 
     /// <inheritdoc/>
@@ -50,18 +44,9 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
     /// <inheritdoc/>
     public override IRgbPwmLed? RgbLed => GetRgbLed();
 
-    internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus)
+    internal ProjectLabHardwareV1(IF7FeatherMeadowDevice device, II2cBus i2cBus) : base(i2cBus)
     {
         _device = device;
-        I2cBus = i2cBus;
-
-        Logger?.Trace("Instantiating SPI Bus");
-        SpiBus = Resolver.Device.CreateSpiBus(
-            device.Pins.SCK,
-            device.Pins.COPI,
-            device.Pins.CIPO,
-            new Frequency(48000, Frequency.UnitType.Kilohertz));
-        Logger?.Trace("SPI Bus up");
 
         Logger?.Trace("Instantiating buttons");
         LeftButton = GetPushButton(device.Pins.D10);
@@ -78,13 +63,13 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         {
             Logger?.Trace("Instantiating display");
 
-            var chipSelectPort = DisplayHeader.Pins.CS.CreateDigitalOutputPort();
-            var dcPort = DisplayHeader.Pins.DC.CreateDigitalOutputPort();
-            var resetPort = DisplayHeader.Pins.RST.CreateDigitalOutputPort();
+            var chipSelectPort = DisplayHeader.Pins.DISPLAY_CS.CreateDigitalOutputPort();
+            var dcPort = DisplayHeader.Pins.DISPLAY_DC.CreateDigitalOutputPort();
+            var resetPort = DisplayHeader.Pins.DISPLAY_RST.CreateDigitalOutputPort();
             Thread.Sleep(50);
 
             _display = new St7789(
-                spiBus: SpiBus,
+                spiBus: DisplayHeader.SpiBusDisplay,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
@@ -152,7 +137,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
             new PinMapping
             {
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.A00),
-                // no RST connected
+                // no DISPLAY_RST connected
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, _device.Pins.D14),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SCK),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.CIPO),
@@ -259,12 +244,13 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
            nameof(Display),
             new PinMapping
             {
-                new PinMapping.PinAlias(DisplayConnector.PinNames.CS, _device.Pins.A03),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.RST, _device.Pins.A05),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DC, _device.Pins.A04),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.CLK, _device.Pins.SCK),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.COPI, _device.Pins.COPI),
-            });
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.A03),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, _device.Pins.A05),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.A04),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SCK),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_COPI, _device.Pins.COPI),
+            },
+            new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO));
     }
 
     /// <inheritdoc/>

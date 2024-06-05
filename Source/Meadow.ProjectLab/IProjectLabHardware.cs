@@ -18,16 +18,6 @@ namespace Meadow.Devices;
 public interface IProjectLabHardware
 {
     /// <summary>
-    /// Gets the SPI bus on the Project Lab board.
-    /// </summary>
-    public ISpiBus SpiBus { get; }
-
-    /// <summary>
-    /// Gets the I2C bus on the Project Lab board.
-    /// </summary>
-    public II2cBus I2cBus { get; }
-
-    /// <summary>
     /// Gets the up button on the Project Lab board.
     /// </summary>
     public IButton? UpButton { get; }
