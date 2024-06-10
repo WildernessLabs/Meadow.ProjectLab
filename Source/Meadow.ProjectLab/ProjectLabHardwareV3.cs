@@ -143,7 +143,6 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     protected override IPixelDisplay? GetDefaultDisplay()
     {
         DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, false);
-        DisplayEnablePort!.State = false;
 
         if (_display == null)
         {
