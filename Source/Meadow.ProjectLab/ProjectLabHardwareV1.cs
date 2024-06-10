@@ -77,7 +77,7 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
                 colorMode: ColorMode.Format16bppRgb565)
             {
                 SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-                SpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz)
+                SpiBusSpeed = new Frequency(24000, Frequency.UnitType.Kilohertz)
             };
             ((St7789)_display).SetRotation(RotationType._270Degrees);
 
