@@ -3,92 +3,110 @@ using Meadow.Hardware;
 using Meadow.Logging;
 using System;
 
-namespace Meadow.Devices
+namespace Meadow.Devices;
+
+/// <summary>
+/// Represents Project Lab hardware and exposes its peripherals
+/// </summary>
+public class ProjectLab
 {
+    private ProjectLab() { }
+
     /// <summary>
-    /// Represents Project Lab hardware and exposes its peripherals
+    /// Create an instance of the ProjectLab class
     /// </summary>
-    public class ProjectLab
+    /// <returns>ProjectLab instance</returns>
+    /// <exception cref="Exception">ProjectLab instance must be created after <c>App.Initialize()</c></exception>
+    /// <exception cref="NotSupportedException">Couldn't detect known ProjectLab hardware</exception>
+    public static IProjectLabHardware Create()
     {
-        private ProjectLab() { }
+        IProjectLabHardware hardware;
+        Logger? logger = Resolver.Log;
 
-        /// <summary>
-        /// Create an instance of the ProjectLab class
-        /// </summary>
-        /// <returns>ProjectLab instance</returns>
-        /// <exception cref="Exception">ProjectLab instance must be created after <c>App.Initialize()</c></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        public static IProjectLabHardware Create()
+        Mcp23008? mcp = null;
+
+        var device = Resolver.Device;
+
+        logger?.Trace("Initializing Project Lab...");
+
+        // make sure not getting instantiated before the App Initialize method
+        if (device == null)
         {
-            IProjectLabHardware hardware;
-            Logger? logger = Resolver.Log;
+            var msg = "ProjectLab instance must be created after App.Initialize()";
+            logger?.Error(msg);
+            throw new Exception(msg);
+        }
 
-            // v2+ stuff
-            Mcp23008? mcp1 = null;
+        var i2cBus = device.CreateI2cBus();
+        logger?.Debug("I2C Bus instantiated");
 
-            logger?.Trace("Initializing Project Lab...");
+        IDigitalInterruptPort? mcpInterrupt = null;
+        IDigitalOutputPort? mcpReset = null;
+        bool isV3 = false;
 
-            var device = Resolver.Device; //convenience local var
-
-            // make sure not getting instantiated before the App Initialize method
-            if (Resolver.Device == null)
-            {
-                var msg = "ProjectLab instance must be created after App.Initialize()";
-                logger?.Error(msg);
-                throw new Exception(msg);
-            }
-
-            I32PinFeatherBoardPinout pins = device switch
-            {
-                IF7FeatherMeadowDevice f => f.Pins,
-                IF7CoreComputeMeadowDevice c => c.Pins,
-                _ => throw new NotSupportedException("Device must be a Feather F7 or F7 Core Compute module"),
-            };
-
-            var i2cBus = device.CreateI2cBus();
-            logger?.Debug("I2C Bus instantiated");
-
-            IDigitalInterruptPort? mcp1Interrupt = null;
-            IDigitalOutputPort? mcp1Reset = null;
-
+        if (device is IF7FeatherMeadowDevice f)
+        {
             try
             {
-                if (device is IF7FeatherMeadowDevice)
-                {
-                    mcp1Interrupt = device.CreateDigitalInterruptPort(pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
-                    mcp1Reset = device.CreateDigitalOutputPort(pins.D14);
+                mcpInterrupt = device.CreateDigitalInterruptPort(f.Pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                mcpReset = device.CreateDigitalOutputPort(f.Pins.D14);
 
-                    mcp1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
+                mcp = new Mcp23008(i2cBus, address: 0x20, mcpInterrupt, mcpReset);
 
-                    logger?.Trace("Mcp_1 up");
-                }
+                logger?.Trace("Mcp_1 up");
             }
-            catch (Exception e)
+            catch
             {
-                logger?.Debug($"Failed to create MCP1: {e.Message}, could be a v1 board?");
-                mcp1Interrupt?.Dispose();
-                mcp1Reset?.Dispose();
+                logger?.Debug("Failed to create MCP1: could be a v1 board");
+                mcpInterrupt?.Dispose();
+                mcpReset?.Dispose();
             }
-
-            switch (device)
-            {
-                case IF7FeatherMeadowDevice feather when mcp1 is null:
-                    logger?.Info("Instantiating Project Lab v1 specific hardware");
-                    hardware = new ProjectLabHardwareV1(feather, i2cBus);
-                    break;
-                case IF7FeatherMeadowDevice feather:
-                    logger?.Info("Instantiating Project Lab v2 specific hardware");
-                    hardware = new ProjectLabHardwareV2(feather, i2cBus, mcp1);
-                    break;
-                case IF7CoreComputeMeadowDevice ccm:
-                    logger?.Info("Instantiating Project Lab v3 specific hardware");
-                    hardware = new ProjectLabHardwareV3(ccm, i2cBus);
-                    break;
-                default:
-                    throw new NotSupportedException(); //should never get here
-            }
-
-            return hardware;
         }
+        else if (device is IF7CoreComputeMeadowDevice c)
+        {
+            try
+            {
+                mcpReset = device.CreateDigitalOutputPort(c.Pins.PA10);
+
+                mcp = new Mcp23008(i2cBus, address: 0x27, resetPort: mcpReset);
+
+                logger?.Trace("Mcp_version up");
+                isV3 = mcp.ReadFromPorts() < 17;
+            }
+            catch
+            {
+                logger?.Debug("Failed to create version MCP: could be a v3 board");
+                isV3 = true;
+            }
+            finally
+            {
+                mcpReset?.Dispose();
+                mcp = null;
+            }
+        }
+
+        switch (device)
+        {
+            case IF7FeatherMeadowDevice feather when mcp is null:
+                logger?.Info("Instantiating Project Lab v1 specific hardware");
+                hardware = new ProjectLabHardwareV1(feather, i2cBus);
+                break;
+            case IF7FeatherMeadowDevice feather:
+                logger?.Info("Instantiating Project Lab v2 specific hardware");
+                hardware = new ProjectLabHardwareV2(feather, i2cBus, mcp);
+                break;
+            case IF7CoreComputeMeadowDevice ccm when isV3 == true:
+                logger?.Info($"Instantiating Project Lab v3 specific hardware");
+                hardware = new ProjectLabHardwareV3(ccm, i2cBus);
+                break;
+            case IF7CoreComputeMeadowDevice ccm:
+                logger?.Info($"Instantiating Project Lab v4 specific hardware");
+                hardware = new ProjectLabHardwareV4(ccm, i2cBus);
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+
+        return hardware;
     }
 }
