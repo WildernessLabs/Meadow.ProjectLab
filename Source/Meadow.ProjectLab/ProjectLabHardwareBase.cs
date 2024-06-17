@@ -43,6 +43,9 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     public abstract IButton? UpButton { get; }
 
     /// <inheritdoc/>
+    public IMeadowDevice ComputeModule { get; }
+
+    /// <inheritdoc/>
     public abstract IButton? DownButton { get; }
 
     /// <inheritdoc/>
@@ -173,8 +176,10 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
 
     private readonly II2cBus _peripheralI2cBus;
 
-    internal ProjectLabHardwareBase(II2cBus peripheralI2cBus)
+    internal ProjectLabHardwareBase(IMeadowDevice compute, II2cBus peripheralI2cBus)
     {
+        ComputeModule = compute;
+
         _peripheralI2cBus = peripheralI2cBus;
     }
 

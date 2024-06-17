@@ -5,12 +5,26 @@ using System;
 
 namespace Meadow.Devices;
 
+public abstract class ProjectLabFeatherAppBase : App<F7FeatherV2, ProjectLabHardwareProvider, IProjectLabHardware>
+{
+}
+
+public abstract class ProjectLabCoreComputeAppBase : App<F7CoreComputeV2, ProjectLabHardwareProvider, IProjectLabHardware>
+{
+}
+
 /// <summary>
 /// Represents Project Lab hardware and exposes its peripherals
 /// </summary>
-public class ProjectLab
+public class ProjectLabHardwareProvider : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware>
 {
-    private ProjectLab() { }
+    private ProjectLabHardwareProvider() { }
+
+    public static IProjectLabHardware Create()
+    {
+        return new ProjectLabHardwareProvider()
+            .Create(Resolver.Services.Get<IMeadowDevice>()!);
+    }
 
     /// <summary>
     /// Create an instance of the ProjectLab class
@@ -18,14 +32,12 @@ public class ProjectLab
     /// <returns>ProjectLab instance</returns>
     /// <exception cref="Exception">ProjectLab instance must be created after <c>App.Initialize()</c></exception>
     /// <exception cref="NotSupportedException">Couldn't detect known ProjectLab hardware</exception>
-    public static IProjectLabHardware Create()
+    public IProjectLabHardware Create(IMeadowDevice device)
     {
         IProjectLabHardware hardware;
         Logger? logger = Resolver.Log;
 
         Mcp23008? mcp = null;
-
-        var device = Resolver.Device;
 
         logger?.Trace("Initializing Project Lab...");
 

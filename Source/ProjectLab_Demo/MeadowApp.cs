@@ -10,10 +10,8 @@ namespace ProjectLab_Demo;
 
 // Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
 // Change to F7CoreComputeV2 for Project Lab V3.x
-public class MeadowApp : App<F7CoreComputeV2>
+public class MeadowApp : ProjectLabCoreComputeAppBase
 {
-    private IProjectLabHardware? projectLab;
-
     private DisplayController? displayController;
 
     private MicroAudio? audio;
@@ -22,78 +20,74 @@ public class MeadowApp : App<F7CoreComputeV2>
     {
         Resolver.Log.LogLevel = Meadow.Logging.LogLevel.Trace;
 
-        Resolver.Log.Info("Initialize hardware...");
+        Resolver.Log.Info($"Running on ProjectLab Hardware {Hardware.RevisionString}");
 
-        projectLab = ProjectLab.Create();
-
-        Resolver.Log.Info($"Running on ProjectLab Hardware {projectLab.RevisionString}");
-
-        if (projectLab.RgbLed is { } rgbLed)
+        if (Hardware.RgbLed is { } rgbLed)
         {
             rgbLed.SetColor(Color.Blue);
         }
 
-        if (projectLab.Display is { } display)
+        if (Hardware.Display is { } display)
         {
             Resolver.Log.Trace("Creating DisplayController");
-            displayController = new DisplayController(display, projectLab.RevisionString);
+            displayController = new DisplayController(display, Hardware.RevisionString);
             Resolver.Log.Trace("DisplayController up");
         }
 
-        if (projectLab.Speaker is { } speaker)
+        if (Hardware.Speaker is { } speaker)
         {
             speaker.SetVolume(0.2f);
             audio = new MicroAudio(speaker);
         }
 
-        if (projectLab.TemperatureSensor is { } temperatureSensor)
+        if (Hardware.TemperatureSensor is { } temperatureSensor)
         {
             temperatureSensor.Updated += OnTemperatureSensorUpdated;
         }
-        if (projectLab.BarometricPressureSensor is { } pressureSensor)
+        if (Hardware.BarometricPressureSensor is { } pressureSensor)
         {
             pressureSensor.Updated += OnPressureSensorUpdated;
         }
-        if (projectLab.HumiditySensor is { } humiditySensor)
+        if (Hardware.HumiditySensor is { } humiditySensor)
         {
             humiditySensor.Updated += OnHumiditySensorUpdated;
         }
-        if (projectLab.LightSensor is { } lightSensor)
+        if (Hardware.LightSensor is { } lightSensor)
         {
             lightSensor.Updated += OnLightSensorUpdated;
         }
 
-        if (projectLab.Accelerometer is { } accelerometer)
+        if (Hardware.Accelerometer is { } accelerometer)
         {
             accelerometer.Updated += OnAccelerometerUpdated;
         }
-        if (projectLab.Gyroscope is { } gyroscope)
+        if (Hardware.Gyroscope is { } gyroscope)
         {
             gyroscope.Updated += OnGyroscopeUpdated;
         }
 
-        if (projectLab.UpButton is { } upButton)
+        if (Hardware.UpButton is { } upButton)
         {
             upButton.PressStarted += (s, e) => displayController!.UpdateButtonUp(true);
             upButton.PressEnded += (s, e) => displayController!.UpdateButtonUp(false);
         }
-        if (projectLab.DownButton is { } downButton)
+        if (Hardware.DownButton is { } downButton)
         {
             downButton.PressStarted += (s, e) => displayController!.UpdateButtonDown(true);
             downButton.PressEnded += (s, e) => displayController!.UpdateButtonDown(false);
         }
-        if (projectLab.LeftButton is { } leftButton)
+        if (Hardware.LeftButton is { } leftButton)
         {
             leftButton.PressStarted += (s, e) => displayController!.UpdateButtonLeft(true);
             leftButton.PressEnded += (s, e) => displayController!.UpdateButtonLeft(false);
         }
-        if (projectLab.RightButton is { } rightButton)
+        if (Hardware.RightButton is { } rightButton)
         {
             rightButton.PressStarted += (s, e) => displayController!.UpdateButtonRight(true);
             rightButton.PressEnded += (s, e) => displayController!.UpdateButtonRight(false);
         }
 
-        if (projectLab.Touchscreen is { } touchScreen)
+        if (Hardware.Touchscreen is { } touchScreen)
         {
             touchScreen.TouchDown += (s, e) =>
             {
@@ -157,33 +151,33 @@ public class MeadowApp : App<F7CoreComputeV2>
             await audio.PlaySystemSound(SystemSoundEffect.Success);
         }
 
-        if (projectLab?.TemperatureSensor is { } temperature)
+        if (Hardware?.TemperatureSensor is { } temperature)
         {
             temperature.StartUpdating(updateInterveral);
         }
-        if (projectLab?.BarometricPressureSensor is { } barometer)
+        if (Hardware?.BarometricPressureSensor is { } barometer)
         {
             barometer.StartUpdating(updateInterveral);
         }
-        if (projectLab?.HumiditySensor is { } humidity)
+        if (Hardware?.HumiditySensor is { } humidity)
         {
             humidity.StartUpdating(updateInterveral);
         }
-        if (projectLab?.LightSensor is { } luminance)
+        if (Hardware?.LightSensor is { } luminance)
         {
             luminance.StartUpdating(updateInterveral);
         }
 
-        if (projectLab?.Accelerometer is { } accelerometer)
+        if (Hardware?.Accelerometer is { } accelerometer)
         {
             accelerometer.StartUpdating(updateInterveral);
         }
-        if (projectLab?.Gyroscope is { } gyroscope)
+        if (Hardware?.Gyroscope is { } gyroscope)
         {
             gyroscope.StartUpdating(updateInterveral);
         }
 
-        if (projectLab?.RgbLed is { } rgbLed)
+        if (Hardware?.RgbLed is { } rgbLed)
         {
             Resolver.Log.Info("starting blink");
             _ = rgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);

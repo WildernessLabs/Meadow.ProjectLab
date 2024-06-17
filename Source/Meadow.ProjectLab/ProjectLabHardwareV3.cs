@@ -64,7 +64,8 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
     /// </summary>
     public IDigitalOutputPort? DisplayEnablePort { get; protected set; }
 
-    internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus) : base(i2cBus)
+    internal ProjectLabHardwareV3(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
+        : base(device, i2cBus)
     {
         _device = device;
 
