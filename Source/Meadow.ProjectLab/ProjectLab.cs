@@ -5,10 +5,16 @@ using System;
 
 namespace Meadow.Devices;
 
+/// <summary>
+/// A base class for Feather-based, Project Lab-targeted applications 
+/// </summary>
 public abstract class ProjectLabFeatherAppBase : App<F7FeatherV2, ProjectLabHardwareProvider, IProjectLabHardware>
 {
 }
 
+/// <summary>
+/// A base class for F7 Core Compute-based, Project Lab-targeted applications 
+/// </summary>
 public abstract class ProjectLabCoreComputeAppBase : App<F7CoreComputeV2, ProjectLabHardwareProvider, IProjectLabHardware>
 {
 }
@@ -20,6 +26,9 @@ public class ProjectLabHardwareProvider : IMeadowAppEmbeddedHardwareProvider<IPr
 {
     private ProjectLabHardwareProvider() { }
 
+    /// <summary>
+    /// Create an instance of the ProjectLab class
+    /// </summary>
     public static IProjectLabHardware Create()
     {
         return new ProjectLabHardwareProvider()
