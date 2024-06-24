@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Mea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Units", "..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj", "{35B3DDB4-71EF-4A68-B242-982C71126F3E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{EF2050F4-6422-4AB2-BF60-9E5428E474AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{EF2050F4-6422-4AB2-BF60-9E5428E474AF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Audio.MicroAudio", "..\..\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Audio.MicroAudio\Driver\Audio.MicroAudio.csproj", "{12C58A2F-9D0E-417F-B138-BA25B166C56B}"
 EndProject
