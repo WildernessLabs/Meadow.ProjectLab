@@ -59,7 +59,8 @@ public class ProjectLabHardwareV2 : ProjectLabHardwareBase
     /// <inheritdoc/>
     public override IRgbPwmLed? RgbLed => GetRgbLed();
 
-    internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1) : base(i2cBus)
+    internal ProjectLabHardwareV2(IF7FeatherMeadowDevice device, II2cBus i2cBus, Mcp23008 mcp1)
+        : base(device, i2cBus)
     {
         _device = device;
 

@@ -15,7 +15,7 @@ namespace Meadow.Devices;
 /// <summary>
 /// Interface for ProjectLab hardware
 /// </summary>
-public interface IProjectLabHardware
+public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
 {
     /// <summary>
     /// Gets the up button on the Project Lab board.
