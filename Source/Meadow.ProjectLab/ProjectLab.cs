@@ -8,30 +8,30 @@ namespace Meadow.Devices;
 /// <summary>
 /// A base class for Feather-based, Project Lab-targeted applications 
 /// </summary>
-public abstract class ProjectLabFeatherApp : App<F7FeatherV2, ProjectLabHardwareProvider, IProjectLabHardware>
+public abstract class ProjectLabFeatherApp : App<F7FeatherV2, ProjectLab, IProjectLabHardware>
 {
 }
 
 /// <summary>
 /// A base class for F7 Core Compute-based, Project Lab-targeted applications 
 /// </summary>
-public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLabHardwareProvider, IProjectLabHardware>
+public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLab, IProjectLabHardware>
 {
 }
 
 /// <summary>
 /// Represents Project Lab hardware and exposes its peripherals
 /// </summary>
-public class ProjectLabHardwareProvider : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware>
+public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware>
 {
-    private ProjectLabHardwareProvider() { }
+    private ProjectLab() { }
 
     /// <summary>
     /// Create an instance of the ProjectLab class
     /// </summary>
     public static IProjectLabHardware Create()
     {
-        return new ProjectLabHardwareProvider()
+        return new ProjectLab()
             .Create(Resolver.Services.Get<IMeadowDevice>()!);
     }
 
