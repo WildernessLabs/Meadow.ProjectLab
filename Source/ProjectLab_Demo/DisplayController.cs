@@ -8,29 +8,29 @@ namespace ProjectLab_Demo;
 
 public class DisplayController
 {
-    private int rowOffset = 29;
-    private int rowHeight = 21;
-    private int rowMargin = 2;
+    private readonly int rowOffset = 29;
+    private readonly int rowHeight = 21;
+    private readonly int rowMargin = 2;
 
     private Color foregroundColor = Color.White;
     private Color atmosphericColor = Color.White;
     private Color motionColor = Color.FromHex("23ABE3");
     private Color buttonColor = Color.FromHex("EF7D3B");
 
-    private Font12x20 font12X20 = new Font12x20();
+    private readonly Font12x20 font12X20 = new();
 
-    private DisplayScreen displayScreen;
+    private readonly DisplayScreen displayScreen;
 
-    private Label temperature;
-    private Label humidity;
-    private Label pressure;
-    private Label iluminance;
-    private Label acceleration3D;
-    private Label angularVelocity3D;
-    private Label buttonUp;
-    private Label buttonDown;
-    private Label buttonLeft;
-    private Label buttonRight;
+    private readonly Label temperature;
+    private readonly Label humidity;
+    private readonly Label pressure;
+    private readonly Label iluminance;
+    private readonly Label acceleration3D;
+    private readonly Label angularVelocity3D;
+    private readonly Label buttonUp;
+    private readonly Label buttonDown;
+    private readonly Label buttonLeft;
+    private readonly Label buttonRight;
 
     public DisplayController(IPixelDisplay display, string revisionVersion)
     {
@@ -58,7 +58,7 @@ public class DisplayController
         displayScreen.Controls.Add(CreateLeftLabel("Left:", buttonColor, rowMargin, rowOffset + rowHeight * 8, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Right:", buttonColor, rowMargin, rowOffset + rowHeight * 9, displayScreen.Width, rowHeight));
 
-        temperature = CreateRightLabel("0°C", atmosphericColor, rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight);
+        temperature = CreateRightLabel("0ºC", atmosphericColor, rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight);
         pressure = CreateRightLabel("0atm", atmosphericColor, rowMargin, rowOffset + rowHeight, displayScreen.Width - rowMargin * 2, rowHeight);
         humidity = CreateRightLabel("0%", atmosphericColor, rowMargin, rowOffset + rowHeight * 2, displayScreen.Width - rowMargin * 2, rowHeight);
         iluminance = CreateRightLabel("0Lux", atmosphericColor, rowMargin, rowOffset + rowHeight * 3, displayScreen.Width - rowMargin * 2, rowHeight);
@@ -96,7 +96,7 @@ public class DisplayController
 
     public void UpdateTemperatureValue(Temperature temperature)
     {
-        this.temperature.Text = $"{temperature.Celsius:N1}°C";
+        this.temperature.Text = $"{temperature.Celsius:N1}ºC";
     }
 
     public void UpdatePressureValue(Pressure pressure)
@@ -121,26 +121,30 @@ public class DisplayController
 
     public void UpdateAngularVelocity3DValue(AngularVelocity3D angularVelocity3D)
     {
-        this.angularVelocity3D.Text = $"{angularVelocity3D.X.DegreesPerSecond:N0},{angularVelocity3D.Y.DegreesPerSecond:N0},{angularVelocity3D.Z.DegreesPerSecond:N0}deg/s";
+        this.angularVelocity3D.Text = $"{angularVelocity3D.X.DegreesPerSecond:N0},{angularVelocity3D.Y.DegreesPerSecond:N0},{angularVelocity3D.Z.DegreesPerSecond:N0}º/s";
     }
 
     public void UpdateButtonUp(bool isPressed)
     {
+        Resolver.Log.Info($"Button Up: {isPressed}");
         buttonUp.Text = isPressed ? "Pressed" : "Released";
     }
 
     public void UpdateButtonDown(bool isPressed)
     {
+        Resolver.Log.Info($"Button Down: {isPressed}");
         buttonDown.Text = isPressed ? "Pressed" : "Released";
     }
 
     public void UpdateButtonLeft(bool isPressed)
     {
+        Resolver.Log.Info($"Button Left: {isPressed}");
         buttonLeft.Text = isPressed ? "Pressed" : "Released";
     }
 
     public void UpdateButtonRight(bool isPressed)
     {
+        Resolver.Log.Info($"Button Right: {isPressed}");
         buttonRight.Text = isPressed ? "Pressed" : "Released";
     }
 }
