@@ -11,13 +11,16 @@
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Update="app.build.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="app.config.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.12.0" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.12.8.1-beta" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.12.8.1-beta" />
     <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
   </ItemGroup>
 </Project>
