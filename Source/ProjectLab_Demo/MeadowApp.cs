@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace ProjectLab_Demo;
 
-// Change F7FeatherV2 to F7FeatherV1 if using Feather V1 Meadow boards
-// Change to F7CoreComputeV2 for Project Lab V3.x
+// Change to ProjectLabFeatherApp for Project Lab V1 or V2
+// Change to ProjectLabCoreComputeApp for Project Lab V3+
 public class MeadowApp : ProjectLabCoreComputeApp
 {
     private DisplayController? displayController;
