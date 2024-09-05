@@ -171,7 +171,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             };
 
             ((Ili9341)_display).SetRotation(RotationType._270Degrees);
-            ((Ili9341)_display).InvertDisplay(true);
+            ((Ili9341)_display).InvertDisplayColor(true);
 
             Logger?.Trace("Display up");
         }

@@ -19,8 +19,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.12.8" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.12.8" />
+    <PackageReference Include="Meadow.Foundation.Audio.MicroAudio" Version="1.14.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.14.0" />
     <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
   </ItemGroup>
 </Project>
