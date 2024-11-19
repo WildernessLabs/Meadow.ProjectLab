@@ -9,6 +9,7 @@ namespace Meadow.Devices;
 internal class ConnectorProviderV3e : IConnectorProvider
 {
     private readonly Sc16is752 _uartExpander;
+    private ModbusRtuClient? _client;
 
     public ConnectorProviderV3e(ProjectLabHardwareBase projLab, II2cBus i2CBus)
     {
@@ -19,18 +20,27 @@ internal class ConnectorProviderV3e : IConnectorProvider
     {
         if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
 
-        try
+        lock (_uartExpander)
         {
-            // v3.e+ uses an SC16is I2C UART expander for the RS485
-            var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
-            Resolver.Log.Trace($"485 port created");
-            return new ModbusRtuClient(port);
+            if (_client == null)
+            {
+                try
+                {
+                    Resolver.Log.Info($"Creating 485 port...", Constants.LogGroup);
+                    // v3.e+ uses an SC16is I2C UART expander for the RS485
+                    var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
+                    Resolver.Log.Trace($"485 port created", Constants.LogGroup);
+                    _client = new ModbusRtuClient(port);
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Warn($"Error creating 485 port: {ex.Message}", Constants.LogGroup);
+                    throw new Exception("Unable to connect to UART expander");
+                }
+            }
         }
-        catch (Exception ex)
-        {
-            Resolver.Log.Warn($"Error creating 485 port: {ex.Message}");
-            throw new Exception("Unable to connect to UART expander");
-        }
+
+        return _client;
     }
 
     public MikroBusConnector CreateMikroBus1(IF7CoreComputeMeadowDevice device, Mcp23008 mcp2)
