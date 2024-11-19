@@ -390,21 +390,29 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         }
     }
 
+    private ModbusRtuClient? _client;
+
     /// <inheritdoc/>
     public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
-        try
+        if (_client == null)
         {
-            // v3.e+ uses an SC16is I2C UART expander for the RS485
-            var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
-            Resolver.Log.Trace($"485 port created");
-            return new ModbusRtuClient(port);
+            try
+            {
+                Resolver.Log.Info($"Creating 485 port...", Constants.LogGroup);
+
+                // v3.e+ uses an SC16is I2C UART expander for the RS485
+                var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
+                Resolver.Log.Trace($"485 port created", Constants.LogGroup);
+                _client = new ModbusRtuClient(port);
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Warn($"Error creating 485 port: {ex.Message}", Constants.LogGroup);
+                throw new Exception("Unable to connect to UART expander");
+            }
         }
-        catch (Exception ex)
-        {
-            Resolver.Log.Warn($"Error creating 485 port: {ex.Message}");
-            throw new Exception("Unable to connect to UART expander");
-        }
+        return _client;
     }
 
     /// <inheritdoc/>
