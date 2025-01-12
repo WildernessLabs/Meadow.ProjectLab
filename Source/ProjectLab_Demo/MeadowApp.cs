@@ -107,7 +107,7 @@ public class MeadowApp : ProjectLabCoreComputeApp
     private void OnTemperatureSensorUpdated(object sender, IChangeResult<Temperature> e)
     {
         Resolver.Log.Info($"TEMPERATURE: {e.New.Celsius:N1}C");
-        displayController!.UpdateTemperatureValue(e.New);
+        displayController!.UpdateTemperatureValue(e.New, Hardware.TemperatureSensor2?.Temperature ?? new Temperature(0));
     }
 
     private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
