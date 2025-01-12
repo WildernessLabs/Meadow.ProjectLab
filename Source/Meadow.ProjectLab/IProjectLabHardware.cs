@@ -58,7 +58,7 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     public ITemperatureSensor? TemperatureSensor { get; }
 
     /// <summary>
-    /// Gets the ITemperatureSensor on the Project Lab board.
+    /// Gets the second/alternate ITemperatureSensor on the Project Lab board.
     /// </summary>
     public ITemperatureSensor? TemperatureSensor2 { get; }
 
