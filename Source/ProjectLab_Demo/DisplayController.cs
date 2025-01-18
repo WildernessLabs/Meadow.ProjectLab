@@ -94,9 +94,9 @@ public class DisplayController
         };
     }
 
-    public void UpdateTemperatureValue(Temperature temperature)
+    public void UpdateTemperatureValue(Temperature temperature, Temperature temperature2)
     {
-        this.temperature.Text = $"{temperature.Celsius:N1}ºC";
+        this.temperature.Text = $"{temperature2.Celsius:N1}ºC/{temperature.Celsius:N1}ºC";
     }
 
     public void UpdatePressureValue(Pressure pressure)
