@@ -30,6 +30,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     private IGyroscope? _gyroscope;
     private IAccelerometer? _accelerometer;
     private ITemperatureSensor? _temperatureSensor;
+    private ITemperatureSensor? _temperatureSensor2;
     private IHumiditySensor? _humiditySensor;
     private IBarometricPressureSensor? _barometricPressureSensor;
     private IGasResistanceSensor? _gasResistanceSensor;
@@ -80,6 +81,9 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
 
     /// <inheritdoc/>
     public ITemperatureSensor? TemperatureSensor => GetTemperatureSensor();
+
+    /// <inheritdoc/>
+    public ITemperatureSensor? TemperatureSensor2 => GetTemperatureSensor2();
 
     /// <inheritdoc/>
     public IHumiditySensor? HumiditySensor => GetHumiditySensor();
@@ -213,6 +217,16 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         return _temperatureSensor;
     }
 
+    private ITemperatureSensor? GetTemperatureSensor2()
+    {
+        if (_temperatureSensor2 == null)
+        {
+            InitializeBme688();
+        }
+
+        return _temperatureSensor2;
+    }
+
     private void InitializeBmi270()
     {
         try
@@ -317,6 +331,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
             _humiditySensor = bme;
             _barometricPressureSensor = bme;
             _gasResistanceSensor = bme;
+            _temperatureSensor2 = bme;
             Resolver.SensorService.RegisterSensor(bme);
             Logger?.Trace("Atmospheric sensor up");
         }
