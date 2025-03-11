@@ -243,8 +243,8 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C3_SDA),
             },
             _device.PlatformOS.GetSerialPortName("com1")!,
-            new I2cBusMapping(_device, 1),
-            new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO)
+            new I2cBusMapping(_device, 3),
+            new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO)
             );
     }
 
@@ -271,7 +271,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             },
             _device.PlatformOS.GetSerialPortName("com1")!,
             new I2cBusMapping(_device, 1),
-            new SpiBusMapping(_device, _device.Pins.SCK, _device.Pins.COPI, _device.Pins.CIPO)
+            new SpiBusMapping(_device, _device.Pins.SPI3_SCK, _device.Pins.SPI3_COPI, _device.Pins.SPI3_CIPO)
             );
     }
 
