@@ -8,20 +8,33 @@ namespace Meadow.Devices;
 
 internal class ConnectorProviderV3e : IConnectorProvider
 {
-    private readonly Sc16is752 _uartExpander;
+    private readonly Sc16is752? _uartExpander;
+    private object _mobusSyncRoot = new();
     private ModbusRtuClient? _client;
 
     public ConnectorProviderV3e(ProjectLabHardwareBase projLab, II2cBus i2CBus)
     {
-        _uartExpander = new Sc16is752(i2CBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
+        try
+        {
+            _uartExpander = new Sc16is752(i2CBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
+        }
+        catch (Exception ex)
+        {
+            Resolver.Log.Error($"Unable to connect to UART expander: {ex.Message}", Constants.LogGroup);
+        }
     }
 
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
         if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
 
-        lock (_uartExpander)
+        lock (_mobusSyncRoot)
         {
+            if (_uartExpander == null)
+            {
+                throw new Exception("No UART expander available");
+            }
+
             if (_client == null)
             {
                 try
