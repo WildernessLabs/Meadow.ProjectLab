@@ -29,8 +29,8 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     private Bmi270? _motionSensor;
     private IGyroscope? _gyroscope;
     private IAccelerometer? _accelerometer;
-    private ITemperatureSensor? _temperatureSensor;
-    private ITemperatureSensor? _temperatureSensor2;
+    private ISamplingTemperatureSensor? _temperatureSensor;
+    private ISamplingTemperatureSensor? _temperatureSensor2;
     private IHumiditySensor? _humiditySensor;
     private IBarometricPressureSensor? _barometricPressureSensor;
     private IGasResistanceSensor? _gasResistanceSensor;
@@ -80,10 +80,10 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     public IAccelerometer? Accelerometer => GetAccelerometer();
 
     /// <inheritdoc/>
-    public ITemperatureSensor? TemperatureSensor => GetTemperatureSensor();
+    public ISamplingTemperatureSensor? TemperatureSensor => GetTemperatureSensor();
 
     /// <inheritdoc/>
-    public ITemperatureSensor? TemperatureSensor2 => GetTemperatureSensor2();
+    public ISamplingTemperatureSensor? TemperatureSensor2 => GetTemperatureSensor2();
 
     /// <inheritdoc/>
     public IHumiditySensor? HumiditySensor => GetHumiditySensor();
@@ -207,7 +207,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         return _gyroscope;
     }
 
-    private ITemperatureSensor? GetTemperatureSensor()
+    private ISamplingTemperatureSensor? GetTemperatureSensor()
     {
         if (_temperatureSensor == null)
         {
@@ -217,7 +217,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         return _temperatureSensor;
     }
 
-    private ITemperatureSensor? GetTemperatureSensor2()
+    private ISamplingTemperatureSensor? GetTemperatureSensor2()
     {
         if (_temperatureSensor2 == null)
         {
