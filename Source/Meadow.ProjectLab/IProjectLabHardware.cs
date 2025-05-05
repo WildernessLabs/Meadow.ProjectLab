@@ -55,12 +55,12 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     /// <summary>
     /// Gets the ITemperatureSensor on the Project Lab board.
     /// </summary>
-    public ITemperatureSensor? TemperatureSensor { get; }
+    public ISamplingTemperatureSensor? TemperatureSensor { get; }
 
     /// <summary>
     /// Gets the second/alternate ITemperatureSensor on the Project Lab board.
     /// </summary>
-    public ITemperatureSensor? TemperatureSensor2 { get; }
+    public ISamplingTemperatureSensor? TemperatureSensor2 { get; }
 
     /// <summary>
     /// Gets the IHumiditySensor on the Project Lab board.
