@@ -2,11 +2,14 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
+using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Speakers;
 using Meadow.Units;
@@ -24,7 +27,6 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
     private readonly IF7CoreComputeMeadowDevice _device;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
-    private IPixelDisplay? _display;
     private ITouchScreen? _touchscreen;
 
     /// <summary>
@@ -84,15 +86,17 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         IDigitalOutputPort? mcp1Reset = null;
 
         _pwmExpander = new Pca9685(i2cBus, address: 0x70);
+        Logger?.Trace("PWM expander up");
         _uartExpander_1 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
+        Logger?.Trace("UART1 expander up");
         _uartExpander_2 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4C);
-        Logger?.Trace("IO expanders up");
+        Logger?.Trace("UART2 expander up");
 
         try
         {
             mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC0, InterruptMode.EdgeRising);
 
-            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PA10);
+            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PH10);
 
             Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
@@ -147,7 +151,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
     /// <inheritdoc/>
     protected override IPixelDisplay? GetDefaultDisplay()
     {
-        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, false);
+        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
         DisplayLedPort ??= Mcp_1?.CreateDigitalOutputPort(DisplayHeader.Pins.DISPLAY_LED, true);
 
         if (_display == null)
@@ -159,14 +163,8 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
             var resetPort = DisplayHeader.Pins.DISPLAY_RST.CreateDigitalOutputPort();
             Thread.Sleep(50);
 
-            var spiBus5 = _device.CreateSpiBus(
-                _device.Pins.SPI5_SCK,
-                _device.Pins.SPI5_COPI,
-                _device.Pins.SPI5_CIPO,
-                new Frequency(24000, Frequency.UnitType.Kilohertz));
-
             _display = new Ili9341(
-                spiBus: spiBus5,
+                spiBus: DisplayHeader.SpiBusDisplay,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
@@ -184,6 +182,43 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         }
 
         return _display;
+    }
+
+    internal override ISamplingTemperatureSensor? GetTemperatureSensor()
+    {
+        if (_temperatureSensor == null)
+        {
+            InitializeAht10();
+        }
+
+        return _temperatureSensor;
+    }
+
+    internal override IHumiditySensor? GetHumiditySensor()
+    {
+        if (_humiditySensor == null)
+        {
+            InitializeAht10();
+        }
+
+        return _humiditySensor;
+    }
+
+    private void InitializeAht10()
+    {
+        try
+        {
+            Logger?.Trace("Instantiating atmospheric sensor");
+            var aht = new Aht10(_peripheralI2cBus, (byte)Aht10.Addresses.Address_0x38);
+            _humiditySensor = aht;
+            _temperatureSensor = aht;
+            Resolver.SensorService.RegisterSensor(aht);
+            Logger?.Trace("Atmospheric sensor up");
+        }
+        catch (Exception ex)
+        {
+            Logger?.Error($"Unable to create the AHT10 atmospheric sensor: {ex.Message}");
+        }
     }
 
     private IToneGenerator? GetSpeaker()

@@ -2,13 +2,17 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
+using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Leds;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Peripherals.Speakers;
 using Meadow.Units;
 using System;
@@ -25,7 +29,6 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     private readonly IF7CoreComputeMeadowDevice _device;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
-    private IPixelDisplay? _display;
     private ITouchScreen? _touchscreen;
 
     /// <summary>
@@ -152,14 +155,8 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             var resetPort = DisplayHeader.Pins.DISPLAY_RST.CreateDigitalOutputPort();
             Thread.Sleep(50);
 
-            var spiBus5 = _device.CreateSpiBus(
-                _device.Pins.SPI5_SCK,
-                _device.Pins.SPI5_COPI,
-                _device.Pins.SPI5_CIPO,
-                new Frequency(24000, Frequency.UnitType.Kilohertz));
-
             _display = new Ili9341(
-                spiBus: spiBus5,
+                spiBus: DisplayHeader.SpiBusDisplay,
                 chipSelectPort: chipSelectPort,
                 dataCommandPort: dcPort,
                 resetPort: resetPort,
@@ -177,6 +174,65 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         }
 
         return _display;
+    }
+
+    internal override ISamplingTemperatureSensor? GetTemperatureSensor()
+    {
+        if (_temperatureSensor == null)
+        {
+            InitializeBme688();
+        }
+
+        return _temperatureSensor;
+    }
+
+    internal override IHumiditySensor? GetHumiditySensor()
+    {
+        if (_humiditySensor == null)
+        {
+            InitializeBme688();
+        }
+
+        return _humiditySensor;
+    }
+
+    internal override IBarometricPressureSensor? GetBarometricPressureSensor()
+    {
+        if (_barometricPressureSensor == null)
+        {
+            InitializeBme688();
+        }
+
+        return _barometricPressureSensor;
+    }
+
+    internal override IGasResistanceSensor? GetGasResistanceSensor()
+    {
+        if (_gasResistanceSensor == null)
+        {
+            InitializeBme688();
+        }
+
+        return _gasResistanceSensor;
+    }
+
+    private void InitializeBme688()
+    {
+        try
+        {
+            Logger?.Trace("Instantiating atmospheric sensor");
+            var bme = new Bme688(_peripheralI2cBus, (byte)Bme68x.Addresses.Address_0x76);
+            _humiditySensor = bme;
+            _barometricPressureSensor = bme;
+            _gasResistanceSensor = bme;
+            _temperatureSensor = bme;
+            Resolver.SensorService.RegisterSensor(bme);
+            Logger?.Trace("Atmospheric sensor up");
+        }
+        catch (Exception ex)
+        {
+            Logger?.Error($"Unable to create the BME688 atmospheric sensor: {ex.Message}");
+        }
     }
 
     private IToneGenerator? GetSpeaker()

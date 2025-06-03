@@ -78,12 +78,12 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     public IGasResistanceSensor? GasResistanceSensor { get; }
 
     /// <summary>
-    /// Gets the IGyroscope on the Project Lab board
+    /// Gets the IGyroscope on the Project Lab board.
     /// </summary>
     public IGyroscope? Gyroscope { get; }
 
     /// <summary>
-    /// Gets the IAccelerometer on the Project Lab board
+    /// Gets the IAccelerometer on the Project Lab board.
     /// </summary>
     public IAccelerometer? Accelerometer { get; }
 
@@ -138,7 +138,7 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     public DisplayConnector DisplayHeader { get; }
 
     /// <summary>
-    /// Gets the touchscreen on the Project Lab display
+    /// Gets the touchscreen on the Project Lab display.
     /// </summary>
     public ITouchScreen? Touchscreen { get; }
 

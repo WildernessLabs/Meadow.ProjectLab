@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Foundation.Sensors.Light;
+﻿using Meadow.Foundation.Sensors.Light;
 using Meadow.Foundation.Sensors.Motion;
 using Meadow.Hardware;
 using Meadow.Logging;
@@ -22,18 +21,17 @@ namespace Meadow.Devices;
 /// </summary>
 public abstract class ProjectLabHardwareBase : IProjectLabHardware
 {
-    private IConnector?[]? _connectors;
-    private IPixelDisplay? _display;
-    private ILightSensor? _lightSensor;
-    private Bme688? _atmosphericSensor;
-    private Bmi270? _motionSensor;
-    private IGyroscope? _gyroscope;
-    private IAccelerometer? _accelerometer;
-    private ISamplingTemperatureSensor? _temperatureSensor;
-    private ISamplingTemperatureSensor? _temperatureSensor2;
-    private IHumiditySensor? _humiditySensor;
-    private IBarometricPressureSensor? _barometricPressureSensor;
-    private IGasResistanceSensor? _gasResistanceSensor;
+    internal IConnector?[]? _connectors;
+    internal IPixelDisplay? _display;
+    internal ILightSensor? _lightSensor;
+    internal Bmi270? _motionSensor;
+    internal IGyroscope? _gyroscope;
+    internal IAccelerometer? _accelerometer;
+    internal ISamplingTemperatureSensor? _temperatureSensor;
+    internal ISamplingTemperatureSensor? _temperatureSensor2;
+    internal IHumiditySensor? _humiditySensor;
+    internal IBarometricPressureSensor? _barometricPressureSensor;
+    internal IGasResistanceSensor? _gasResistanceSensor;
 
     /// <summary>
     /// Get a reference to Meadow Logger
@@ -66,12 +64,6 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
 
     /// <inheritdoc/>
     public ILightSensor? LightSensor => GetLightSensor();
-
-    /// <inheritdoc/>
-    public Bme688? AtmosphericSensor => GetAtmosphericSensor();
-
-    /// <inheritdoc/>
-    public Bmi270? MotionSensor => GetMotionSensor();
 
     /// <inheritdoc/>
     public IGyroscope? Gyroscope => GetGyroscope();
@@ -178,7 +170,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         }
     }
 
-    private readonly II2cBus _peripheralI2cBus;
+    internal readonly II2cBus _peripheralI2cBus;
 
     internal ProjectLabHardwareBase(IMeadowDevice compute, II2cBus peripheralI2cBus)
     {
@@ -207,24 +199,34 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         return _gyroscope;
     }
 
-    private ISamplingTemperatureSensor? GetTemperatureSensor()
-    {
-        if (_temperatureSensor == null)
-        {
-            InitializeBmi270();
-        }
-
-        return _temperatureSensor;
-    }
-
     private ISamplingTemperatureSensor? GetTemperatureSensor2()
     {
         if (_temperatureSensor2 == null)
         {
-            InitializeBme688();
+            InitializeBmi270();
         }
 
         return _temperatureSensor2;
+    }
+
+    internal virtual ISamplingTemperatureSensor? GetTemperatureSensor()
+    {
+        return null;
+    }
+
+    internal virtual IBarometricPressureSensor? GetBarometricPressureSensor()
+    {
+        return null;
+    }
+
+    internal virtual IHumiditySensor? GetHumiditySensor()
+    {
+        return null;
+    }
+
+    internal virtual IGasResistanceSensor? GetGasResistanceSensor()
+    {
+        return null;
     }
 
     private void InitializeBmi270()
@@ -237,7 +239,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
             _gyroscope = bmi;
             _accelerometer = bmi;
             // we use the BMI270 because, I believe, the 688 is closer to an on-board heat source and reads high
-            _temperatureSensor = bmi;
+            _temperatureSensor2 = bmi;
             Resolver.SensorService.RegisterSensor(_motionSensor);
             Logger?.Trace("Motion sensor up");
         }
@@ -245,16 +247,6 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         {
             Logger?.Error($"Unable to create the BMI270 IMU: {ex.Message}");
         }
-    }
-
-    private Bmi270? GetMotionSensor()
-    {
-        if (_motionSensor == null)
-        {
-            InitializeBmi270();
-        }
-
-        return _motionSensor;
     }
 
     private ILightSensor? GetLightSensor()
@@ -279,66 +271,6 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
         }
 
         return _lightSensor;
-    }
-
-    private Bme688? GetAtmosphericSensor()
-    {
-        if (_atmosphericSensor == null)
-        {
-            InitializeBme688();
-        }
-
-        return _atmosphericSensor;
-    }
-
-    private IHumiditySensor? GetHumiditySensor()
-    {
-        if (_humiditySensor == null)
-        {
-            InitializeBme688();
-        }
-
-        return _humiditySensor;
-    }
-
-    private IBarometricPressureSensor? GetBarometricPressureSensor()
-    {
-        if (_barometricPressureSensor == null)
-        {
-            InitializeBme688();
-        }
-
-        return _barometricPressureSensor;
-    }
-
-    private IGasResistanceSensor? GetGasResistanceSensor()
-    {
-        if (_gasResistanceSensor == null)
-        {
-            InitializeBme688();
-        }
-
-        return _gasResistanceSensor;
-    }
-
-    private void InitializeBme688()
-    {
-        try
-        {
-            Logger?.Trace("Instantiating atmospheric sensor");
-            var bme = new Bme688(_peripheralI2cBus, (byte)Bme68x.Addresses.Address_0x76);
-            _atmosphericSensor = bme;
-            _humiditySensor = bme;
-            _barometricPressureSensor = bme;
-            _gasResistanceSensor = bme;
-            _temperatureSensor2 = bme;
-            Resolver.SensorService.RegisterSensor(bme);
-            Logger?.Trace("Atmospheric sensor up");
-        }
-        catch (Exception ex)
-        {
-            Logger?.Error($"Unable to create the BME688 atmospheric sensor: {ex.Message}");
-        }
     }
 
     /// <summary>
