@@ -409,8 +409,6 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
             new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO),
             new I2cBusMapping(_device, 1)
             );
-
-
     }
 
     private byte? _revisionNumber;
@@ -432,7 +430,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
     {
         get
         {
-            return _revisionString ??= $"v4.{(Mcp_Version == null ? "x" : RevisionNumber)}";
+            return _revisionString ??= $"v5.{(Mcp_Version == null ? "x" : RevisionNumber)}";
         }
     }
 
