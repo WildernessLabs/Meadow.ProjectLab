@@ -47,7 +47,7 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// </summary>
         public const string TOUCH_CS = "TOUCH_CS";
         /// <summary>
-        /// Touch SPI Clock pin
+        /// Touch Clock pin
         /// </summary>
         public const string TOUCH_CLK = "TOUCH_CLK";
         /// <summary>
@@ -58,6 +58,14 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
         /// Touch SPI controller in, peripheral out pin
         /// </summary>
         public const string TOUCH_CIPO = "TOUCH_CIPO";
+        /// <summary>
+        /// Touch Reset Clock pin
+        /// </summary>
+        public const string TOUCH_RST = "TOUCH_RST";
+        /// <summary>
+        /// Touch I2C data pin
+        /// </summary>
+        public const string TOUCH_SDA = "TOUCH_SDA";
     }
 
     /// <summary>
@@ -168,18 +176,40 @@ public class DisplayConnector : Connector<DisplayConnectorPinDefinitions>
 
     private readonly SpiBusMapping _spiBusMappingDisplay;
     private readonly SpiBusMapping? _spiBusMappingTouch;
+    private readonly I2cBusMapping? _i2cBusMappingTouch;
     private ISpiBus? _spiDisplay;
     private readonly ISpiBus? _spiTouch;
+    private readonly II2cBus? _i2cTouch;
+
+    /// <param name="name">The connector name</param>
+    /// <param name="mapping">The mappings to the host controller</param>
+    /// <param name="spiBusMappingDisplay">The mapping for the display connector's SPI bus</param>
+    public DisplayConnector(string name, PinMapping mapping, SpiBusMapping spiBusMappingDisplay)
+        : base(name, new DisplayConnectorPinDefinitions(mapping))
+    {
+        _spiBusMappingDisplay = spiBusMappingDisplay;
+    }
 
     /// <param name="name">The connector name</param>
     /// <param name="mapping">The mappings to the host controller</param>
     /// <param name="spiBusMappingDisplay">The mapping for the display connector's SPI bus</param>
     /// <param name="spiBusMappingTouch">The mapping for the touch connector's SPI bus</param>
-    public DisplayConnector(string name, PinMapping mapping, SpiBusMapping spiBusMappingDisplay, SpiBusMapping? spiBusMappingTouch = null)
+    public DisplayConnector(string name, PinMapping mapping, SpiBusMapping spiBusMappingDisplay, SpiBusMapping? spiBusMappingTouch)
         : base(name, new DisplayConnectorPinDefinitions(mapping))
     {
         _spiBusMappingDisplay = spiBusMappingDisplay;
         _spiBusMappingTouch = spiBusMappingTouch;
+    }
+
+    /// <param name="name">The connector name</param>
+    /// <param name="mapping">The mappings to the host controller</param>
+    /// <param name="spiBusMappingDisplay">The mapping for the display connector's SPI bus</param>
+    /// <param name="i2cBusMappingTouch">The mapping for the touch connector's I2C bus</param>
+    public DisplayConnector(string name, PinMapping mapping, SpiBusMapping spiBusMappingDisplay, I2cBusMapping? i2cBusMappingTouch)
+        : base(name, new DisplayConnectorPinDefinitions(mapping))
+    {
+        _spiBusMappingDisplay = spiBusMappingDisplay;
+        _i2cBusMappingTouch = i2cBusMappingTouch;
     }
 
     /// <summary>
