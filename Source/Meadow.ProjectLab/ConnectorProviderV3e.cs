@@ -9,7 +9,7 @@ namespace Meadow.Devices;
 internal class ConnectorProviderV3e : IConnectorProvider
 {
     private readonly Sc16is752? _uartExpander;
-    private object _mobusSyncRoot = new();
+    private readonly object _mobusSyncRoot = new();
     private ModbusRtuClient? _client;
 
     public ConnectorProviderV3e(ProjectLabHardwareBase projLab, II2cBus i2CBus)
@@ -101,7 +101,7 @@ internal class ConnectorProviderV3e : IConnectorProvider
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, device.Pins.I2C1_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, device.Pins.I2C1_SDA),
             },
-            _uartExpander.PortA,
+            _uartExpander?.PortA,
             new I2cBusMapping(device, 1),
             new SpiBusMapping(device, device.Pins.SCK, device.Pins.COPI, device.Pins.CIPO)
             );
