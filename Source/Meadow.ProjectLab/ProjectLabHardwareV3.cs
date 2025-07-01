@@ -331,6 +331,11 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
             _device.PlatformOS.GetSerialPortName("com4")!);
     }
 
+    internal override Rs485Connector CreateRs485UartConnector()
+    {
+        return _connectors.GetRs485UartConnector(this);
+    }
+
     internal override I2cConnector CreateQwiicConnector()
     {
         Logger?.Trace("Creating Qwiic I2C connector");

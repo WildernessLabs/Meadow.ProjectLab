@@ -11,6 +11,8 @@ internal class ConnectorProviderV3e : IConnectorProvider
     private readonly Sc16is752? _uartExpander;
     private readonly object _mobusSyncRoot = new();
     private ModbusRtuClient? _client;
+    private readonly ISerialPort? _uartPort;
+    private Rs485Connector? _rs485Connector;
 
     public ConnectorProviderV3e(ProjectLabHardwareBase projLab, II2cBus i2CBus)
     {
@@ -22,6 +24,18 @@ internal class ConnectorProviderV3e : IConnectorProvider
         {
             Resolver.Log.Error($"Unable to connect to UART expander: {ex.Message}", Constants.LogGroup);
         }
+    }
+
+    public Rs485Connector GetRs485UartConnector(ProjectLabHardwareBase projLab)
+    {
+        if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
+
+        if (_rs485Connector == null)
+        {
+            _rs485Connector = new ProjectLabRs485Connector(_uartExpander, _uartExpander.PortB);
+        }
+
+        return _rs485Connector;
     }
 
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)

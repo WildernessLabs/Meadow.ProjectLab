@@ -27,7 +27,9 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
     private readonly IF7CoreComputeMeadowDevice _device;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
-    private ITouchScreen? _touchscreen;
+    private readonly ITouchScreen? _touchscreen;
+    private ModbusRtuClient? _client;
+    private ProjectLabRs485Connector? _rs485Connector;
 
     /// <summary>
     /// The MCP23008 IO expander connected to internal peripherals on Project Lab
@@ -434,7 +436,14 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         }
     }
 
-    private ModbusRtuClient? _client;
+    internal override Rs485Connector CreateRs485UartConnector()
+    {
+        if (_rs485Connector == null)
+        {
+            _rs485Connector = new ProjectLabRs485Connector(_uartExpander_1, _uartExpander_1.PortB);
+        }
+        return _rs485Connector;
+    }
 
     /// <inheritdoc/>
     public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)

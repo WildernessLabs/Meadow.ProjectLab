@@ -331,6 +331,11 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         }
     }
 
+    internal override Rs485Connector CreateRs485UartConnector()
+    {
+        throw new PlatformNotSupportedException();
+    }
+
     /// <inheritdoc/>
     public override ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {

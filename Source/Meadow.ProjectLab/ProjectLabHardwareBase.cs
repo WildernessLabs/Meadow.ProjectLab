@@ -129,6 +129,9 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     /// <inheritdoc/>
     public DisplayConnector DisplayHeader => (DisplayConnector)Connectors[7]!;
 
+    /// <inheritdoc/>
+    public UartConnector Rs485Uart => (UartConnector)Connectors[8]!;
+
     internal abstract MikroBusConnector CreateMikroBus1();
     internal abstract MikroBusConnector CreateMikroBus2();
     internal virtual GroveDigitalConnector? CreateGroveDigitalConnector()
@@ -139,6 +142,8 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     internal abstract GroveDigitalConnector CreateGroveAnalogConnector();
 
     internal abstract UartConnector CreateGroveUartConnector();
+
+    internal abstract Rs485Connector CreateRs485UartConnector();
 
     internal abstract I2cConnector CreateQwiicConnector();
 
@@ -164,6 +169,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
                 _connectors[5] = CreateQwiicConnector();
                 _connectors[6] = CreateIOTerminalConnector();
                 _connectors[7] = CreateDisplayConnector();
+                _connectors[8] = CreateRs485UartConnector();
             }
 
             return _connectors;
