@@ -125,7 +125,7 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     /// <summary>
     /// Gets the RS485 UART connector on the Project Lab board.
     /// </summary>
-    UartConnector Rs485Uart { get; }
+    Rs485Connector Rs485Connector { get; }
 
     /// <summary>
     /// Gets the Qwiic connector on the Project Lab board.

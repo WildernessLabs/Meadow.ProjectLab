@@ -130,7 +130,7 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     public DisplayConnector DisplayHeader => (DisplayConnector)Connectors[7]!;
 
     /// <inheritdoc/>
-    public UartConnector Rs485Uart => (UartConnector)Connectors[8]!;
+    public Rs485Connector Rs485Connector => (Rs485Connector)Connectors[8]!;
 
     internal abstract MikroBusConnector CreateMikroBus1();
     internal abstract MikroBusConnector CreateMikroBus2();

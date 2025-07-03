@@ -9,8 +9,8 @@ namespace Meadow.Devices;
 internal class ConnectorProviderV3e : IConnectorProvider
 {
     private readonly Sc16is752? _uartExpander;
-    private readonly object _mobusSyncRoot = new();
-    private ModbusRtuClient? _client;
+    private readonly object _rs485SyncRoot = new();
+    private readonly ModbusRtuClient? _client;
     private readonly ISerialPort? _uartPort;
     private Rs485Connector? _rs485Connector;
 
@@ -29,10 +29,17 @@ internal class ConnectorProviderV3e : IConnectorProvider
     public Rs485Connector GetRs485UartConnector(ProjectLabHardwareBase projLab)
     {
         if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
-
-        if (_rs485Connector == null)
+        if (_uartExpander == null)
         {
-            _rs485Connector = new ProjectLabRs485Connector(_uartExpander, _uartExpander.PortB);
+            throw new NotSupportedException("No UART expander detected");
+        }
+
+        lock (_rs485SyncRoot)
+        {
+            if (_rs485Connector == null)
+            {
+                _rs485Connector = new ProjectLabRs485Connector(_uartExpander, _uartExpander.PortB);
+            }
         }
 
         return _rs485Connector;
@@ -40,34 +47,8 @@ internal class ConnectorProviderV3e : IConnectorProvider
 
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
-        if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
-
-        lock (_mobusSyncRoot)
-        {
-            if (_uartExpander == null)
-            {
-                throw new Exception("No UART expander available");
-            }
-
-            if (_client == null)
-            {
-                try
-                {
-                    Resolver.Log.Info($"Creating 485 port...", Constants.LogGroup);
-                    // v3.e+ uses an SC16is I2C UART expander for the RS485
-                    var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
-                    Resolver.Log.Trace($"485 port created", Constants.LogGroup);
-                    _client = new ModbusRtuClient(port);
-                }
-                catch (Exception ex)
-                {
-                    Resolver.Log.Warn($"Error creating 485 port: {ex.Message}", Constants.LogGroup);
-                    throw new Exception("Unable to connect to UART expander");
-                }
-            }
-        }
-
-        return _client;
+        var connector = GetRs485UartConnector(projLab);
+        return (ModbusRtuClient)connector.CreateModbusBusRtuClient(baudRate, dataBits, parity, stopBits);
     }
 
     public MikroBusConnector CreateMikroBus1(IF7CoreComputeMeadowDevice device, Mcp23008 mcp2)
