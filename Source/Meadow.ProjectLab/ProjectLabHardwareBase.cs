@@ -151,6 +151,8 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
 
     internal abstract DisplayConnector CreateDisplayConnector();
 
+    private readonly object _syncRoot = new object();
+
     /// <summary>
     /// Collection of connectors on the Project Lab board
     /// </summary>
@@ -158,21 +160,24 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
     {
         get
         {
-            if (_connectors == null)
+            lock (_syncRoot)
             {
-                _connectors = new IConnector[8];
-                _connectors[0] = CreateMikroBus1();
-                _connectors[1] = CreateMikroBus2();
-                _connectors[2] = CreateGroveDigitalConnector();
-                _connectors[3] = CreateGroveAnalogConnector();
-                _connectors[4] = CreateGroveUartConnector();
-                _connectors[5] = CreateQwiicConnector();
-                _connectors[6] = CreateIOTerminalConnector();
-                _connectors[7] = CreateDisplayConnector();
-                _connectors[8] = CreateRs485UartConnector();
-            }
+                if (_connectors == null)
+                {
+                    _connectors = new IConnector[9];
+                    _connectors[0] = CreateMikroBus1();
+                    _connectors[1] = CreateMikroBus2();
+                    _connectors[2] = CreateGroveDigitalConnector();
+                    _connectors[3] = CreateGroveAnalogConnector();
+                    _connectors[4] = CreateGroveUartConnector();
+                    _connectors[5] = CreateQwiicConnector();
+                    _connectors[6] = CreateIOTerminalConnector();
+                    _connectors[7] = CreateDisplayConnector();
+                    _connectors[8] = CreateRs485UartConnector();
+                }
 
-            return _connectors;
+                return _connectors;
+            }
         }
     }
 
