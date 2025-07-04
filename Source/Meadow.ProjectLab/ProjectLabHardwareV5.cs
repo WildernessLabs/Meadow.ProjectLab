@@ -4,7 +4,6 @@ using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Peripherals.Displays;
@@ -12,7 +11,6 @@ using Meadow.Peripherals.Leds;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Buttons;
-using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Peripherals.Speakers;
 using Meadow.Units;
 using System;
@@ -22,14 +20,14 @@ using System.Threading;
 namespace Meadow.Devices;
 
 /// <summary>
-/// Represents Project Lab V4 hardware and exposes its peripherals
+/// Represents Project Lab V5 hardware and exposes its peripherals
 /// </summary>
-public class ProjectLabHardwareV4 : ProjectLabHardwareBase
+public class ProjectLabHardwareV5 : ProjectLabHardwareBase
 {
     private readonly IF7CoreComputeMeadowDevice _device;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
-    private ITouchScreen? _touchscreen;
+    private readonly ITouchScreen? _touchscreen;
     private ModbusRtuClient? _client;
     private ProjectLabRs485Connector? _rs485Connector;
 
@@ -66,7 +64,10 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     /// <inheritdoc/>
     public override IRgbPwmLed? RgbLed => GetRgbLed();
 
-    private readonly Sc16is752 _uartExpander;
+    private readonly Sc16is752 _uartExpander_1;
+    private readonly Sc16is752 _uartExpander_2;
+
+    private readonly Pca9685 _pwmExpander;
 
     /// <summary>
     /// Display enable port
@@ -78,7 +79,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     /// </summary>
     public IDigitalOutputPort? DisplayLedPort { get; protected set; }
 
-    internal ProjectLabHardwareV4(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
+    internal ProjectLabHardwareV5(IF7CoreComputeMeadowDevice device, II2cBus i2cBus)
         : base(device, i2cBus)
     {
         _device = device;
@@ -86,11 +87,18 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         IDigitalInterruptPort? mcp1Interrupt = null;
         IDigitalOutputPort? mcp1Reset = null;
 
+        _pwmExpander = new Pca9685(i2cBus, address: 0x70);
+        Logger?.Trace("PWM expander up");
+        _uartExpander_1 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
+        Logger?.Trace("UART1 expander up");
+        _uartExpander_2 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4C);
+        Logger?.Trace("UART2 expander up");
+
         try
         {
             mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC0, InterruptMode.EdgeRising);
 
-            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PA10);
+            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PH10);
 
             Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
@@ -139,13 +147,13 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
         if (downPort != null) DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
 
-        _uartExpander = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
+
     }
 
     /// <inheritdoc/>
     protected override IPixelDisplay? GetDefaultDisplay()
     {
-        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, false);
+        DisplayEnablePort ??= Mcp_1?.CreateDigitalOutputPort(Mcp_1.Pins.GP4, true);
         DisplayLedPort ??= Mcp_1?.CreateDigitalOutputPort(DisplayHeader.Pins.DISPLAY_LED, true);
 
         if (_display == null)
@@ -182,7 +190,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         if (_temperatureSensor == null)
         {
-            InitializeBme688();
+            InitializeAht10();
         }
 
         return _temperatureSensor;
@@ -192,48 +200,26 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         if (_humiditySensor == null)
         {
-            InitializeBme688();
+            InitializeAht10();
         }
 
         return _humiditySensor;
     }
 
-    internal override IBarometricPressureSensor? GetBarometricPressureSensor()
-    {
-        if (_barometricPressureSensor == null)
-        {
-            InitializeBme688();
-        }
-
-        return _barometricPressureSensor;
-    }
-
-    internal override IGasResistanceSensor? GetGasResistanceSensor()
-    {
-        if (_gasResistanceSensor == null)
-        {
-            InitializeBme688();
-        }
-
-        return _gasResistanceSensor;
-    }
-
-    private void InitializeBme688()
+    private void InitializeAht10()
     {
         try
         {
             Logger?.Trace("Instantiating atmospheric sensor");
-            var bme = new Bme688(_peripheralI2cBus, (byte)Bme68x.Addresses.Address_0x76);
-            _humiditySensor = bme;
-            _barometricPressureSensor = bme;
-            _gasResistanceSensor = bme;
-            _temperatureSensor = bme;
-            Resolver.SensorService.RegisterSensor(bme);
+            var aht = new Aht10(_peripheralI2cBus, (byte)Aht10.Addresses.Address_0x38);
+            _humiditySensor = aht;
+            _temperatureSensor = aht;
+            Resolver.SensorService.RegisterSensor(aht);
             Logger?.Trace("Atmospheric sensor up");
         }
         catch (Exception ex)
         {
-            Logger?.Error($"Unable to create the BME688 atmospheric sensor: {ex.Message}");
+            Logger?.Error($"Unable to create the AHT10 atmospheric sensor: {ex.Message}");
         }
     }
 
@@ -244,7 +230,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             try
             {
                 Logger?.Trace("Instantiating speaker");
-                _speaker = new PiezoSpeaker(_device.Pins.PA0);
+                _speaker = new PiezoSpeaker(_device.Pins.PC9);
                 Logger?.Trace("Speaker up");
             }
             catch (Exception ex)
@@ -264,9 +250,9 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             {
                 Logger?.Trace("Instantiating RGB LED");
                 _rgbled = new RgbPwmLed(
-                    redPwmPin: _device.Pins.PC6,
-                    greenPwmPin: _device.Pins.PC7,
-                    bluePwmPin: _device.Pins.PC9,
+                    redPwmPin: _pwmExpander.Pins.LED2,
+                    greenPwmPin: _pwmExpander.Pins.LED1,
+                    bluePwmPin: _pwmExpander.Pins.LED0,
                     CommonType.CommonAnode);
                 Logger?.Trace("RGB LED up");
             }
@@ -283,24 +269,24 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         Logger?.Trace("Creating MikroBus1 connector");
         Debug.Assert(Mcp_2 != null, nameof(Mcp_2) + " != null");
+        Debug.Assert(_pwmExpander != null, nameof(_pwmExpander) + " != null");
+        Debug.Assert(_uartExpander_2 != null, nameof(_uartExpander_2) + " != null");
         return new MikroBusConnector(
             "MikroBus1",
         new PinMapping
         {
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.AN, _device.Pins.PA3),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, _device.Pins.PH10),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, _device.Pins.PB12),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.RST, Mcp_2.Pins.GP4),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.CS, Mcp_2.Pins.GP5),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SPI5_SCK),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.SPI5_CIPO),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, _device.Pins.SPI5_COPI),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _device.Pins.PB8),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, _device.Pins.PC2),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, _device.Pins.PB15),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, _device.Pins.PB14),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _pwmExpander.Pins.LED3),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, Mcp_2.Pins.GP6),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C3_SCL),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C3_SDA),
             },
-            _device.PlatformOS.GetSerialPortName("com1")!,
+            _uartExpander_2.PortB,
             new I2cBusMapping(_device, 3),
             new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO)
             );
@@ -310,6 +296,8 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         Logger?.Trace("Creating MikroBus2 connector");
         Debug.Assert(Mcp_2 != null, nameof(Mcp_2) + " != null");
+        Debug.Assert(_pwmExpander != null, nameof(_pwmExpander) + " != null");
+        Debug.Assert(_uartExpander_1 != null, nameof(_uartExpander_1) + " != null");
         return new MikroBusConnector(
             "MikroBus2",
             new PinMapping
@@ -320,15 +308,13 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.SCK, _device.Pins.SPI3_SCK),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.CIPO, _device.Pins.SPI3_CIPO),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.COPI, _device.Pins.SPI3_COPI),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _device.Pins.PB9),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.PWM, _pwmExpander.Pins.LED4),
                 new PinMapping.PinAlias(MikroBusConnector.PinNames.INT, Mcp_2.Pins.GP3),
-//                new PinMapping.PinAlias(MikroBusConnector.PinNames.RX, uart1rx), // on the I2C uart and not usable for anything else
-//                new PinMapping.PinAlias(MikroBusConnector.PinNames.TX, uart1tx), // on the I2C uart and not usable for anything else
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C1_SCL),
-                new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C1_SDA),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SCL, _device.Pins.I2C3_SCL),
+                new PinMapping.PinAlias(MikroBusConnector.PinNames.SDA, _device.Pins.I2C3_SDA),
             },
-            _device.PlatformOS.GetSerialPortName("com1")!,
-            new I2cBusMapping(_device, 1),
+            _uartExpander_2.PortA,
+            new I2cBusMapping(_device, 3),
             new SpiBusMapping(_device, _device.Pins.SPI3_SCK, _device.Pins.SPI3_COPI, _device.Pins.SPI3_CIPO)
             );
     }
@@ -336,13 +322,14 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     internal override GroveDigitalConnector? CreateGroveDigitalConnector()
     {
         Logger?.Trace("Creating Grove digital connector");
+        Debug.Assert(_pwmExpander != null, nameof(_pwmExpander) + " != null");
 
         return new GroveDigitalConnector(
            nameof(GroveDigital),
             new PinMapping
             {
-                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _device.Pins.PB4),
-                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, Mcp_2!.Pins.GP4),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D0, _pwmExpander.Pins.LED5),
+                new PinMapping.PinAlias(GroveDigitalConnector.PinNames.D1, _pwmExpander.Pins.LED6),
             });
     }
 
@@ -362,15 +349,14 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     internal override UartConnector CreateGroveUartConnector()
     {
         Logger?.Trace("Creating Grove UART connector");
+        Debug.Assert(_uartExpander_2 != null, nameof(_uartExpander_2) + " != null");
 
         return new UartConnector(
            nameof(GroveUart),
             new PinMapping
-            {
-                new PinMapping.PinAlias(UartConnector.PinNames.RX, _device.Pins.PI9),
-                new PinMapping.PinAlias(UartConnector.PinNames.TX, _device.Pins.PH13),
-            },
-            _device.PlatformOS.GetSerialPortName("com4")!);
+            { },
+            _uartExpander_2.PortA
+        );
     }
 
     internal override I2cConnector CreateQwiicConnector()
@@ -381,10 +367,10 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
            nameof(Qwiic),
             new PinMapping
             {
-                new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.PB6),
-                new PinMapping.PinAlias(I2cConnector.PinNames.SDA, _device.Pins.PB7),
+                new PinMapping.PinAlias(I2cConnector.PinNames.SCL, _device.Pins.PH7),
+                new PinMapping.PinAlias(I2cConnector.PinNames.SDA, _device.Pins.PH8),
             },
-            new I2cBusMapping(_device, 1));
+            new I2cBusMapping(_device, 3));
     }
 
     internal override IOTerminalConnector CreateIOTerminalConnector()
@@ -396,33 +382,35 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             new PinMapping
             {
                 new PinMapping.PinAlias(IOTerminalConnector.PinNames.A1, _device.Pins.PB1),
-                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D2, Mcp_2!.Pins.GP6),
-                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D3, Mcp_2.Pins.GP5),
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D2, _device.Pins.PC6),
+                new PinMapping.PinAlias(IOTerminalConnector.PinNames.D3, _device.Pins.PC7),
             });
     }
 
     internal override DisplayConnector CreateDisplayConnector()
     {
         Logger?.Trace("Creating display connector");
+        Debug.Assert(Mcp_1 != null, nameof(Mcp_1) + " != null");
+        Debug.Assert(Mcp_2 != null, nameof(Mcp_2) + " != null");
 
         return new DisplayConnector(
            nameof(Display),
             new PinMapping
             {
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PD5),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, _device.Pins.PB13),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.PI11),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PB15),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, _device.Pins.PB8),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.PB14),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SPI5_SCK),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_COPI, _device.Pins.SPI5_COPI),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_LED, Mcp_1!.Pins.GP5),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_INT, Mcp_2!.Pins.GP0),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CS, Mcp_1.Pins.GP6),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CLK, _device.Pins.SPI3_SCK),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_COPI, _device.Pins.SPI3_COPI),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CIPO, _device.Pins.SPI3_CIPO),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_LED, Mcp_1.Pins.GP5),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_INT, Mcp_2.Pins.GP0),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_CLK, _device.Pins.I2C1_SCL),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_SDA, _device.Pins.I2C1_SDA),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.TOUCH_RST, Mcp_1.Pins.GP6),
             },
             new SpiBusMapping(_device, _device.Pins.SPI5_SCK, _device.Pins.SPI5_COPI, _device.Pins.SPI5_CIPO),
-            new SpiBusMapping(_device, _device.Pins.SPI3_SCK, _device.Pins.SPI3_COPI, _device.Pins.SPI3_CIPO));
+            new I2cBusMapping(_device, 1)
+            );
     }
 
     private byte? _revisionNumber;
@@ -444,7 +432,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         get
         {
-            return _revisionString ??= $"v4.{(Mcp_Version == null ? "x" : RevisionNumber)}";
+            return _revisionString ??= $"v5.{(Mcp_Version == null ? "x" : RevisionNumber)}";
         }
     }
 
@@ -452,7 +440,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         if (_rs485Connector == null)
         {
-            _rs485Connector = new ProjectLabRs485Connector(_uartExpander, _uartExpander.PortB);
+            _rs485Connector = new ProjectLabRs485Connector(_uartExpander_1, _uartExpander_1.PortB);
         }
         return _rs485Connector;
     }
@@ -466,8 +454,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
             {
                 Resolver.Log.Info($"Creating 485 port...", Constants.LogGroup);
 
-                // v3.e+ uses an SC16is I2C UART expander for the RS485
-                var port = _uartExpander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
+                var port = _uartExpander_1.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits, false);
                 Resolver.Log.Trace($"485 port created", Constants.LogGroup);
                 _client = new ModbusRtuClient(port);
             }
@@ -485,12 +472,7 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
     {
         get
         {
-            return _touchscreen ??= new Xpt2046(
-                DisplayHeader.SpiBusDisplay,
-                DisplayHeader.Pins.TOUCH_INT.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, ResistorMode.Disabled),
-                DisplayHeader.Pins.TOUCH_CS.CreateDigitalOutputPort(true),
-                RotationType.Normal
-                );
+            return null;
         }
     }
 }

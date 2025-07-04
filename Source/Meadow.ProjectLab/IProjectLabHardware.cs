@@ -20,127 +20,132 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     /// <summary>
     /// Gets the up button on the Project Lab board.
     /// </summary>
-    public IButton? UpButton { get; }
+    IButton? UpButton { get; }
 
     /// <summary>
     /// Gets the down button on the Project Lab board.
     /// </summary>
-    public IButton? DownButton { get; }
+    IButton? DownButton { get; }
 
     /// <summary>
     /// Gets the left button on the Project Lab board.
     /// </summary>
-    public IButton? LeftButton { get; }
+    IButton? LeftButton { get; }
 
     /// <summary>
     /// Gets the right button on the Project Lab board.
     /// </summary>
-    public IButton? RightButton { get; }
+    IButton? RightButton { get; }
 
     /// <summary>
     /// Gets the piezo speaker on the Project Lab board.
     /// </summary>
-    public IToneGenerator? Speaker { get; }
+    IToneGenerator? Speaker { get; }
 
     /// <summary>
     /// Gets the RGB PWM LED on the Project Lab board.
     /// </summary>
-    public IRgbPwmLed? RgbLed { get; }
+    IRgbPwmLed? RgbLed { get; }
 
     /// <summary>
     /// Gets the light sensor on the Project Lab board.
     /// </summary>
-    public ILightSensor? LightSensor { get; }
+    ILightSensor? LightSensor { get; }
 
     /// <summary>
     /// Gets the ITemperatureSensor on the Project Lab board.
     /// </summary>
-    public ISamplingTemperatureSensor? TemperatureSensor { get; }
+    ISamplingTemperatureSensor? TemperatureSensor { get; }
 
     /// <summary>
     /// Gets the second/alternate ITemperatureSensor on the Project Lab board.
     /// </summary>
-    public ISamplingTemperatureSensor? TemperatureSensor2 { get; }
+    ISamplingTemperatureSensor? TemperatureSensor2 { get; }
 
     /// <summary>
     /// Gets the IHumiditySensor on the Project Lab board.
     /// </summary>
-    public IHumiditySensor? HumiditySensor { get; }
+    IHumiditySensor? HumiditySensor { get; }
 
     /// <summary>
     /// Gets the IBarometricPressureSensor on the Project Lab board.
     /// </summary>
-    public IBarometricPressureSensor? BarometricPressureSensor { get; }
+    IBarometricPressureSensor? BarometricPressureSensor { get; }
 
     /// <summary>
     /// Gets the IGasResistanceSensor on the Project Lab board.
     /// </summary>
-    public IGasResistanceSensor? GasResistanceSensor { get; }
+    IGasResistanceSensor? GasResistanceSensor { get; }
 
     /// <summary>
-    /// Gets the IGyroscope on the Project Lab board
+    /// Gets the IGyroscope on the Project Lab board.
     /// </summary>
-    public IGyroscope? Gyroscope { get; }
+    IGyroscope? Gyroscope { get; }
 
     /// <summary>
-    /// Gets the IAccelerometer on the Project Lab board
+    /// Gets the IAccelerometer on the Project Lab board.
     /// </summary>
-    public IAccelerometer? Accelerometer { get; }
+    IAccelerometer? Accelerometer { get; }
 
     /// <summary>
     /// Gets the graphics display on the Project Lab board.
     /// </summary>
-    public IPixelDisplay? Display { get; }
+    IPixelDisplay? Display { get; }
 
     /// <summary>
     /// Gets the revision string of the Project Lab board.
     /// </summary>
-    public string RevisionString { get; }
+    string RevisionString { get; }
 
     /// <summary>
     /// Gets MikroBus connector 1 on the Project Lab board.
     /// </summary>
-    public MikroBusConnector MikroBus1 { get; }
+    MikroBusConnector MikroBus1 { get; }
 
     /// <summary>
     /// Gets MikroBus connector 2 on the Project Lab board.
     /// </summary>
-    public MikroBusConnector MikroBus2 { get; }
+    MikroBusConnector MikroBus2 { get; }
 
     /// <summary>
     /// Gets the Grove Digital connector on the Project Lab board.
     /// </summary>
-    public GroveDigitalConnector? GroveDigital { get; }
+    GroveDigitalConnector? GroveDigital { get; }
 
     /// <summary>
     /// Gets the Grove Analog connector on the Project Lab board.
     /// </summary>
-    public GroveDigitalConnector GroveAnalog { get; }
+    GroveDigitalConnector GroveAnalog { get; }
 
     /// <summary>
     /// Gets the Grove UART connector on the Project Lab board.
     /// </summary>
-    public UartConnector GroveUart { get; }
+    UartConnector GroveUart { get; }
+
+    /// <summary>
+    /// Gets the RS485 UART connector on the Project Lab board.
+    /// </summary>
+    Rs485Connector Rs485Connector { get; }
 
     /// <summary>
     /// Gets the Qwiic connector on the Project Lab board.
     /// </summary>
-    public I2cConnector Qwiic { get; }
+    I2cConnector Qwiic { get; }
 
     /// <summary>
     /// Gets the IO Terminal connector on the Project Lab board.
     /// </summary>
-    public IOTerminalConnector IOTerminal { get; }
+    IOTerminalConnector IOTerminal { get; }
 
     /// <summary>
     /// Gets the display header connector on the Project Lab board.
     /// </summary>
-    public DisplayConnector DisplayHeader { get; }
+    DisplayConnector DisplayHeader { get; }
 
     /// <summary>
-    /// Gets the touchscreen on the Project Lab display
+    /// Gets the touchscreen on the Project Lab display.
     /// </summary>
-    public ITouchScreen? Touchscreen { get; }
+    ITouchScreen? Touchscreen { get; }
 
     /// <summary>
     /// Get a Modbus RTU client with optional parameters.
@@ -150,5 +155,5 @@ public interface IProjectLabHardware : IMeadowAppEmbeddedHardware
     /// <param name="parity">The parity setting.</param>
     /// <param name="stopBits">The stop bits setting.</param>
     /// <returns>A Modbus RTU client.</returns>
-    public ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
+    ModbusRtuClient GetModbusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One);
 }

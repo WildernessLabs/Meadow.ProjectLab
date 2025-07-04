@@ -63,7 +63,7 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
 
         IDigitalInterruptPort? mcpInterrupt = null;
         IDigitalOutputPort? mcpReset = null;
-        bool isV3 = false;
+        int version = 0;
 
         if (device is IF7FeatherMeadowDevice f)
         {
@@ -92,12 +92,11 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
                 mcp = new Mcp23008(i2cBus, address: 0x27, resetPort: mcpReset);
 
                 logger?.Trace("Mcp_version up");
-                isV3 = mcp.ReadFromPorts() < 17;
+                version = mcp.ReadFromPorts();
             }
             catch
             {
                 logger?.Debug("Failed to create version MCP: could be a v3 board");
-                isV3 = true;
             }
             finally
             {
@@ -109,20 +108,24 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
         switch (device)
         {
             case IF7FeatherMeadowDevice feather when mcp is null:
-                logger?.Info("Instantiating Project Lab v1 specific hardware");
+                logger?.Info("Instantiating Project Lab v1 hardware");
                 hardware = new ProjectLabHardwareV1(feather, i2cBus);
                 break;
             case IF7FeatherMeadowDevice feather:
-                logger?.Info("Instantiating Project Lab v2 specific hardware");
+                logger?.Info("Instantiating Project Lab v2 hardware");
                 hardware = new ProjectLabHardwareV2(feather, i2cBus, mcp);
                 break;
-            case IF7CoreComputeMeadowDevice ccm when isV3 == true:
-                logger?.Info($"Instantiating Project Lab v3 specific hardware");
+            case IF7CoreComputeMeadowDevice ccm when version < 17:
+                logger?.Info($"Instantiating Project Lab v3 hardware");
                 hardware = new ProjectLabHardwareV3(ccm, i2cBus);
                 break;
-            case IF7CoreComputeMeadowDevice ccm:
-                logger?.Info($"Instantiating Project Lab v4 specific hardware");
+            case IF7CoreComputeMeadowDevice ccm when version < 18:
+                logger?.Info($"Instantiating Project Lab v4 hardware");
                 hardware = new ProjectLabHardwareV4(ccm, i2cBus);
+                break;
+            case IF7CoreComputeMeadowDevice ccm:
+                logger?.Info($"Instantiating Project Lab v5 hardware");
+                hardware = new ProjectLabHardwareV5(ccm, i2cBus);
                 break;
             default:
                 throw new NotSupportedException();

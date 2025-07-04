@@ -7,6 +7,11 @@ namespace Meadow.Devices;
 
 internal class ConnectorProviderV3 : IConnectorProvider
 {
+    public Rs485Connector GetRs485UartConnector(ProjectLabHardwareBase projLab)
+    {
+        throw new PlatformNotSupportedException("RS485 is not supported on hardware revisions before 3.e");
+    }
+
     public ModbusRtuClient GetModbusRtuClient(ProjectLabHardwareBase projLab, int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
         if (Resolver.Device is F7CoreComputeV2)
