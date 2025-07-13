@@ -397,9 +397,9 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
            nameof(Display),
             new PinMapping
             {
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PB15),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PB4),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, _device.Pins.PB8),
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.PB14),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.PI11),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SPI5_SCK),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_COPI, _device.Pins.SPI5_COPI),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_LED, Mcp_1.Pins.GP5),

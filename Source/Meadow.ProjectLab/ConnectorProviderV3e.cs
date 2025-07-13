@@ -22,20 +22,22 @@ internal class ConnectorProviderV3e : IConnectorProvider
         }
         catch (Exception ex)
         {
-            Resolver.Log.Error($"Unable to connect to UART expander: {ex.Message}", Constants.LogGroup);
+            Resolver.Log.Warn($"Unable to connect to UART expander: {ex.Message}", Constants.LogGroup);
         }
     }
 
     public Rs485Connector GetRs485UartConnector(ProjectLabHardwareBase projLab)
     {
         if (Resolver.Device is not F7CoreComputeV2) throw new NotSupportedException();
-        if (_uartExpander == null)
-        {
-            throw new NotSupportedException("No UART expander detected");
-        }
 
         lock (_rs485SyncRoot)
         {
+            if (_uartExpander == null)
+            {
+                // create it with no parameters - it will throw only if a client tries to actually use it
+                _rs485Connector = new ProjectLabRs485Connector();
+            }
+
             if (_rs485Connector == null)
             {
                 _rs485Connector = new ProjectLabRs485Connector(_uartExpander, _uartExpander.PortB);
