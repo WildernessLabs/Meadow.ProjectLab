@@ -133,12 +133,12 @@ public class ProjectLabHardwareV3 : ProjectLabHardwareBase
 
         if (RevisionNumber < 15) // before 3.e
         {
-            Logger?.Trace("Hardware is 3.d or earlier");
+            Logger?.Trace($"HW Revision: {RevisionNumber} Hardware is 3.d or earlier");
             _connectors = new ConnectorProviderV3();
         }
         else
         {
-            Logger?.Trace("Hardware is 3.e or later");
+            Logger?.Trace($"HW Revision: {RevisionNumber} Hardware is 3.e or later");
             _connectors = new ConnectorProviderV3e(this, i2cBus);
         }
     }

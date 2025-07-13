@@ -74,4 +74,4 @@ jobs:
           8.0.x
     
     - name: Build Meadow.ProjectLab
-      run: dotnet build -c Release Meadow.ProjectLab/Source/Meadow.ProjectLab.sln
+      run: dotnet build -c Release Meadow.ProjectLab/Source/Meadow.ProjectLab.slnx

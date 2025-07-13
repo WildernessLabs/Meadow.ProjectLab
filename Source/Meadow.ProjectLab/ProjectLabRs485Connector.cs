@@ -7,10 +7,16 @@ namespace Meadow.Devices;
 
 public class ProjectLabRs485Connector : Rs485Connector
 {
-    private readonly Sc16is752 _expander;
+    private readonly Sc16is752? _expander;
     private ISerialPort? _serialPort;
     private ModbusRtuClient? _modbusClient;
     private ModbusRtuServer? _modbusServer;
+
+    internal ProjectLabRs485Connector()
+        : base("Unsupported hardware", new SerialPortName("null", "null", null))
+    {
+
+    }
 
     internal ProjectLabRs485Connector(Sc16is752 expander, SerialPortName portName)
         : base("RS485", portName)
@@ -23,6 +29,12 @@ public class ProjectLabRs485Connector : Rs485Connector
     /// <inheritdoc/>
     public override ISerialPort CreateSerialPort(int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 1024)
     {
+        if (_expander == null)
+        {
+            throw new NotSupportedException("No UART expander detected");
+        }
+
+        Resolver.Log.Info("Creating RS485 serial port...");
         _serialPort = _expander.PortB.CreateRs485SerialPort(baudRate, dataBits, parity, stopBits);
         return _serialPort;
     }
@@ -30,6 +42,11 @@ public class ProjectLabRs485Connector : Rs485Connector
     /// <inheritdoc/>
     public override IModbusBusClient CreateModbusBusRtuClient(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
+        if (_expander == null)
+        {
+            throw new NotSupportedException("No UART expander detected");
+        }
+
         Resolver.Log.Info("Creating Modbus RTU client...");
         lock (_expander)
         {
@@ -55,6 +72,11 @@ public class ProjectLabRs485Connector : Rs485Connector
     /// <inheritdoc/>
     public override IModbusServer CreateModbusBusRtuServer(int baudRate = 19200, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
     {
+        if (_expander == null)
+        {
+            throw new NotSupportedException("No UART expander detected");
+        }
+
         Resolver.Log.Info("Creating Modbus RTU server...");
         lock (_expander)
         {

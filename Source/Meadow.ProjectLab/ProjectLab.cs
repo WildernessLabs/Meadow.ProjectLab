@@ -13,10 +13,28 @@ public abstract class ProjectLabFeatherApp : App<F7FeatherV2, ProjectLab, IProje
 }
 
 /// <summary>
-/// A base class for F7 Core Compute-based, Project Lab-targeted applications 
+/// A base class for F7 Core Compute (v4 and earlier)-based, Project Lab-targeted applications 
 /// </summary>
 public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLab, IProjectLabHardware>
 {
+}
+
+/// <summary>
+/// A base class for F7 Core Compute (v5)-based, Project Lab-targeted applications 
+/// </summary>
+public abstract class ProjectLabV5App : App<F7CoreComputeV2, ProjectLabV5, IProjectLabHardware>
+{
+}
+
+/// <summary>
+/// Represents Project Lab hardware and exposes its peripherals
+/// </summary>
+public class ProjectLabV5 : ProjectLab
+{
+    protected override IPin GetMcpResetPin(IF7CoreComputeMeadowDevice ccm)
+    {
+        return ccm.Pins.PH10;
+    }
 }
 
 /// <summary>
@@ -24,7 +42,12 @@ public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLab
 /// </summary>
 public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware>
 {
-    private ProjectLab() { }
+    protected ProjectLab() { }
+
+    protected virtual IPin GetMcpResetPin(IF7CoreComputeMeadowDevice ccm)
+    {
+        return ccm.Pins.PB4; // this is where it is on the 4.e
+    }
 
     /// <summary>
     /// Create an instance of the ProjectLab class
@@ -72,6 +95,7 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
                 mcpInterrupt = device.CreateDigitalInterruptPort(f.Pins.D09, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
                 mcpReset = device.CreateDigitalOutputPort(f.Pins.D14);
 
+                logger?.Info("creating Mcp_1 at 0x20");
                 mcp = new Mcp23008(i2cBus, address: 0x20, mcpInterrupt, mcpReset);
 
                 logger?.Trace("Mcp_1 up");
@@ -87,7 +111,9 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
         {
             try
             {
-                mcpReset = device.CreateDigitalOutputPort(c.Pins.PA10);
+                var reset = GetMcpResetPin(c);
+                Resolver.Log.Info($"Using MCP reset pin {reset.Name}");
+                mcpReset = device.CreateDigitalOutputPort(reset);
 
                 mcp = new Mcp23008(i2cBus, address: 0x27, resetPort: mcpReset);
 

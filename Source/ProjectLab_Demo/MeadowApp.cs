@@ -10,7 +10,8 @@ namespace ProjectLab_Demo;
 
 // Change to ProjectLabFeatherApp for Project Lab V1 or V2
 // Change to ProjectLabCoreComputeApp for Project Lab V3+
-public class MeadowApp : ProjectLabCoreComputeApp
+// public class MeadowApp : ProjectLabCoreComputeApp // <-- this is for V3/v4
+public class MeadowApp : ProjectLabV5App // this is for v5+
 {
     private DisplayController? displayController;
 
