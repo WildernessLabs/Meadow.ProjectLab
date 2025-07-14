@@ -88,6 +88,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         IDigitalOutputPort? mcp1Reset = null;
 
         _pwmExpander = new Pca9685(i2cBus, address: 0x70);
+
         Logger?.Trace("PWM expander up");
         _uartExpander_1 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
         Logger?.Trace("UART1 expander up");
@@ -174,7 +175,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
                 colorMode: ColorMode.Format12bppRgb444)
             {
                 SpiBusMode = SpiClockConfiguration.Mode.Mode3,
-                SpiBusSpeed = new Frequency(24000, Frequency.UnitType.Kilohertz)
+                SpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz)
             };
 
             ((Ili9341)_display).SetRotation(RotationType._270Degrees);

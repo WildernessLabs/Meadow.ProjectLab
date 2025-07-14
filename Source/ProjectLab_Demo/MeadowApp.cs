@@ -108,7 +108,7 @@ public class MeadowApp : ProjectLabV5App // this is for v5+
     private void OnTemperatureSensorUpdated(object sender, IChangeResult<Temperature> e)
     {
         Resolver.Log.Info($"TEMPERATURE: {e.New.Celsius:N1}C");
-        displayController!.UpdateTemperatureValue(e.New, Hardware.TemperatureSensor?.Temperature ?? new Temperature(0));
+        displayController!.UpdateTemperatureValue(e.New, Hardware.TemperatureSensor2?.Temperature ?? new Temperature(0));
     }
 
     private void OnPressureSensorUpdated(object sender, IChangeResult<Pressure> e)
@@ -156,6 +156,10 @@ public class MeadowApp : ProjectLabV5App // this is for v5+
         {
             temperature.StartUpdating(updateInterveral);
         }
+        if (Hardware?.TemperatureSensor2 is { } temperature2)
+        {
+            temperature2.StartUpdating(updateInterveral);
+        }
         if (Hardware?.BarometricPressureSensor is { } barometer)
         {
             barometer.StartUpdating(updateInterveral);
@@ -181,7 +185,7 @@ public class MeadowApp : ProjectLabV5App // this is for v5+
         if (Hardware?.RgbLed is { } rgbLed)
         {
             Resolver.Log.Info("starting blink");
-            _ = rgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f);
+            _ = rgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f, 0.1f);
         }
     }
 }

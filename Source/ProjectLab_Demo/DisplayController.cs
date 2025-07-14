@@ -58,12 +58,12 @@ public class DisplayController
         displayScreen.Controls.Add(CreateLeftLabel("Left:", buttonColor, rowMargin, rowOffset + rowHeight * 8, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Right:", buttonColor, rowMargin, rowOffset + rowHeight * 9, displayScreen.Width, rowHeight));
 
-        temperature = CreateRightLabel("0ºC", atmosphericColor, rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight);
-        pressure = CreateRightLabel("0atm", atmosphericColor, rowMargin, rowOffset + rowHeight, displayScreen.Width - rowMargin * 2, rowHeight);
-        humidity = CreateRightLabel("0%", atmosphericColor, rowMargin, rowOffset + rowHeight * 2, displayScreen.Width - rowMargin * 2, rowHeight);
-        iluminance = CreateRightLabel("0Lux", atmosphericColor, rowMargin, rowOffset + rowHeight * 3, displayScreen.Width - rowMargin * 2, rowHeight);
-        acceleration3D = CreateRightLabel("0,0,0g", motionColor, rowMargin, rowOffset + rowHeight * 4, displayScreen.Width - rowMargin * 2, rowHeight);
-        angularVelocity3D = CreateRightLabel("0,0,0rpm", motionColor, rowMargin, rowOffset + rowHeight * 5, displayScreen.Width - rowMargin * 2, rowHeight);
+        temperature = CreateRightLabel("", atmosphericColor, rowMargin, rowOffset, displayScreen.Width - rowMargin * 2, rowHeight);
+        pressure = CreateRightLabel("", atmosphericColor, rowMargin, rowOffset + rowHeight, displayScreen.Width - rowMargin * 2, rowHeight);
+        humidity = CreateRightLabel("", atmosphericColor, rowMargin, rowOffset + rowHeight * 2, displayScreen.Width - rowMargin * 2, rowHeight);
+        iluminance = CreateRightLabel("", atmosphericColor, rowMargin, rowOffset + rowHeight * 3, displayScreen.Width - rowMargin * 2, rowHeight);
+        acceleration3D = CreateRightLabel("", motionColor, rowMargin, rowOffset + rowHeight * 4, displayScreen.Width - rowMargin * 2, rowHeight);
+        angularVelocity3D = CreateRightLabel("", motionColor, rowMargin, rowOffset + rowHeight * 5, displayScreen.Width - rowMargin * 2, rowHeight);
         buttonUp = CreateRightLabel("Released", buttonColor, rowMargin, rowOffset + rowHeight * 6, displayScreen.Width - rowMargin * 2, rowHeight);
         buttonDown = CreateRightLabel("Released", buttonColor, rowMargin, rowOffset + rowHeight * 7, displayScreen.Width - rowMargin * 2, rowHeight);
         buttonLeft = CreateRightLabel("Released", buttonColor, rowMargin, rowOffset + rowHeight * 8, displayScreen.Width - rowMargin * 2, rowHeight);
