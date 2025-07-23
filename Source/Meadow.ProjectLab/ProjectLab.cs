@@ -42,6 +42,8 @@ public class ProjectLabV5 : ProjectLab
 /// </summary>
 public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware>
 {
+    private static IProjectLabHardware? _instance;
+
     protected ProjectLab() { }
 
     protected virtual IPin GetMcpResetPin(IF7CoreComputeMeadowDevice ccm)
@@ -54,7 +56,7 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
     /// </summary>
     public static IProjectLabHardware Create()
     {
-        return new ProjectLab()
+        return _instance ??= new ProjectLab()
             .Create(Resolver.Services.Get<IMeadowDevice>()!);
     }
 
