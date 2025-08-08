@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.Audio;
+using Meadow.Foundation.Audio;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Leds;
@@ -42,7 +42,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
     public Mcp23008? Mcp_2 { get; protected set; }
 
     /// <summary>
-    /// The MCP23008 IO expander that contains the ProjectLab hardware version 
+    /// The MCP23008 IO expander that contains the ProjectLab hardware version
     /// </summary>
     private Mcp23008? Mcp_Version { get; set; }
 
@@ -398,7 +398,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
            nameof(Display),
             new PinMapping
             {
-                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PB4),
+                new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CS, _device.Pins.PH10),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_RST, _device.Pins.PB8),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_DC, _device.Pins.PI11),
                 new PinMapping.PinAlias(DisplayConnector.PinNames.DISPLAY_CLK, _device.Pins.SPI5_SCK),

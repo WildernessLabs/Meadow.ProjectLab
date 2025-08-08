@@ -6,21 +6,21 @@ using System;
 namespace Meadow.Devices;
 
 /// <summary>
-/// A base class for Feather-based, Project Lab-targeted applications 
+/// A base class for Feather-based, Project Lab-targeted applications
 /// </summary>
 public abstract class ProjectLabFeatherApp : App<F7FeatherV2, ProjectLab, IProjectLabHardware>
 {
 }
 
 /// <summary>
-/// A base class for F7 Core Compute (v4 and earlier)-based, Project Lab-targeted applications 
+/// A base class for F7 Core Compute (v4 and earlier)-based, Project Lab-targeted applications
 /// </summary>
 public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLab, IProjectLabHardware>
 {
 }
 
 /// <summary>
-/// A base class for F7 Core Compute (v5)-based, Project Lab-targeted applications 
+/// A base class for F7 Core Compute (v5)-based, Project Lab-targeted applications
 /// </summary>
 public abstract class ProjectLabV5App : App<F7CoreComputeV2, ProjectLabV5, IProjectLabHardware>
 {
@@ -33,7 +33,8 @@ public class ProjectLabV5 : ProjectLab
 {
     protected override IPin GetMcpResetPin(IF7CoreComputeMeadowDevice ccm)
     {
-        return ccm.Pins.PH10;
+        return ccm.Pins.PB4;
+        //return ccm.Pins.PH10;
     }
 }
 
