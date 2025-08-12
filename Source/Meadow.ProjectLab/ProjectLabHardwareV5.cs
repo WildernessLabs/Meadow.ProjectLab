@@ -99,7 +99,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         {
             mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC0, InterruptMode.EdgeRising);
 
-            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PH10);
+            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PB4);
 
             Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
