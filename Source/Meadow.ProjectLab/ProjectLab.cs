@@ -20,36 +20,22 @@ public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLab
 }
 
 /// <summary>
-/// A base class for F7 Core Compute (v5)-based, Project Lab-targeted applications
-/// </summary>
-public abstract class ProjectLabV5App : App<F7CoreComputeV2, ProjectLabV5, IProjectLabHardware>
-{
-}
-
-/// <summary>
-/// Represents Project Lab hardware and exposes its peripherals
-/// </summary>
-public class ProjectLabV5 : ProjectLab
-{
-    protected override IPin GetMcpResetPin(IF7CoreComputeMeadowDevice ccm)
-    {
-        return ccm.Pins.PB4;
-        //return ccm.Pins.PH10;
-    }
-}
-
-/// <summary>
 /// Represents Project Lab hardware and exposes its peripherals
 /// </summary>
 public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware>
 {
     private static IProjectLabHardware? _instance;
 
-    protected ProjectLab() { }
+    internal ProjectLab() { }
 
-    protected virtual IPin GetMcpResetPin(IF7CoreComputeMeadowDevice ccm)
+    internal virtual IPin GetMcpResetPin1(IF7CoreComputeMeadowDevice ccm)
     {
-        return ccm.Pins.PB4; // this is where it is on the 4.e
+        return ccm.Pins.PH10; // this is where it is on the 3.x and 5.b+
+    }
+
+    internal virtual IPin GetMcpResetPin2(IF7CoreComputeMeadowDevice ccm)
+    {
+        return ccm.Pins.PB4; // this is where it is on the 4.e and 5.a
     }
 
     /// <summary>
@@ -114,7 +100,7 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
         {
             try
             {
-                var reset = GetMcpResetPin(c);
+                var reset = GetMcpResetPin1(c);
                 Resolver.Log.Info($"Using MCP reset pin {reset.Name}");
                 mcpReset = device.CreateDigitalOutputPort(reset);
 
@@ -125,7 +111,24 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
             }
             catch
             {
-                logger?.Debug("Failed to create version MCP: could be a v3 board");
+                mcpReset?.Dispose();
+                mcp = null;
+
+                try
+                {
+                    var reset = GetMcpResetPin2(c);
+                    Resolver.Log.Info($"Using MCP reset pin {reset.Name}");
+                    mcpReset = device.CreateDigitalOutputPort(reset);
+
+                    mcp = new Mcp23008(i2cBus, address: 0x27, resetPort: mcpReset);
+
+                    logger?.Trace("Mcp_version up");
+                    version = mcp.ReadFromPorts();
+                }
+                catch
+                {
+                    logger?.Debug("Failed to create version MCP: could be a v3 board");
+                }
             }
             finally
             {
