@@ -9,15 +9,13 @@ namespace Meadow.Devices;
 /// A base class for Feather-based, Project Lab-targeted applications
 /// </summary>
 public abstract class ProjectLabFeatherApp : App<F7FeatherV2, ProjectLab, IProjectLabHardware>
-{
-}
+{ }
 
 /// <summary>
 /// A base class for F7 Core Compute (v4 and earlier)-based, Project Lab-targeted applications
 /// </summary>
 public abstract class ProjectLabCoreComputeApp : App<F7CoreComputeV2, ProjectLab, IProjectLabHardware>
-{
-}
+{ }
 
 /// <summary>
 /// Represents Project Lab hardware and exposes its peripherals
@@ -30,12 +28,12 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
 
     internal virtual IPin GetMcpResetPin1(IF7CoreComputeMeadowDevice ccm)
     {
-        return ccm.Pins.PH10; // this is where it is on the 3.x and 5.b+
+        return ccm.Pins.PB4; // this is where it is on the 3.x and 5.b+
     }
 
     internal virtual IPin GetMcpResetPin2(IF7CoreComputeMeadowDevice ccm)
     {
-        return ccm.Pins.PB4; // this is where it is on the 4.e and 5.a
+        return ccm.Pins.PH10; // this is where it is on the 4.e and 5.a
     }
 
     /// <summary>
