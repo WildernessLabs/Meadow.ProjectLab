@@ -192,6 +192,33 @@ public class ProjectLabHardwareV1 : ProjectLabHardwareBase
         return _rgbled;
     }
 
+    /// <summary>
+    /// Collection of connectors on the Project Lab board
+    /// </summary>
+    public override IConnector?[] Connectors
+    {
+        get
+        {
+            lock (_syncRoot)
+            {
+                if (_connectors == null)
+                {
+                    _connectors = new IConnector[8];
+                    _connectors[0] = CreateMikroBus1();
+                    _connectors[1] = CreateMikroBus2();
+                    _connectors[2] = CreateGroveDigitalConnector();
+                    _connectors[3] = CreateGroveAnalogConnector();
+                    _connectors[4] = CreateGroveUartConnector();
+                    _connectors[5] = CreateQwiicConnector();
+                    _connectors[6] = CreateIOTerminalConnector();
+                    _connectors[7] = CreateDisplayConnector();
+                }
+
+                return _connectors;
+            }
+        }
+    }
+
     internal override MikroBusConnector CreateMikroBus1()
     {
         Logger?.Trace("Creating MikroBus1 connector");

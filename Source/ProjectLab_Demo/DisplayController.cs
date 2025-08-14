@@ -47,10 +47,10 @@ public class DisplayController
             HorizontalAlignment = HorizontalAlignment.Center
         });
 
-        displayScreen.Controls.Add(CreateLeftLabel("Temperature:", atmosphericColor, rowMargin, rowOffset, displayScreen.Width, rowHeight));
+        displayScreen.Controls.Add(CreateLeftLabel(displayScreen.Width == 240 ? "Temp:" : "Temperature:", atmosphericColor, rowMargin, rowOffset, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Pressure:", atmosphericColor, rowMargin, rowOffset + rowHeight, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Humidity:", atmosphericColor, rowMargin, rowOffset + rowHeight * 2, displayScreen.Width, rowHeight));
-        displayScreen.Controls.Add(CreateLeftLabel("Illuminance:", atmosphericColor, rowMargin, rowOffset + rowHeight * 3, displayScreen.Width, rowHeight));
+        displayScreen.Controls.Add(CreateLeftLabel(displayScreen.Width == 240 ? "Light:" : "Illuminance:", atmosphericColor, rowMargin, rowOffset + rowHeight * 3, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Accel:", motionColor, rowMargin, rowOffset + rowHeight * 4, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Gyro:", motionColor, rowMargin, rowOffset + rowHeight * 5, displayScreen.Width, rowHeight));
         displayScreen.Controls.Add(CreateLeftLabel("Up:", buttonColor, rowMargin, rowOffset + rowHeight * 6, displayScreen.Width, rowHeight));

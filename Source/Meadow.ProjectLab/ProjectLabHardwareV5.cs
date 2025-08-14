@@ -24,7 +24,7 @@ namespace Meadow.Devices;
 /// </summary>
 public class ProjectLabHardwareV5 : ProjectLabHardwareBase
 {
-    private readonly IF7CoreComputeMeadowDevice _device;
+    internal readonly IF7CoreComputeMeadowDevice _device;
     private IToneGenerator? _speaker;
     private IRgbPwmLed? _rgbled;
     private readonly ITouchScreen? _touchscreen;
@@ -99,7 +99,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         {
             mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC0, InterruptMode.EdgeRising);
 
-            mcp1Reset = device.CreateDigitalOutputPort(device.Pins.PB4);
+            mcp1Reset = device.CreateDigitalOutputPort(GetVersionResetPin(device));
 
             Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
@@ -147,8 +147,11 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         var downPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
         if (downPort != null) DownButton = new PushButton(downPort);
         Logger?.Trace("Buttons up");
+    }
 
-
+    internal virtual IPin GetVersionResetPin(IF7CoreComputeMeadowDevice device)
+    {
+        return device.Pins.PB4;
     }
 
     /// <inheritdoc/>

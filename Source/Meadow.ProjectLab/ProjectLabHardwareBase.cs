@@ -151,12 +151,12 @@ public abstract class ProjectLabHardwareBase : IProjectLabHardware
 
     internal abstract DisplayConnector CreateDisplayConnector();
 
-    private readonly object _syncRoot = new object();
+    internal readonly object _syncRoot = new object();
 
     /// <summary>
     /// Collection of connectors on the Project Lab board
     /// </summary>
-    public IConnector?[] Connectors
+    public virtual IConnector?[] Connectors
     {
         get
         {
