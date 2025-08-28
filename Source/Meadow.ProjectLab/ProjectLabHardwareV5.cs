@@ -89,25 +89,24 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
 
         _pwmExpander = new Pca9685(i2cBus, address: 0x70);
 
-        Logger?.Trace("PWM expander up");
+        Logger?.Trace("PWM expander up", Constants.LogGroup);
         _uartExpander_1 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4D);
-        Logger?.Trace("UART1 expander up");
+        Logger?.Trace("UART1 expander up", Constants.LogGroup);
         _uartExpander_2 = new Sc16is752(i2cBus, new Frequency(1.8432, Frequency.UnitType.Megahertz), Sc16is7x2.Addresses.Address_0x4C);
-        Logger?.Trace("UART2 expander up");
+        Logger?.Trace("UART2 expander up", Constants.LogGroup);
 
         try
         {
-            mcp1Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC0, InterruptMode.EdgeRising);
-
+            mcp1Interrupt = device.Pins.PC0.CreateDigitalInterruptPort(InterruptMode.EdgeRising);
             mcp1Reset = device.CreateDigitalOutputPort(GetVersionResetPin(device));
 
             Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
-            Logger?.Trace("Mcp_1 up");
+            Logger?.Trace("Mcp_1 up", Constants.LogGroup);
         }
         catch (Exception e)
         {
-            Logger?.Trace($"Failed to create MCP1: {e.Message}");
+            Logger?.Info($"Failed to create MCP1: {e.Message}", Constants.LogGroup);
             mcp1Interrupt?.Dispose();
         }
 
@@ -115,29 +114,29 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
 
         try
         {
-            mcp2Interrupt = device.CreateDigitalInterruptPort(device.Pins.PC8, InterruptMode.EdgeRising);
+            mcp2Interrupt = device.Pins.PC8.CreateDigitalInterruptPort(InterruptMode.EdgeRising);
 
             Mcp_2 = new Mcp23008(i2cBus, address: 0x21, mcp2Interrupt);
 
-            Logger?.Trace("Mcp_2 up");
+            Logger?.Trace("Mcp_2 up", Constants.LogGroup);
         }
         catch (Exception e)
         {
-            Logger?.Trace($"Failed to create MCP2: {e.Message}");
+            Logger?.Info($"Failed to create MCP2: {e.Message}", Constants.LogGroup);
             mcp2Interrupt?.Dispose();
         }
 
         try
         {
             Mcp_Version = new Mcp23008(i2cBus, address: 0x27);
-            Logger?.Trace("Mcp_Version up");
+            Logger?.Trace("Mcp_Version up", Constants.LogGroup);
         }
         catch (Exception e)
         {
-            Logger?.Trace($"ERR creating the MCP that has version information: {e.Message}");
+            Logger?.Info($"ERR creating the MCP that has version information: {e.Message}", Constants.LogGroup);
         }
 
-        Logger?.Trace("Instantiating buttons");
+        Logger?.Trace("Instantiating buttons", Constants.LogGroup);
         var leftPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
         if (leftPort != null) LeftButton = new PushButton(leftPort);
         var rightPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
@@ -146,7 +145,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
         if (upPort != null) UpButton = new PushButton(upPort);
         var downPort = Mcp_1?.CreateDigitalInterruptPort(Mcp_1.Pins.GP3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
         if (downPort != null) DownButton = new PushButton(downPort);
-        Logger?.Trace("Buttons up");
+        Logger?.Trace("Buttons up", Constants.LogGroup);
     }
 
     internal virtual IPin GetVersionResetPin(IF7CoreComputeMeadowDevice device)
@@ -258,6 +257,10 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
                     greenPwmPin: _pwmExpander.Pins.LED1,
                     bluePwmPin: _pwmExpander.Pins.LED0,
                     CommonType.CommonAnode);
+
+                // initialize off
+                _rgbled.IsOn = true;
+
                 Logger?.Trace("RGB LED up");
             }
             catch (Exception ex)

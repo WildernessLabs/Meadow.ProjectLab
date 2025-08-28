@@ -85,11 +85,11 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
                 logger?.Info("creating Mcp_1 at 0x20");
                 mcp = new Mcp23008(i2cBus, address: 0x20, mcpInterrupt, mcpReset);
 
-                logger?.Trace("Mcp_1 up");
+                logger?.Trace("Mcp_1 up", Constants.LogGroup);
             }
             catch
             {
-                logger?.Debug("Failed to create MCP1: could be a v1 board");
+                logger?.Debug("Failed to create MCP1: could be a v1 board", Constants.LogGroup);
                 mcpInterrupt?.Dispose();
                 mcpReset?.Dispose();
             }
@@ -99,12 +99,12 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
             try
             {
                 var reset = GetMcpResetPin1(c);
-                Resolver.Log.Info($"Using MCP reset pin {reset.Name}");
+                Resolver.Log.Info($"Using MCP reset pin {reset.Name}", Constants.LogGroup);
                 mcpReset = device.CreateDigitalOutputPort(reset);
 
                 mcp = new Mcp23008(i2cBus, address: 0x27, resetPort: mcpReset);
 
-                logger?.Trace("Mcp_version up");
+                logger?.Trace("Mcp_version up", Constants.LogGroup);
                 version = mcp.ReadFromPorts();
             }
             catch
@@ -115,12 +115,12 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
                 try
                 {
                     var reset = GetMcpResetPin2(c);
-                    Resolver.Log.Info($"Using MCP reset pin {reset.Name}");
+                    Resolver.Log.Info($"Using MCP reset pin {reset.Name}", Constants.LogGroup);
                     mcpReset = device.CreateDigitalOutputPort(reset);
 
                     mcp = new Mcp23008(i2cBus, address: 0x27, resetPort: mcpReset);
 
-                    logger?.Trace("Mcp_version up");
+                    logger?.Trace("Mcp_version up", Constants.LogGroup);
                     version = mcp.ReadFromPorts();
                 }
                 catch
@@ -138,23 +138,23 @@ public class ProjectLab : IMeadowAppEmbeddedHardwareProvider<IProjectLabHardware
         switch (device)
         {
             case IF7FeatherMeadowDevice feather when mcp is null:
-                logger?.Info("Instantiating Project Lab v1 hardware");
+                logger?.Info("Instantiating Project Lab v1 hardware", Constants.LogGroup);
                 hardware = new ProjectLabHardwareV1(feather, i2cBus);
                 break;
             case IF7FeatherMeadowDevice feather:
-                logger?.Info("Instantiating Project Lab v2 hardware");
+                logger?.Info("Instantiating Project Lab v2 hardware", Constants.LogGroup);
                 hardware = new ProjectLabHardwareV2(feather, i2cBus, mcp);
                 break;
             case IF7CoreComputeMeadowDevice ccm when version < 17:
-                logger?.Info($"Instantiating Project Lab v3 hardware");
+                logger?.Info($"Instantiating Project Lab v3 hardware", Constants.LogGroup);
                 hardware = new ProjectLabHardwareV3(ccm, i2cBus);
                 break;
             case IF7CoreComputeMeadowDevice ccm when version < 18:
-                logger?.Info($"Instantiating Project Lab v4 hardware");
+                logger?.Info($"Instantiating Project Lab v4 hardware", Constants.LogGroup);
                 hardware = new ProjectLabHardwareV4(ccm, i2cBus);
                 break;
             case IF7CoreComputeMeadowDevice ccm:
-                logger?.Info($"Instantiating Project Lab v5 hardware");
+                logger?.Info($"Instantiating Project Lab v5 hardware", Constants.LogGroup);
                 hardware = new ProjectLabHardwareV5(ccm, i2cBus);
                 break;
             default:
