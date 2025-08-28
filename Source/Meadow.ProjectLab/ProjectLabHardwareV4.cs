@@ -94,11 +94,11 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
 
             Mcp_1 = new Mcp23008(i2cBus, address: 0x20, mcp1Interrupt, mcp1Reset);
 
-            Logger?.Trace("Mcp_1 up");
+            Logger?.Trace("Mcp_1 up", Constants.LogGroup);
         }
         catch (Exception e)
         {
-            Logger?.Trace($"Failed to create MCP1: {e.Message}");
+            Logger?.Info($"Failed to create MCP1: {e.Message}", Constants.LogGroup);
             mcp1Interrupt?.Dispose();
         }
 
@@ -110,11 +110,11 @@ public class ProjectLabHardwareV4 : ProjectLabHardwareBase
 
             Mcp_2 = new Mcp23008(i2cBus, address: 0x21, mcp2Interrupt);
 
-            Logger?.Trace("Mcp_2 up");
+            Logger?.Trace("Mcp_2 up", Constants.LogGroup);
         }
         catch (Exception e)
         {
-            Logger?.Trace($"Failed to create MCP2: {e.Message}");
+            Logger?.Info($"Failed to create MCP2: {e.Message}", Constants.LogGroup);
             mcp2Interrupt?.Dispose();
         }
 
