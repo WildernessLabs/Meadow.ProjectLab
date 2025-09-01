@@ -259,7 +259,7 @@ public class ProjectLabHardwareV5 : ProjectLabHardwareBase
                     CommonType.CommonAnode);
 
                 // initialize off
-                _rgbled.IsOn = true;
+                _rgbled.IsOn = false;
 
                 Logger?.Trace("RGB LED up");
             }
