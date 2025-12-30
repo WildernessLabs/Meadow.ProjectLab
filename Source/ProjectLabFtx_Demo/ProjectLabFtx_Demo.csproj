@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Ftxxxx\Driver\ICs.IOExpanders.Ftxxxx.csproj" />
+    <ProjectReference Include="..\Meadow.ProjectLab\Meadow.ProjectLab.csproj" />
+  </ItemGroup>
+
+</Project>

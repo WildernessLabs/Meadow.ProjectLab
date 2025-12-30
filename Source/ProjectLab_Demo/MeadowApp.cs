@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Audio;
+using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -181,10 +181,30 @@ public class MeadowApp : ProjectLabCoreComputeApp
             gyroscope.StartUpdating(updateInterveral);
         }
 
+        var wifi = Hardware.ComputeModule.NetworkAdapters.Primary<IWiFiNetworkAdapter>();
+        if (wifi is { })
+        {
+            Resolver.Log.Info($"using WiFi ");
+            wifi.NetworkConnected += (s, e) =>
+            {
+                Resolver.Log.Info($"Wifi Connected. IP: {e.IpAddress}");
+            };
+            wifi.NetworkDisconnected += (s, e) =>
+            {
+                Resolver.Log.Info($"Wifi Disconnected from network");
+            };
+
+            _ = wifi.Connect("interwebs", "1234567890");
+        }
+        else
+        {
+            Resolver.Log.Info("no WiFi adapter found");
+        }
+
         if (Hardware?.RgbLed is { } rgbLed)
         {
             Resolver.Log.Info("starting blink");
-            _ = rgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f, 0.1f);
+            //            _ = rgbLed.StartBlink(WildernessLabsColors.PearGreen, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(2000), 0.5f, 0.1f);
         }
     }
 }
