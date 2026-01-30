@@ -165,6 +165,7 @@ internal class Program
                     Console.WriteLine("  Press and hold a button, then type 'p' again to see state change.");
                     Console.WriteLine();
                     
+                    // Channel B - Low Byte D4-D7
                     Console.WriteLine("  Channel B (I2C) - Low Byte D4-D7:");
                     var b_d4 = channelB.CreateDigitalInputPort(channelB.Pins.D4, ResistorMode.ExternalPullUp);
                     var b_d5 = channelB.CreateDigitalInputPort(channelB.Pins.D5, ResistorMode.ExternalPullUp);
@@ -173,8 +174,18 @@ internal class Program
                     Console.WriteLine($"    D4={b_d4.State} D5={b_d5.State} D6={b_d6.State} D7={b_d7.State}");
                     b_d4.Dispose(); b_d5.Dispose(); b_d6.Dispose(); b_d7.Dispose();
                     
+                    // Channel B - High Byte C4-C7
+                    Console.WriteLine("  Channel B (I2C) - High Byte C4-C7:");
+                    var b_c4 = channelB.CreateDigitalInputPort(channelB.Pins.C4, ResistorMode.ExternalPullUp);
+                    var b_c5 = channelB.CreateDigitalInputPort(channelB.Pins.C5, ResistorMode.ExternalPullUp);
+                    var b_c6 = channelB.CreateDigitalInputPort(channelB.Pins.C6, ResistorMode.ExternalPullUp);
+                    var b_c7 = channelB.CreateDigitalInputPort(channelB.Pins.C7, ResistorMode.ExternalPullUp);
+                    Console.WriteLine($"    C4={b_c4.State} C5={b_c5.State} C6={b_c6.State} C7={b_c7.State}");
+                    b_c4.Dispose(); b_c5.Dispose(); b_c6.Dispose(); b_c7.Dispose();
+                    
                     if (channelA != null)
                     {
+                        // Channel A - Low Byte D4-D7
                         Console.WriteLine("  Channel A (SPI) - Low Byte D4-D7:");
                         var a_d4 = channelA.CreateDigitalInputPort(channelA.Pins.D4, ResistorMode.ExternalPullUp);
                         var a_d5 = channelA.CreateDigitalInputPort(channelA.Pins.D5, ResistorMode.ExternalPullUp);
@@ -182,6 +193,15 @@ internal class Program
                         var a_d7 = channelA.CreateDigitalInputPort(channelA.Pins.D7, ResistorMode.ExternalPullUp);
                         Console.WriteLine($"    D4={a_d4.State} D5={a_d5.State} D6={a_d6.State} D7={a_d7.State}");
                         a_d4.Dispose(); a_d5.Dispose(); a_d6.Dispose(); a_d7.Dispose();
+                        
+                        // Channel A - High Byte C4-C7
+                        Console.WriteLine("  Channel A (SPI) - High Byte C4-C7:");
+                        var a_c4 = channelA.CreateDigitalInputPort(channelA.Pins.C4, ResistorMode.ExternalPullUp);
+                        var a_c5 = channelA.CreateDigitalInputPort(channelA.Pins.C5, ResistorMode.ExternalPullUp);
+                        var a_c6 = channelA.CreateDigitalInputPort(channelA.Pins.C6, ResistorMode.ExternalPullUp);
+                        var a_c7 = channelA.CreateDigitalInputPort(channelA.Pins.C7, ResistorMode.ExternalPullUp);
+                        Console.WriteLine($"    C4={a_c4.State} C5={a_c5.State} C6={a_c6.State} C7={a_c7.State}");
+                        a_c4.Dispose(); a_c5.Dispose(); a_c6.Dispose(); a_c7.Dispose();
                     }
                     break;
                     

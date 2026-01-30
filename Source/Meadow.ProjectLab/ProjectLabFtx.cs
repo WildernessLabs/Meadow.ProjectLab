@@ -30,10 +30,12 @@ public class ProjectLabFtx : IProjectLabHardware
     {
         public PinDefinitions(FtdiExpander expander)
         {
-            BTN1 = expander.Pins.D4; // BC_D4 == UP
-            BTN2 = expander.Pins.D5; // BC_D5 == RIGHT
-            BTN3 = expander.Pins.D7; // BC_D7 == DOWN
-            BTN4 = expander.Pins.D6; // BC_D6 == LEFT
+            // Buttons are on high-byte BCBUS pins (C4-C7), not low-byte BDBUS pins (D4-D7)
+            // Confirmed via GPIO polling: C pins change state when buttons pressed
+            BTN1 = expander.Pins.C4; // BC_C4 == UP
+            BTN2 = expander.Pins.C5; // BC_C5 == RIGHT
+            BTN3 = expander.Pins.C7; // BC_C7 == DOWN
+            BTN4 = expander.Pins.C6; // BC_C6 == LEFT
         }
 
         public IPin BTN1 { get; } // UP
