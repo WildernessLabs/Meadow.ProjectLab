@@ -23,6 +23,9 @@
     <Project Path="../../Meadow.Foundation/Source/Meadow.Foundation.Peripherals/Displays.TftSpi/Driver/Displays.TftSpi.csproj">
       <Deploy />
     </Project>
+    <Project Path="../../Meadow.Foundation/Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ftxxxx/Driver/ICs.IOExpanders.Ftxxxx.csproj">
+      <Deploy />
+    </Project>
     <Project Path="../../Meadow.Foundation/Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Driver/ICs.IOExpanders.Mcp23xxx.csproj">
       <Deploy />
     </Project>
@@ -57,6 +60,7 @@
   <Project Path="Meadow.ProjectLab/Meadow.ProjectLab.csproj">
     <Deploy />
   </Project>
+  <Project Path="ProjectLabFtx_Demo/ProjectLabFtx_Demo.csproj" Id="f491eef6-e639-4ef8-87e1-613e13130a57" />
   <Project Path="ProjectLab_Demo/ProjectLab_Demo.csproj">
     <BuildType Project="Debug" />
     <Deploy />
